@@ -16,7 +16,7 @@ input {
 
 .tertiarySearchClassName:before{
   color:white;
-  content:" Price:  ("
+  content:" UId:  ("
 }
 
 .tertiarySearchClassName:after{

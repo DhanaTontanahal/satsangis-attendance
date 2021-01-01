@@ -4,9 +4,10 @@ import './index.css';
 import App from './search_bar/search';
 import reportWebVitals from './reportWebVitals';
 
+
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    < App />
   </React.StrictMode>,
   document.getElementById('root')
 );
