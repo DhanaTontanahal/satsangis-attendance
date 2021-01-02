@@ -4,23 +4,81 @@ import './App.css';
 import AutoCompleteSearchBox from './src/AutoCompleteSearchBox';
 import {stocksData} from './data/stocks'
 import firebase from "firebase/app";
+import { ThemeProvider } from 'styled-components';
+import styled from "styled-components";
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
+import 'react-datepicker/dist/react-datepicker-cssmodules.css';
+
 require('firebase/auth');
 require('firebase/database');
 
+
+const DropDownContainer = styled("div")`
+  width: 20em;
+  margin: 0 auto;
+  align: centre;
+`;
+
+const DropDownHeader = styled("div")`
+  margin-bottom: 0.8em;
+  padding: 0.4em 2em 0.4em 1em;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.15);
+  font-weight: 200;
+  font-size: 1.3rem;
+  color: #000000;
+  background: #DCDCDC;
+`;
+
+const DropDownListContainer = styled("div")``;
+
+const DropDownList = styled("ul")`
+  padding: 0;
+  margin: 0;
+  padding-left: 1em;
+  background: #DCDCDC;
+  border: 1px solid #000000;
+  box-sizing: border-box;
+  color: #000000;
+  font-size: 1rem;
+  font-weight: 150;
+  &:first-child {
+    padding-top: 0.8em;
+  }
+`;
+
+const ListItem = styled("li")`
+  list-style: none;
+  margin-bottom: 0.8em;
+`;
 
 
 export default class SearchBar extends React.Component
 {
   constructor(props) {
     super(props);
-    this.state = {userData: []};
+    this.state = {
+      userData: [], 
+      selectedUsers: [],
+      selectedDate: new Date(),
+      eventList: [],
+      isOpen: false,
+      selectedEvent: null
+    };
+    this.submitAttendance = this.submitAttendance.bind(this);
   }
 
   componentDidMount() {
-    this.fetchUserData();
+    this.fetchData();
   }
 
-  fetchUserData = async() => {
+  submitAttendance() {
+    console.log(this.state.selectedDate, this.state.selectedEvent, this.state.selectedUsers)
+    console.log("attendance submitted")
+    window.location.reload();
+  }
+
+  fetchData = async() => {
 
     const firebaseConfig = {
       apiKey: "AIzaSyCbRXOuEbKdDD0YBZcQJAnYb6ghRp0hH04",
@@ -38,80 +96,91 @@ export default class SearchBar extends React.Component
    }else {
       firebase.app(); // if already initialized, use that one
    }
-   const users = await firebase.database().ref('/users/').once('value').then((snapshot) => { 
+   const users = await firebase.database().ref('/satsangiUsers/').once('value').then((snapshot) => { 
     return snapshot.val()
   })
     this.setState({
      userData: users
     });
+
+    const eventListFromFirebase = await firebase.database().ref('/activities/').once('value').then((snapshot) => { 
+      return snapshot.val()
+    })
+      this.setState({
+       eventList: Object.keys(eventListFromFirebase)
+      });
  }
-
-
-
-//  let [getUsers,setUsers] = useState([])
-//   useEffect(() => {
-//     console.log('in use effect')
-//     console.log(getUsers)
-//     setUsers(firebase.database().ref('/users/').once('value').then((snapshot) => snapshot.val()))
-//   }, getUsers)
-  // let usersDatabase = firebase.database().ref('/users/').once('value').then((snapshot) => snapshot.val())
-  // return firebase.database().ref('/users/').once('value').then((snapshot) => {
-  //   // console.log(userData)
-  //   // const symbols = stocksData.map((stockObj) =>{
-  //   //   return stockObj["symbol"]
-  //   // });
-  
-  //   const onClick = (suggestion) =>{
-  //     alert(suggestion["name"])
-  //   }
-  //   return (
-  //     <div className="App">
-  //       <AutoCompleteSearchBox
-  //         placeHolderSearchLabel={"Search.."} 
-  //         primaryIndex={"Satsangi Name"} 
-  //         secondaryIndex={"Uid"}
-  //         showSecondarySearchCriterion={true}
-  //         secondarySearchClassName="secondarySearchClassName"
-  //         tertiaryIndex={"Branch Code"}
-  //         showTertiarySearchCriterion={true}
-  //         tertiarySearchClassName="tertiarySearchClassName"
-  //         suggestions={snapshot.val()}
-  //         onClick={onClick}
-  //         showSearchBtn={true}
-  //         searchImg={search}
-  //         />   
-  //     </div>
-  //   );
-  // });
-
-    //   const symbols = stocksData.map((stockObj) =>{
-    //   return stockObj["symbol"]
-    // });
-  
-
-    // console.log(getUsers)
     render() {
-      const onClick = (suggestion) =>{
-        alert(suggestion["name"])
+      const onClick = (selectedUsers) =>{
+        this.setState({selectedUsers: selectedUsers})
       }
       console.log(this.state.userData)
+      const toggling = () => this.setState({isOpen: !this.state.isOpen});
+
+  const onOptionClicked = (value) => () => {
+    this.setState({selectedEvent: value});
+    this.setState({isOpen: false})
+    console.log(this.state.selectedEvent);
+  };
+
       return (
         <div className="App">
+          <h1>Satsangis Attendance </h1>
+      <div>
+        <h3>Choose date</h3>
+            <DatePicker
+                selected = {this.state.selectedDate}
+                onChange = {date => this.setState({selectedDate: date})}
+                dateFormat = 'dd/MM/yyyy'
+            />
+      </div>
+      <div>
+        <h3>Choose event</h3>
+        <DropDownContainer>
+      <DropDownHeader onClick={toggling}>
+        {this.state.selectedEvent || "Event"}
+      </DropDownHeader>
+      {this.state.isOpen && (
+        <DropDownListContainer>
+          <DropDownList>
+            {this.state.eventList.map((event) => (
+              <ListItem onClick={onOptionClicked(event)} key={Math.random()}>
+                {event}
+              </ListItem>
+            ))}
+          </DropDownList>
+        </DropDownListContainer>
+      )}
+    </DropDownContainer>
+      </div>
+      <div>
+        <h3>Choose user</h3>
           <AutoCompleteSearchBox
             placeHolderSearchLabel={"Search.."} 
-            primaryIndex={"Satsangi Name"} 
-            secondaryIndex={"Uid"}
+            primaryIndex={"nameSatsangi"} 
+            secondaryIndex={"newUID"}
             showSecondarySearchCriterion={true}
             secondarySearchClassName="secondarySearchClassName"
-            tertiaryIndex={"Branch Code"}
+            tertiaryIndex={"branchCode"}
             showTertiarySearchCriterion={true}
             tertiarySearchClassName="tertiarySearchClassName"
-            suggestions={this.state.userData}
+            suggestions={Object.values(this.state.userData)}
             onClick={onClick}
             showSearchBtn={true}
             searchImg={search}
             />   
+      </div>
+
+      <div>
+      <br></br>
+            
+        <button onClick={this.submitAttendance}>
+      Submit Attendance
+        </button>
         </div>
+      </div>
+
       );
+
     }
 }

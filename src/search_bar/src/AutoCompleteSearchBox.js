@@ -1,5 +1,8 @@
 import React, { Component } from 'react'
 import styled from 'styled-components';
+import Chip from '@material-ui/core/Chip';
+// import { makeStyles } from '@material-ui/core/styles';
+
 
 const StyledNoSuggsDiv = styled.div`
     color: #999;
@@ -107,17 +110,19 @@ class AutoCompleteSearchBox extends Component {
             filteredSuggestions: [],
             activeSuggestions: 0,
             showSuggestions: false,
-            userInput: ""
+            userInput: "",
+            selectedUsers: []
         }
 
         this.onChange = this.onChange.bind(this);
         this.onKeyDown = this.onKeyDown.bind(this);
         this.onClick = this.onClick.bind(this);
+        this.onDelete = this.onDelete.bind(this);
     }
 
 
     onChange(e){
-        // console.log(e.target.value)
+        // console.log(e)
         const { suggestions, primaryIndex } = this.props;
         const userSearchInput = e.target.value;
 
@@ -170,9 +175,28 @@ class AutoCompleteSearchBox extends Component {
 
     }
 
-    onClick() {
-        console.log(this.state.userInput);
-        this.props.onClick(this.state.filteredSuggestions[this.state.activeSuggestions]);
+    onClick(e) {
+        if(this.state.selectedUsers.indexOf(this.state.filteredSuggestions[e.currentTarget.dataset.id]) === -1) {
+            this.state.selectedUsers.push(this.state.filteredSuggestions[e.currentTarget.dataset.id])
+        }
+        console.log('user input list')
+        console.log(this.state.selectedUsers)
+        this.setState({
+            userInput: ""
+        })
+        this.props.onClick(this.state.selectedUsers);
+    }
+
+    onDelete(user) {
+        const index = this.state.selectedUsers.indexOf(user);
+        if (index > -1) {
+            this.state.selectedUsers.splice(index, 1)
+            console.log('after delete')
+            console.log(this.state.selectedUsers)
+            this.setState({
+                userInput: ""
+            })
+          }
     }
 
     render() {
@@ -206,8 +230,13 @@ class AutoCompleteSearchBox extends Component {
                                 return (
                                     <li
                                         className={className}
-                                        key={index}>
+                                        key={index}
+                                        onClick={this.onClick}
+                                        data-id={index}
+                                        >
                                         {suggestion[primaryIndex]}
+                                        
+                                        
                                         <br />
                                         <span>
                                             {
@@ -219,7 +248,6 @@ class AutoCompleteSearchBox extends Component {
                                                 this.props.showTertiarySearchCriterion ?
                                                     <small className={this.props.tertiarySearchClassName}>{suggestion[tertiaryIndex]}</small> :
                                                     null
-
                                             }
                                         </span>
 
@@ -246,6 +274,14 @@ class AutoCompleteSearchBox extends Component {
 
             <div style={styles.container}>
                 <StyledContainer>
+                <div>
+                    {this.state.selectedUsers.map((user, index) => (
+                        <Chip
+                            label={user.nameSatsangi}
+                            // onDelete={this.onDelete(user)}
+                        />
+                    ))}          
+                    </div>
                     <input
                         placeholder={this.props.placeHolderSearchLabel}
                         type="text"
@@ -253,12 +289,7 @@ class AutoCompleteSearchBox extends Component {
                         onKeyDown={this.onKeyDown}
                         value={userInput}
                     />
-                    {
-                        this.props.showSearchBtn?
-                        <button onClick={this.onClick}>
-                        <img src={this.props.searchImg} width={styles.searchImage.width} height={styles.searchImage.height} alt={styles.searchImage.alt} />
-                    </button>:null
-                    }
+
                     
                 </StyledContainer>
                 {autoCompleteSuggestions}

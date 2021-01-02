@@ -11,16 +11,16 @@ input {
 
 }
 .tertiarySearchClassName{
-  color:white;
+  color:blue;
 }
 
 .tertiarySearchClassName:before{
-  color:white;
-  content:" UId:  ("
+  color:blue;
+  content:" UID:  ("
 }
 
 .tertiarySearchClassName:after{
-  color:white;
+  color:blue;
   content:" )"
 }
 
