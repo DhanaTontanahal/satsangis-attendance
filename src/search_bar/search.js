@@ -2,7 +2,7 @@ import React, { Component, useEffect, useState } from 'react';
 import search from './search.svg';
 import './App.css';
 import AutoCompleteSearchBox from './src/AutoCompleteSearchBox';
-import {stocksData} from './data/stocks'
+import { stocksData } from './data/stocks'
 import firebase from "firebase/app";
 import { ThemeProvider } from 'styled-components';
 import styled from "styled-components";
@@ -27,7 +27,7 @@ const DropDownHeader = styled("div")`
   font-weight: 200;
   font-size: 1.3rem;
   color: #000000;
-  background: #DCDCDC;
+  background: #f6f6f6;
 `;
 
 const DropDownListContainer = styled("div")``;
@@ -36,7 +36,7 @@ const DropDownList = styled("ul")`
   padding: 0;
   margin: 0;
   padding-left: 1em;
-  background: #DCDCDC;
+  background: #f6f6f6;
   border: 1px solid #000000;
   box-sizing: border-box;
   color: #000000;
@@ -52,13 +52,18 @@ const ListItem = styled("li")`
   margin-bottom: 0.8em;
 `;
 
+const button = {
+  color: "#00008E",
+  backgroundColor: "#f6f6f6",
+  padding: "10px",
+  fontFamily: "Arial"
+};
 
-export default class SearchBar extends React.Component
-{
+export default class SearchBar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      userData: [], 
+      userData: [],
       selectedUsers: [],
       selectedDate: new Date(),
       eventList: [],
@@ -78,7 +83,7 @@ export default class SearchBar extends React.Component
     window.location.reload();
   }
 
-  fetchData = async() => {
+  fetchData = async () => {
 
     const firebaseConfig = {
       apiKey: "AIzaSyCbRXOuEbKdDD0YBZcQJAnYb6ghRp0hH04",
@@ -93,71 +98,71 @@ export default class SearchBar extends React.Component
     // Initialize Firebase
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
-   }else {
+    } else {
       firebase.app(); // if already initialized, use that one
-   }
-   const users = await firebase.database().ref('/satsangiUsers/').once('value').then((snapshot) => { 
-    return snapshot.val()
-  })
-    this.setState({
-     userData: users
-    });
-
-    const eventListFromFirebase = await firebase.database().ref('/activities/').once('value').then((snapshot) => { 
+    }
+    const users = await firebase.database().ref('/satsangiUsers/').once('value').then((snapshot) => {
       return snapshot.val()
     })
-      this.setState({
-       eventList: Object.keys(eventListFromFirebase)
-      });
- }
-    render() {
-      const onClick = (selectedUsers) =>{
-        this.setState({selectedUsers: selectedUsers})
-      }
-      console.log(this.state.userData)
-      const toggling = () => this.setState({isOpen: !this.state.isOpen});
+    this.setState({
+      userData: users
+    });
 
-  const onOptionClicked = (value) => () => {
-    this.setState({selectedEvent: value});
-    this.setState({isOpen: false})
-    console.log(this.state.selectedEvent);
-  };
+    const eventListFromFirebase = await firebase.database().ref('/activities/').once('value').then((snapshot) => {
+      return snapshot.val()
+    })
+    this.setState({
+      eventList: Object.keys(eventListFromFirebase)
+    });
+  }
+  render() {
+    const onClick = (selectedUsers) => {
+      this.setState({ selectedUsers: selectedUsers })
+    }
+    console.log(this.state.userData)
+    const toggling = () => this.setState({ isOpen: !this.state.isOpen });
 
-      return (
-        <div className="App">
-          <h1>Satsangis Attendance </h1>
-      <div>
-        <h3>Choose date</h3>
-            <DatePicker
-                selected = {this.state.selectedDate}
-                onChange = {date => this.setState({selectedDate: date})}
-                dateFormat = 'dd/MM/yyyy'
-            />
-      </div>
-      <div>
-        <h3>Choose event</h3>
-        <DropDownContainer>
-      <DropDownHeader onClick={toggling}>
-        {this.state.selectedEvent || "Event"}
-      </DropDownHeader>
-      {this.state.isOpen && (
-        <DropDownListContainer>
-          <DropDownList>
-            {this.state.eventList.map((event) => (
-              <ListItem onClick={onOptionClicked(event)} key={Math.random()}>
-                {event}
-              </ListItem>
-            ))}
-          </DropDownList>
-        </DropDownListContainer>
-      )}
-    </DropDownContainer>
-      </div>
-      <div>
-        <h3>Choose user</h3>
-          <AutoCompleteSearchBox
-            placeHolderSearchLabel={"Search.."} 
-            primaryIndex={"nameSatsangi"} 
+    const onOptionClicked = (value) => () => {
+      this.setState({ selectedEvent: value });
+      this.setState({ isOpen: false })
+      console.log(this.state.selectedEvent);
+    };
+
+    return (
+      <div className="App">
+        <h1>Satsangis Attendance </h1>
+        <div>
+          <h3>Choose date</h3>
+          <DatePicker
+            selected={this.state.selectedDate}
+            onChange={date => this.setState({ selectedDate: date })}
+            dateFormat='dd/MM/yyyy'
+          />
+        </div>
+        <div>
+          <h3>Choose event</h3>
+          <DropDownContainer>
+            <DropDownHeader onClick={toggling}>
+              {this.state.selectedEvent || "Event"}
+            </DropDownHeader>
+            {this.state.isOpen && (
+              <DropDownListContainer>
+                <DropDownList>
+                  {this.state.eventList.map((event) => (
+                    <ListItem onClick={onOptionClicked(event)} key={Math.random()}>
+                      {event}
+                    </ListItem>
+                  ))}
+                </DropDownList>
+              </DropDownListContainer>
+            )}
+          </DropDownContainer>
+        </div>
+        <div>
+          <h3>Choose user</h3>
+          <AutoCompleteSearchBox 
+            placeHolderSearchLabel={"Search.."}
+            primaryIndex={"nameSatsangi"}
             secondaryIndex={"newUID"}
             showSecondarySearchCriterion={true}
             secondarySearchClassName="secondarySearchClassName"
@@ -168,19 +173,18 @@ export default class SearchBar extends React.Component
             onClick={onClick}
             showSearchBtn={true}
             searchImg={search}
-            />   
-      </div>
+          />
+        </div>
 
-      <div>
-      <br></br>
-            
-        <button onClick={this.submitAttendance}>
-      Submit Attendance
-        </button>
+        <div>
+          <br></br>
+          <button onClick={this.submitAttendance} style = {button}>
+            Submit Attendance
+          </button>
         </div>
       </div>
 
-      );
+    );
 
-    }
+  }
 }
