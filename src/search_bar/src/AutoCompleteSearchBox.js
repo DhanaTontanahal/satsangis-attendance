@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import styled from 'styled-components';
-import Chip from '@material-ui/core/Chip';
+//import Chip from '@material-ui/core/Chip';
 // import { makeStyles } from '@material-ui/core/styles';
-
+import Chip from './Chips'
 
 const StyledNoSuggsDiv = styled.div`
     color: #999;
@@ -16,11 +16,11 @@ const StyledContainer = styled.div`
  input{
   width:100%;
   height:45px;
-  border:1px solid pink;
-  border-radius: 25px;
+  border:0px solid black;
+  border-radius: 0px;
   padding:0px 5px 0 10px;
   font-size: 0.75rem;
-  font-family: "Montserrat";
+  background: #f6f6f6;
   margin:5px 5px 5px 5px;
 }
 
@@ -276,9 +276,9 @@ class AutoCompleteSearchBox extends Component {
                 <StyledContainer>
                 <div>
                     {this.state.selectedUsers.map((user, index) => (
-                        <Chip
+                        <Chip 
                             label={user.nameSatsangi}
-                            // onDelete={this.onDelete(user)}
+                            //onDelete={this.onDelete(user)}
                         />
                     ))}          
                     </div>
