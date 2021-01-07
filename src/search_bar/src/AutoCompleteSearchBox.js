@@ -278,7 +278,7 @@ class AutoCompleteSearchBox extends Component {
                     {this.state.selectedUsers.map((user, index) => (
                         <Chip 
                             label={user.nameSatsangi}
-                            //onDelete={this.onDelete(user)}
+                            onDelete={() => this.onDelete(user)}
                         />
                     ))}          
                     </div>
