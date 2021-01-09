@@ -52,11 +52,23 @@ const ListItem = styled("li")`
   margin-bottom: 0.8em;
 `;
 
+
 const button = {
   color: "#00008E",
   backgroundColor: "#f6f6f6",
   padding: "10px",
   fontFamily: "Arial"
+};
+const firebaseConfig = {
+  apiKey: "AIzaSyCbRXOuEbKdDD0YBZcQJAnYb6ghRp0hH04",
+  authDomain: "demoattendance-7d80c.firebaseapp.com",
+  databaseURL: "https://demoattendance-7d80c-default-rtdb.firebaseio.com",
+  projectId: "demoattendance-7d80c",
+  storageBucket: "demoattendance-7d80c.appspot.com",
+  messagingSenderId: "17274395407",
+  appId: "1:17274395407:web:2d5e1f13ebcd16a60dbc7a",
+  measurementId: "G-10ZR1ZYQX4"
+
 };
 
 export default class SearchBar extends React.Component {
@@ -78,23 +90,31 @@ export default class SearchBar extends React.Component {
   }
 
   submitAttendance() {
+    if(this.state.selectedEvent == null)
+    {
+      alert("Please select a valid event")
+      return
+    }
     console.log(this.state.selectedDate, this.state.selectedEvent, this.state.selectedUsers)
+    
+    // Initialize Firebase
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }else {
+      firebase.app(); // if already initialized, use that one
+    }
+    const attendanceDate = ("0" + this.state.selectedDate.getDate()).slice(-2) + "-" + this.state.selectedDate.toLocaleString('default', { month: 'long' }) + "-" + this.state.selectedDate.getFullYear()
+    // console.log(attendanceDate)
+    this.state.selectedUsers.forEach((user) => {
+      firebase.database().ref('satsangiUsers-attendance/' + attendanceDate + "/" + this.state.selectedEvent + "/" + user.newUID).set(user)  
+    })
+    // firebase.database().ref('satsangiUsers-attendance/' + attendanceDate + "/" + this.state.selectedEvent + "/" + this.state.sele)
     console.log("attendance submitted")
     window.location.reload();
   }
 
   fetchData = async () => {
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCbRXOuEbKdDD0YBZcQJAnYb6ghRp0hH04",
-      authDomain: "demoattendance-7d80c.firebaseapp.com",
-      databaseURL: "https://demoattendance-7d80c-default-rtdb.firebaseio.com",
-      projectId: "demoattendance-7d80c",
-      storageBucket: "demoattendance-7d80c.appspot.com",
-      messagingSenderId: "17274395407",
-      appId: "1:17274395407:web:2d5e1f13ebcd16a60dbc7a",
-      measurementId: "G-10ZR1ZYQX4"
-    };
     // Initialize Firebase
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
