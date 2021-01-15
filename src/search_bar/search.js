@@ -9,10 +9,22 @@ import styled from "styled-components";
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import 'react-datepicker/dist/react-datepicker-cssmodules.css';
+import { withTranslation } from 'react-i18next';
+import i18n from "i18next";
+import Lottie from 'react-lottie';
+import thumbsUp from './856-thumbs-up-grey-blue.json';
 
 require('firebase/auth');
 require('firebase/database');
 
+const defaultOptions = {
+  loop: true,
+  autoplay: true,
+  animationData: thumbsUp,
+  rendererSettings: {
+    preserveAspectRatio: "xMidYMid slice"
+  }
+};
 
 const DropDownContainer = styled("div")`
   width: 20em;
@@ -28,6 +40,10 @@ const DropDownHeader = styled("div")`
   font-size: 1.3rem;
   color: #000000;
   background: #f6f6f6;
+`;
+
+const Container = styled("div")`
+  flex:1;
 `;
 
 const DropDownListContainer = styled("div")``;
@@ -71,7 +87,8 @@ const firebaseConfig = {
 
 };
 
-export default class SearchBar extends React.Component {
+
+class SearchBar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -80,37 +97,45 @@ export default class SearchBar extends React.Component {
       selectedDate: new Date(),
       eventList: [],
       isOpen: false,
-      selectedEvent: null
+      selectedEvent: null,
+      submitSuccess: false
     };
     this.submitAttendance = this.submitAttendance.bind(this);
   }
+
 
   componentDidMount() {
     this.fetchData();
   }
 
   submitAttendance() {
-    if(this.state.selectedEvent == null)
-    {
+    if (this.state.submitSuccess) {
+      return
+    }
+    if (this.state.selectedEvent == null) {
       alert("Please select a valid event")
       return
     }
     console.log(this.state.selectedDate, this.state.selectedEvent, this.state.selectedUsers)
-    
+
     // Initialize Firebase
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
-    }else {
+    } else {
       firebase.app(); // if already initialized, use that one
     }
     const attendanceDate = ("0" + this.state.selectedDate.getDate()).slice(-2) + "-" + this.state.selectedDate.toLocaleString('default', { month: 'long' }) + "-" + this.state.selectedDate.getFullYear()
     // console.log(attendanceDate)
     this.state.selectedUsers.forEach((user) => {
-      firebase.database().ref('satsangiUsers-attendance/' + attendanceDate + "/" + this.state.selectedEvent + "/" + user.newUID).set(user)  
+      firebase.database().ref('satsangiUsers-attendance/' + attendanceDate + "/" + this.state.selectedEvent + "/" + user.newUID).set(user)
     })
     // firebase.database().ref('satsangiUsers-attendance/' + attendanceDate + "/" + this.state.selectedEvent + "/" + this.state.sele)
     console.log("attendance submitted")
-    window.location.reload();
+    this.setState({ submitSuccess: true })
+    //alert(this.props.t('submit_message'))
+    setTimeout(() => {
+      window.location.reload();
+    }, 3000)
   }
 
   fetchData = async () => {
@@ -135,7 +160,24 @@ export default class SearchBar extends React.Component {
       eventList: Object.keys(eventListFromFirebase)
     });
   }
+
+  handleOnCLick = (lang) => {
+    //store the lang in local storage
+    //on button click get the lang from localstorage and then change the lang
+    localStorage.setItem("currentLanguage", lang)
+    //localStorage.getItem("currentLanguage")
+    //redux-->local storage
+    i18n.changeLanguage(lang)
+  }
+
+  updateEvetToggle = () => {
+    if (this.state.isOpen) {
+      this.setState({ isOpen: false })
+    } else { return }
+  }
+
   render() {
+    const { t } = this.props;
     const onClick = (selectedUsers) => {
       this.setState({ selectedUsers: selectedUsers })
     }
@@ -148,63 +190,74 @@ export default class SearchBar extends React.Component {
       console.log(this.state.selectedEvent);
     };
 
+    //console.log("sumsa ki jai",this.props.t('Welcome_to_React'))
     return (
       <div className="App">
-        <h1>Satsangis Attendance </h1>
-        <div>
-          <h3>Choose date</h3>
-          <DatePicker
-            selected={this.state.selectedDate}
-            onChange={date => this.setState({ selectedDate: date })}
-            dateFormat='dd/MM/yyyy'
-          />
-        </div>
-        <div>
-          <h3>Choose event</h3>
-          <DropDownContainer>
-            <DropDownHeader onClick={toggling}>
-              {this.state.selectedEvent || "Event"}
-            </DropDownHeader>
-            {this.state.isOpen && (
-              <DropDownListContainer>
-                <DropDownList>
-                  {this.state.eventList.map((event) => (
-                    <ListItem onClick={onOptionClicked(event)} key={Math.random()}>
-                      {event}
-                    </ListItem>
-                  ))}
-                </DropDownList>
-              </DropDownListContainer>
-            )}
-          </DropDownContainer>
-        </div>
-        <div>
-          <h3>Choose user</h3>
-          <AutoCompleteSearchBox 
-            placeHolderSearchLabel={"Search.."}
-            primaryIndex={"nameSatsangi"}
-            secondaryIndex={"newUID"}
-            showSecondarySearchCriterion={true}
-            secondarySearchClassName="secondarySearchClassName"
-            tertiaryIndex={"branchCode"}
-            showTertiarySearchCriterion={true}
-            tertiarySearchClassName="tertiarySearchClassName"
-            suggestions={Object.values(this.state.userData)}
-            onClick={onClick}
-            showSearchBtn={true}
-            searchImg={search}
-          />
-        </div>
-
-        <div>
-          <br></br>
-          <button onClick={this.submitAttendance} style = {button}>
-            Submit Attendance
-          </button>
-        </div>
+        <Container onClick={this.updateEvetToggle}>
+          <button onClick={() => this.handleOnCLick("en")}>English</button>
+          <button onClick={() => this.handleOnCLick("hi")}>Hindi</button>
+          <h1>{t("Satsangis_Attendance")}</h1>
+          <div>
+            <h3>{t("Choose_date")}</h3>
+            <DatePicker
+              selected={this.state.selectedDate}
+              onChange={date => this.setState({ selectedDate: date })}
+              dateFormat='dd/MM/yyyy'
+            />
+          </div>
+          <div>
+            <h3>{t("Choose_event")}</h3>
+            <DropDownContainer>
+              <DropDownHeader onClick={toggling}>
+                {this.state.selectedEvent || "Event"}
+              </DropDownHeader>
+              {this.state.isOpen && (
+                <DropDownListContainer>
+                  <DropDownList>
+                    {this.state.eventList.map((event) => (
+                      <ListItem onClick={onOptionClicked(event)} key={Math.random()}>
+                        {event}
+                      </ListItem>
+                    ))}
+                  </DropDownList>
+                </DropDownListContainer>
+              )}
+            </DropDownContainer>
+          </div>
+          <div>
+            <h3>{t("Choose_user")}</h3>
+            <AutoCompleteSearchBox
+              placeHolderSearchLabel={"Search.."}
+              primaryIndex={"nameSatsangi"}
+              secondaryIndex={"newUID"}
+              showSecondarySearchCriterion={true}
+              secondarySearchClassName="secondarySearchClassName"
+              tertiaryIndex={"branchCode"}
+              showTertiarySearchCriterion={true}
+              tertiarySearchClassName="tertiarySearchClassName"
+              suggestions={Object.values(this.state.userData)}
+              onClick={onClick}
+              showSearchBtn={true}
+              searchImg={search}
+            />
+          </div>
+          {this.state.submitSuccess ? <div>
+            <div>{t("submit_message")}</div>
+            <Lottie options={defaultOptions}
+              height={20}
+              width={20} />
+          </div>
+            : null}
+          <div>
+            <br></br>
+            <button onClick={this.submitAttendance} style={button}>
+              {t("Submit_Attendance")}
+            </button>
+          </div>
+        </Container>
       </div>
-
     );
 
   }
 }
+export default withTranslation()(SearchBar);
