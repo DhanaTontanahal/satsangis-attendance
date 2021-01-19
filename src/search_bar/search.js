@@ -2,6 +2,7 @@ import React, { Component, useEffect, useState } from 'react';
 import search from './search.svg';
 import './App.css';
 import AutoCompleteSearchBox from './src/AutoCompleteSearchBox';
+import AutoCompleteSearchBoxLogin from './AutoCompleteSearchBoxLogin'
 import { stocksData } from './data/stocks'
 import firebase from "firebase/app";
 import { ThemeProvider } from 'styled-components';
@@ -98,15 +99,53 @@ class SearchBar extends React.Component {
       eventList: [],
       isOpen: false,
       selectedEvent: null,
-      submitSuccess: false
+      submitSuccess: false,
+      
+      userName: null,
+      dateOfBirth: null,
+      login: false
     };
     this.submitAttendance = this.submitAttendance.bind(this);
+    this.login = this.login.bind(this);
   }
 
 
   componentDidMount() {
     this.fetchData();
   }
+
+
+  login() {
+    if(this.state.userName == null)
+    {
+      alert("Please select a valid UUID")
+      return
+    }
+
+    if(this.state.dateOfBirth == null)
+    {
+      alert("Please select a valid date of birth")
+      return
+    }
+
+    
+    console.log(this.state.dateOfBirth, this.state.userName)
+    
+    // Initialize Firebase
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }else {
+      firebase.app(); // if already initialized, use that one
+    }
+    const formattedDOB = ("0" + this.state.dateOfBirth.getDate()).slice(-2) + "-" + this.state.dateOfBirth.toLocaleString('default', { month: 'long' }) + "-" + this.state.dateOfBirth.getFullYear()
+
+    console.log(formattedDOB, this.state.userName)
+    // todo function to complete
+    this.setState({
+      login: true
+    })
+  }
+
 
   submitAttendance() {
     if (this.state.submitSuccess) {
@@ -181,6 +220,11 @@ class SearchBar extends React.Component {
     const onClick = (selectedUsers) => {
       this.setState({ selectedUsers: selectedUsers })
     }
+
+    const onLoginClick = (selectedUsers) => {
+      this.setState({ userName: selectedUsers })
+    }
+
     console.log(this.state.userData)
     const toggling = () => this.setState({ isOpen: !this.state.isOpen });
 
@@ -191,72 +235,117 @@ class SearchBar extends React.Component {
     };
 
     //console.log("sumsa ki jai",this.props.t('Welcome_to_React'))
+
+    if(this.state.login == true)
+      return (
+        <div className="App">
+          <Container onClick={this.updateEvetToggle}>
+            <button onClick={() => this.handleOnCLick("en")}>English</button>
+            <button onClick={() => this.handleOnCLick("hi")}>Hindi</button>
+            <h1>{t("Satsangis_Attendance")}</h1>
+            <h2>Radhasoami {this.state.userName.nameSatsangi}</h2>
+            <div>
+              <h3>{t("Choose_date")}</h3>
+              <DatePicker
+                selected={this.state.selectedDate}
+                onChange={date => this.setState({ selectedDate: date })}
+                dateFormat='dd/MM/yyyy'
+              />
+            </div>
+            <div>
+              <h3>{t("Choose_event")}</h3>
+              <DropDownContainer>
+                <DropDownHeader onClick={toggling}>
+                  {this.state.selectedEvent || "Event"}
+                </DropDownHeader>
+                {this.state.isOpen && (
+                  <DropDownListContainer>
+                    <DropDownList>
+                      {this.state.eventList.map((event) => (
+                        <ListItem onClick={onOptionClicked(event)} key={Math.random()}>
+                          {event}
+                        </ListItem>
+                      ))}
+                    </DropDownList>
+                  </DropDownListContainer>
+                )}
+              </DropDownContainer>
+            </div>
+            <div>
+              <h3>{t("Choose_user")}</h3>
+              <AutoCompleteSearchBox
+                placeHolderSearchLabel={"Search.."}
+                primaryIndex={"nameSatsangi"}
+                secondaryIndex={"newUID"}
+                showSecondarySearchCriterion={true}
+                secondarySearchClassName="secondarySearchClassName"
+                tertiaryIndex={"branchCode"}
+                showTertiarySearchCriterion={true}
+                tertiarySearchClassName="tertiarySearchClassName"
+                suggestions={Object.values(this.state.userData)}
+                onClick={onClick}
+                showSearchBtn={true}
+                searchImg={search}
+              />
+            </div>
+            {this.state.submitSuccess ? <div>
+              <div>{t("submit_message")}</div>
+              <Lottie options={defaultOptions}
+                height={20}
+                width={20} />
+            </div>
+              : null}
+            <div>
+              <br></br>
+              <button onClick={this.submitAttendance} style={button}>
+                {t("Submit_Attendance")}
+              </button>
+            </div>
+          </Container>
+        </div>
+      );
+    else
     return (
       <div className="App">
-        <Container onClick={this.updateEvetToggle}>
-          <button onClick={() => this.handleOnCLick("en")}>English</button>
-          <button onClick={() => this.handleOnCLick("hi")}>Hindi</button>
-          <h1>{t("Satsangis_Attendance")}</h1>
-          <div>
-            <h3>{t("Choose_date")}</h3>
-            <DatePicker
-              selected={this.state.selectedDate}
-              onChange={date => this.setState({ selectedDate: date })}
-              dateFormat='dd/MM/yyyy'
-            />
-          </div>
-          <div>
-            <h3>{t("Choose_event")}</h3>
-            <DropDownContainer>
-              <DropDownHeader onClick={toggling}>
-                {this.state.selectedEvent || "Event"}
-              </DropDownHeader>
-              {this.state.isOpen && (
-                <DropDownListContainer>
-                  <DropDownList>
-                    {this.state.eventList.map((event) => (
-                      <ListItem onClick={onOptionClicked(event)} key={Math.random()}>
-                        {event}
-                      </ListItem>
-                    ))}
-                  </DropDownList>
-                </DropDownListContainer>
-              )}
-            </DropDownContainer>
-          </div>
-          <div>
-            <h3>{t("Choose_user")}</h3>
-            <AutoCompleteSearchBox
-              placeHolderSearchLabel={"Search.."}
-              primaryIndex={"nameSatsangi"}
-              secondaryIndex={"newUID"}
-              showSecondarySearchCriterion={true}
-              secondarySearchClassName="secondarySearchClassName"
-              tertiaryIndex={"branchCode"}
-              showTertiarySearchCriterion={true}
-              tertiarySearchClassName="tertiarySearchClassName"
-              suggestions={Object.values(this.state.userData)}
-              onClick={onClick}
-              showSearchBtn={true}
-              searchImg={search}
-            />
-          </div>
-          {this.state.submitSuccess ? <div>
-            <div>{t("submit_message")}</div>
-            <Lottie options={defaultOptions}
-              height={20}
-              width={20} />
-          </div>
-            : null}
-          <div>
-            <br></br>
-            <button onClick={this.submitAttendance} style={button}>
-              {t("Submit_Attendance")}
-            </button>
-          </div>
-        </Container>
+        <h1>Satsangis Attendance </h1>
+        <div>
+          <h3>Choose UUID</h3>
+          <AutoCompleteSearchBoxLogin 
+            placeHolderSearchLabel={"Search.."}
+            primaryIndex={"nameSatsangi"}
+            secondaryIndex={"newUID"}
+            showSecondarySearchCriterion={true}
+            secondarySearchClassName="secondarySearchClassName"
+            tertiaryIndex={"branchCode"}
+            showTertiarySearchCriterion={true}
+            tertiarySearchClassName="tertiarySearchClassName"
+            suggestions={Object.values(this.state.userData)}
+            onClick={onLoginClick}
+            showSearchBtn={true}
+            searchImg={search}
+          />
+        </div>
+
+        <div>
+          <h3>Choose Date of birth</h3>
+          <DatePicker
+            selected={this.state.dateOfBirth}
+            onChange={date => this.setState({ dateOfBirth: date })}
+            dateFormat='dd/MM/yyyy'
+          />
+        </div>
+
+
+        <div>
+          <br></br>
+          <button onClick={this.login} style = {button}>
+            Login
+          </button>
+        </div>
       </div>
+
     );
+
 
   }
 }

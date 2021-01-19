@@ -102,7 +102,7 @@ const defaultProps = {
 }
 
 
-class AutoCompleteSearchBox extends Component {
+class AutoCompleteSearchBoxLogin extends Component {
     constructor(props) {
         super(props)
 
@@ -287,5 +287,5 @@ class AutoCompleteSearchBox extends Component {
     }
 }
 
-AutoCompleteSearchBox.defaultProps = defaultProps;
-export default AutoCompleteSearchBox
+AutoCompleteSearchBoxLogin.defaultProps = defaultProps;
+export default AutoCompleteSearchBoxLogin
