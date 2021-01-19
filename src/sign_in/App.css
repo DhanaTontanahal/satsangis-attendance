@@ -1,0 +1,26 @@
+
+
+input {
+  border: 1px solid #999;
+  padding: 0.5rem;
+  width: 300px;
+}
+
+
+.secondarySearchClassName{
+
+}
+.tertiarySearchClassName{
+  color:blue;
+}
+
+.tertiarySearchClassName:before{
+  color:blue;
+  content:" UID:  ("
+}
+
+.tertiarySearchClassName:after{
+  color:blue;
+  content:" )"
+}
+
