@@ -1,12 +1,13 @@
 import logo from './logo.svg';
 import './App.css';
 import SearchBar from './search_bar/search';
+import SignIn from './sign_in/sign_in';
 
 function App() {
   
   return (
     <div className="App">
-        <SearchBar/>
+        <SignIn/>
     </div>
   );
 
