@@ -139,6 +139,15 @@ export default class SignIn extends React.Component {
     }
     console.log(this.state.userData)
 
+    const toggling = () => this.setState({ isOpen: !this.state.isOpen });
+
+    const onOptionClicked = (value) => () => {
+      this.setState({ selectedEvent: value });
+      this.setState({ isOpen: false })
+      console.log(this.state.selectedEvent);
+    };
+    
+
     if(this.state.login == true)
       return (
           <div className="App">
@@ -168,13 +177,24 @@ export default class SignIn extends React.Component {
         </div>
 
         <div>
-          <h3>Choose Date of birth</h3>
-          <DatePicker
-            selected={this.state.dateOfBirth}
-            onChange={date => this.setState({ dateOfBirth: date })}
-            dateFormat='dd/MM/yyyy'
-          />
-        </div>
+              <h3>{t("Choose_event")}</h3>
+              <DropDownContainer>
+                <DropDownHeader onClick={toggling}>
+                  {this.state.selectedEvent || "Event"}
+                </DropDownHeader>
+                {this.state.isOpen && (
+                  <DropDownListContainer>
+                    <DropDownList>
+                      {this.state.eventList.map((event) => (
+                        <ListItem onClick={onOptionClicked(event)} key={Math.random()}>
+                          {event}
+                        </ListItem>
+                      ))}
+                    </DropDownList>
+                  </DropDownListContainer>
+                )}
+              </DropDownContainer>
+            </div>
 
 
         <div>
