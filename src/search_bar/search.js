@@ -102,11 +102,15 @@ class SearchBar extends React.Component {
       submitSuccess: false,
       
       userName: null,
-      dateOfBirth: null,
+      selectedDOY: null,
+      isOpenDOY: false,
+      yearList: [],
       login: false
     };
     this.submitAttendance = this.submitAttendance.bind(this);
     this.login = this.login.bind(this);
+    for (let i = 1950 ; i < 2021 ; ++i) 
+      this.state.yearList.push(i);
   }
 
 
@@ -122,28 +126,36 @@ class SearchBar extends React.Component {
       return
     }
 
-    if(this.state.dateOfBirth == null)
+    if(this.state.selectedDOY == null)
     {
-      alert("Please select a valid date of birth")
+      alert("Please select a valid year of date")
       return
     }
 
     
-    console.log(this.state.dateOfBirth, this.state.userName)
+    console.log(this.state.selectedDOY, this.state.userName)
     
-    // Initialize Firebase
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }else {
-      firebase.app(); // if already initialized, use that one
-    }
-    const formattedDOB = ("0" + this.state.dateOfBirth.getDate()).slice(-2) + "-" + this.state.dateOfBirth.toLocaleString('default', { month: 'long' }) + "-" + this.state.dateOfBirth.getFullYear()
+    // // Initialize Firebase
+    // if (!firebase.apps.length) {
+    //   firebase.initializeApp(firebaseConfig);
+    // }else {
+    //   firebase.app(); // if already initialized, use that one
+    // }
+    // // const formattedDOB = ("0" + this.state.dateOfBirth.getDate()).slice(-2) + "-" + this.state.dateOfBirth.toLocaleString('default', { month: 'long' }) + "-" + this.state.dateOfBirth.getFullYear()
 
-    console.log(formattedDOB, this.state.userName)
-    // todo function to complete
-    this.setState({
-      login: true
-    })
+    // // console.log(formattedDOB, this.state.userName)
+    // // todo function to complete
+
+    if (String(this.state.userName.dobYear) == this.state.selectedDOY)
+    {
+      this.setState({
+        login: true
+      })
+    }
+    else {
+      alert("Invalid credentials")
+      window.location.reload(); 
+    }
   }
 
 
@@ -215,6 +227,12 @@ class SearchBar extends React.Component {
     } else { return }
   }
 
+  updateEvetToggleDOY = () => {
+    if (this.state.isOpenDOY) {
+      this.setState({ isOpenDOY: false })
+    } else { return }
+  }
+
   render() {
     const { t } = this.props;
     const onClick = (selectedUsers) => {
@@ -227,12 +245,20 @@ class SearchBar extends React.Component {
 
     console.log(this.state.userData)
     const toggling = () => this.setState({ isOpen: !this.state.isOpen });
+    const toggling_DOY = () => this.setState({ isOpenDOY: !this.state.isOpenDOY });
 
     const onOptionClicked = (value) => () => {
       this.setState({ selectedEvent: value });
       this.setState({ isOpen: false })
       console.log(this.state.selectedEvent);
     };
+
+    const onOptionClickedYOB = (value) => () => {
+      this.setState({ selectedDOY: value });
+      this.setState({ isOpenDOY: false })
+      console.log(this.state.selectedDOY);
+    };
+
 
     //console.log("sumsa ki jai",this.props.t('Welcome_to_React'))
 
@@ -307,6 +333,7 @@ class SearchBar extends React.Component {
     else
     return (
       <div className="App">
+        <Container onClick={this.updateEvetToggleDOY}>
         <h1>Satsangis Attendance </h1>
         <div>
           <h3>Choose UUID</h3>
@@ -327,13 +354,24 @@ class SearchBar extends React.Component {
         </div>
 
         <div>
-          <h3>Choose Date of birth</h3>
-          <DatePicker
-            selected={this.state.dateOfBirth}
-            onChange={date => this.setState({ dateOfBirth: date })}
-            dateFormat='dd/MM/yyyy'
-          />
-        </div>
+              <h3>{t("Choose Year of Birth")}</h3>
+              <DropDownContainer>
+                <DropDownHeader onClick={toggling_DOY}>
+                  {this.state.selectedDOY || "Year"}
+                </DropDownHeader>
+                {this.state.isOpenDOY && (
+                  <DropDownListContainer>
+                    <DropDownList>
+                      {this.state.yearList.map((event) => (
+                        <ListItem onClick={onOptionClickedYOB(event)} key={Math.random()}>
+                          {event}
+                        </ListItem>
+                      ))}
+                    </DropDownList>
+                  </DropDownListContainer>
+                )}
+              </DropDownContainer>
+            </div>
 
 
         <div>
@@ -342,7 +380,9 @@ class SearchBar extends React.Component {
             Login
           </button>
         </div>
+        </Container>
       </div>
+      
 
     );
 
