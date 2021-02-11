@@ -44,10 +44,12 @@ const DropDownHeader = styled("div")`
 `;
 
 const Container = styled("div")`
-  flex:1;
 `;
 
-const DropDownListContainer = styled("div")``;
+const DropDownListContainer = styled("div")`
+  max-height:200px;
+  overflow:scroll;
+`;
 
 const DropDownList = styled("ul")`
   padding: 0;
@@ -100,7 +102,7 @@ class SearchBar extends React.Component {
       isOpen: false,
       selectedEvent: null,
       submitSuccess: false,
-      
+
       userName: null,
       selectedDOY: null,
       isOpenDOY: false,
@@ -109,7 +111,7 @@ class SearchBar extends React.Component {
     };
     this.submitAttendance = this.submitAttendance.bind(this);
     this.login = this.login.bind(this);
-    for (let i = 1950 ; i < 2021 ; ++i) 
+    for (let i = 1950; i < 2021; ++i)
       this.state.yearList.push(i);
   }
 
@@ -120,21 +122,19 @@ class SearchBar extends React.Component {
 
 
   login() {
-    if(this.state.userName == null)
-    {
+    if (this.state.userName == null) {
       alert("Please select a valid UUID")
       return
     }
 
-    if(this.state.selectedDOY == null)
-    {
+    if (this.state.selectedDOY == null) {
       alert("Please select a valid year of date")
       return
     }
 
-    
+
     console.log(this.state.selectedDOY, this.state.userName)
-    
+
     // // Initialize Firebase
     // if (!firebase.apps.length) {
     //   firebase.initializeApp(firebaseConfig);
@@ -146,15 +146,14 @@ class SearchBar extends React.Component {
     // // console.log(formattedDOB, this.state.userName)
     // // todo function to complete
 
-    if (String(this.state.userName.dobYear) == this.state.selectedDOY)
-    {
+    if (String(this.state.userName.dobYear) == this.state.selectedDOY) {
       this.setState({
         login: true
       })
     }
     else {
       alert("Invalid credentials")
-      window.location.reload(); 
+      window.location.reload();
     }
   }
 
@@ -262,7 +261,7 @@ class SearchBar extends React.Component {
 
     //console.log("sumsa ki jai",this.props.t('Welcome_to_React'))
 
-    if(this.state.login == true)
+    if (this.state.login == true)
       return (
         <div className="App">
           <Container onClick={this.updateEvetToggle}>
@@ -331,30 +330,32 @@ class SearchBar extends React.Component {
         </div>
       );
     else
-    return (
-      <div className="App">
-        <Container onClick={this.updateEvetToggleDOY}>
-        <h1>Satsangis Attendance </h1>
-        <div>
-          <h3>Choose UUID</h3>
-          <AutoCompleteSearchBoxLogin 
-            placeHolderSearchLabel={"Search.."}
-            primaryIndex={"nameSatsangi"}
-            secondaryIndex={"newUID"}
-            showSecondarySearchCriterion={true}
-            secondarySearchClassName="secondarySearchClassName"
-            tertiaryIndex={"branchCode"}
-            showTertiarySearchCriterion={true}
-            tertiarySearchClassName="tertiarySearchClassName"
-            suggestions={Object.values(this.state.userData)}
-            onClick={onLoginClick}
-            showSearchBtn={true}
-            searchImg={search}
-          />
-        </div>
+      return (
+        <div className="App">
+          <Container onClick={this.updateEvetToggleDOY}>
+            <button onClick={() => this.handleOnCLick("en")}>English</button>
+            <button onClick={() => this.handleOnCLick("hi")}>Hindi</button>
+            <h1>Satsangis Attendance </h1>
+            <div>
+              <h3>{t("Choose_UID")}</h3>
+              <AutoCompleteSearchBoxLogin
+                placeHolderSearchLabel={"Search.."}
+                primaryIndex={"nameSatsangi"}
+                secondaryIndex={"newUID"}
+                showSecondarySearchCriterion={true}
+                secondarySearchClassName="secondarySearchClassName"
+                tertiaryIndex={"branchCode"}
+                showTertiarySearchCriterion={true}
+                tertiarySearchClassName="tertiarySearchClassName"
+                suggestions={Object.values(this.state.userData)}
+                onClick={onLoginClick}
+                showSearchBtn={true}
+                searchImg={search}
+              />
+            </div>
 
-        <div>
-              <h3>{t("Choose Year of Birth")}</h3>
+            <div>
+              <h3>{t("Choose_Year_of_Birth")}</h3>
               <DropDownContainer>
                 <DropDownHeader onClick={toggling_DOY}>
                   {this.state.selectedDOY || "Year"}
@@ -374,17 +375,17 @@ class SearchBar extends React.Component {
             </div>
 
 
-        <div>
-          <br></br>
-          <button onClick={this.login} style = {button}>
-            Login
-          </button>
+            <div>
+              <br></br>
+              <button onClick={this.login} style={button}>
+                {t("Login")}
+              </button>
+            </div>
+          </Container>
         </div>
-        </Container>
-      </div>
-      
 
-    );
+
+      );
 
 
   }

@@ -159,7 +159,7 @@ export default class SignIn extends React.Component {
       <div className="App">
         <h1>Satsangis Attendance </h1>
         <div>
-          <h3>Choose UUID</h3>
+          <h3>Choose UID</h3>
           <AutoCompleteSearchBox 
             placeHolderSearchLabel={"Search.."}
             primaryIndex={"nameSatsangi"}

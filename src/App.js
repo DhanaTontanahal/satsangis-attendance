@@ -15,7 +15,10 @@ i18n
           "Choose_event":"Choose Event",
           "Choose_user":"Choose User",
           "Submit_Attendance":"Submit Attendance",
-          "submit_message":"Radhasoami, Your attendance is marked!"
+          "submit_message":"Radhasoami \nYour attendance is marked!",
+          "Choose_Year_of_Birth":"Choose Year of Birth",
+          "Choose_UID":"Choose UID",
+          "Login":"Login"
         }
       },
       hi: {
@@ -25,7 +28,10 @@ i18n
           "Choose_event":"ईवेंट चुनें",
           "Choose_user":"सत्संगियों का नाम चुनें",
           "Submit_Attendance":"उपस्थिति दर्ज करें",
-          "submit_message":"राधास्वामी, आपकी attendance लग गई है।"
+          "submit_message":"राधास्वामी \nआपकी attendance लग गई है।",
+          "Choose_Year_of_Birth":"जन्म का वर्ष चुनें",
+          "Choose_UID":"UID चुनें",
+          "Login":"लॉग इन करें"
         }
       }
     },
