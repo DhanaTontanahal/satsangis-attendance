@@ -77,15 +77,13 @@ const button = {
   fontFamily: "Arial"
 };
 const firebaseConfig = {
-  apiKey: "AIzaSyCbRXOuEbKdDD0YBZcQJAnYb6ghRp0hH04",
-  authDomain: "demoattendance-7d80c.firebaseapp.com",
-  databaseURL: "https://demoattendance-7d80c-default-rtdb.firebaseio.com",
-  projectId: "demoattendance-7d80c",
-  storageBucket: "demoattendance-7d80c.appspot.com",
-  messagingSenderId: "17274395407",
-  appId: "1:17274395407:web:2d5e1f13ebcd16a60dbc7a",
-  measurementId: "G-10ZR1ZYQX4"
-
+  apiKey: "AIzaSyApR69k8Oyt0PLCJQSJfHbhBH4aspxtCXQ",
+  authDomain: "pams-e7971.firebaseapp.com",
+  databaseURL: "https://pams-e7971.firebaseio.com",
+  projectId: "pams-e7971",
+  storageBucket: "pams-e7971.appspot.com",
+  messagingSenderId: "821251191711",
+  appId: "1:821251191711:web:dd4ce38f4dca3eb45d03aa"
 };
 
 
@@ -105,7 +103,8 @@ class SearchBar extends React.Component {
       selectedDOY: null,
       isOpenDOY: false,
       yearList: [],
-      login: false
+      login: false,
+      isMPGCoordinator: false
     };
     this.submitAttendance = this.submitAttendance.bind(this);
     this.login = this.login.bind(this);
@@ -148,9 +147,28 @@ class SearchBar extends React.Component {
 
     if (String(this.state.userName.dobYear) == this.state.selectedDOY)
     {
-      this.setState({
-        login: true
-      })
+      console.log("user", "isMPGCoordinator" in this.state.userName)
+      console.log("isMPGCoordinator", this.state.userName.isMPGCoordinator)
+
+      if (("isMPGCoordinator" in this.state.userName) && (this.state.userName.isMPGCoordinator === true)) {
+        console.log("you are here")
+        this.setState({
+          login: true,
+          isMPGCoordinator: true
+        })        
+        
+      }
+      else {
+        console.log("you shouldn't be here")
+        let tempEventList = this.state.eventList
+        tempEventList.splice(tempEventList.indexOf("Morning Video E-Satsang"),1)
+        tempEventList.splice(tempEventList.indexOf("Evening Video E-Satsang"),1)
+        this.setState({
+          login: true,
+          eventList: tempEventList
+        })
+      }
+      console.log("state", this.state)
     }
     else {
       alert("Invalid credentials")
@@ -159,7 +177,7 @@ class SearchBar extends React.Component {
   }
 
 
-  submitAttendance() {
+  submitAttendance = async() => {
     if (this.state.submitSuccess) {
       return
     }
@@ -172,12 +190,23 @@ class SearchBar extends React.Component {
     // Initialize Firebase
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
+      await firebase.auth()
+      .signInWithEmailAndPassword("individualattendanceapp@gmail.com", "hjklvbnmuiop")
+      .then((data) => console.log(data))
+      .catch(error => console.log(error))
+      
     } else {
       firebase.app(); // if already initialized, use that one
+      await firebase.auth()
+      .signInWithEmailAndPassword("individualattendanceapp@gmail.com", "hjklvbnmuiop")
+      .then((data) => console.log(data))
+      .catch(error => console.log(error))
     }
     const attendanceDate = ("0" + this.state.selectedDate.getDate()).slice(-2) + "-" + this.state.selectedDate.toLocaleString('default', { month: 'long' }) + "-" + this.state.selectedDate.getFullYear()
     // console.log(attendanceDate)
     this.state.selectedUsers.forEach((user) => {
+      user.attendanceMarkedByUID = this.state.userName.newUID
+      user.attendanceMarkedByName = this.state.userName.nameSatsangi
       firebase.database().ref('satsangiUsers-attendance/' + attendanceDate + "/" + this.state.selectedEvent + "/" + user.newUID).set(user)
     })
     // firebase.database().ref('satsangiUsers-attendance/' + attendanceDate + "/" + this.state.selectedEvent + "/" + this.state.sele)
@@ -194,8 +223,18 @@ class SearchBar extends React.Component {
     // Initialize Firebase
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
+      await firebase.auth()
+      .signInWithEmailAndPassword("individualattendanceapp@gmail.com", "hjklvbnmuiop")
+      .then((data) => console.log(data))
+      .catch(error => console.log(error))
+
     } else {
+
       firebase.app(); // if already initialized, use that one
+      await firebase.auth()
+      .signInWithEmailAndPassword("individualattendanceapp@gmail.com", "hjklvbnmuiop")
+      .then((data) => console.log(data))
+      .catch(error => console.log(error))
     }
     const users = await firebase.database().ref('/satsangiUsers/').once('value').then((snapshot) => {
       return snapshot.val()
@@ -207,9 +246,10 @@ class SearchBar extends React.Component {
     const eventListFromFirebase = await firebase.database().ref('/activities/').once('value').then((snapshot) => {
       return snapshot.val()
     })
-    this.setState({
+      this.setState({
       eventList: Object.keys(eventListFromFirebase)
     });
+
   }
 
   handleOnCLick = (lang) => {
