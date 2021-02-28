@@ -44,10 +44,14 @@ const DropDownHeader = styled("div")`
 `;
 
 const Container = styled("div")`
-  flex:1;
 `;
 
-const DropDownListContainer = styled("div")``;
+const DropDownListContainer = styled("div")`
+  max-height:200px;
+  overflow:scroll;
+`;
+
+// const DropDownListContainer = styled("div")``;
 
 const DropDownList = styled("ul")`
   padding: 0;
@@ -376,9 +380,11 @@ class SearchBar extends React.Component {
     return (
       <div className="App">
         <Container onClick={this.updateEvetToggleDOY}>
+        <button onClick={() => this.handleOnCLick("en")}>English</button>
+        <button onClick={() => this.handleOnCLick("hi")}>Hindi</button>
         <h1>Satsangis Attendance </h1>
         <div>
-          <h3>Choose UID</h3>
+        <h3>{t("Choose_UID")}</h3>
           <AutoCompleteSearchBoxLogin 
             placeHolderSearchLabel={"Search.."}
             primaryIndex={"nameSatsangi"}
@@ -396,7 +402,7 @@ class SearchBar extends React.Component {
         </div>
 
         <div>
-              <h3>{t("Choose Year of Birth")}</h3>
+        <h3>{t("Choose_Year_of_Birth")}</h3>
               <DropDownContainer>
                 <DropDownHeader onClick={toggling_DOY}>
                   {this.state.selectedDOY || "Year"}
@@ -419,7 +425,7 @@ class SearchBar extends React.Component {
         <div>
           <br></br>
           <button onClick={this.login} style = {button}>
-            Login
+          {t("Login")}
           </button>
         </div>
         </Container>
