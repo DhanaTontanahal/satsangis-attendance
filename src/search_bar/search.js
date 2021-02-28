@@ -108,7 +108,7 @@ class SearchBar extends React.Component {
     };
     this.submitAttendance = this.submitAttendance.bind(this);
     this.login = this.login.bind(this);
-    for (let i = 1950 ; i < 2021 ; ++i) 
+    for (let i = 1900 ; i < 2021 ; ++i) 
       this.state.yearList.push(i);
   }
 
@@ -121,7 +121,7 @@ class SearchBar extends React.Component {
   login() {
     if(this.state.userName == null)
     {
-      alert("Please select a valid UUID")
+      alert("Please select a valid UID")
       return
     }
 
@@ -207,6 +207,8 @@ class SearchBar extends React.Component {
     this.state.selectedUsers.forEach((user) => {
       user.attendanceMarkedByUID = this.state.userName.newUID
       user.attendanceMarkedByName = this.state.userName.nameSatsangi
+      user.activityName = this.state.selectedEvent
+      user.datePresent = attendanceDate
       firebase.database().ref('satsangiUsers-attendance/' + attendanceDate + "/" + this.state.selectedEvent + "/" + user.newUID).set(user)
     })
     // firebase.database().ref('satsangiUsers-attendance/' + attendanceDate + "/" + this.state.selectedEvent + "/" + this.state.sele)
@@ -376,7 +378,7 @@ class SearchBar extends React.Component {
         <Container onClick={this.updateEvetToggleDOY}>
         <h1>Satsangis Attendance </h1>
         <div>
-          <h3>Choose UUID</h3>
+          <h3>Choose UID</h3>
           <AutoCompleteSearchBoxLogin 
             placeHolderSearchLabel={"Search.."}
             primaryIndex={"nameSatsangi"}
