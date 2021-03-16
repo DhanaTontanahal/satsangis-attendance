@@ -237,7 +237,7 @@ class AutoCompleteSearchBoxLogin extends Component {
                                         
                                         
                                         <br />
-                                        <span>
+                                        {/* <span>
                                             {
                                                 this.props.showSecondarySearchCriterion ?
                                                     <small>{suggestion[secondaryIndex]}</small> :
@@ -248,7 +248,7 @@ class AutoCompleteSearchBoxLogin extends Component {
                                                     <small className={this.props.tertiarySearchClassName}>{suggestion[tertiaryIndex]}</small> :
                                                     null
                                             }
-                                        </span>
+                                        </span> */}
 
                                     </li>
                                 )

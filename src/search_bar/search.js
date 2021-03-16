@@ -37,10 +37,21 @@ const DropDownHeader = styled("div")`
   margin-bottom: 0.8em;
   padding: 0.4em 2em 0.4em 1em;
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.15);
-  font-weight: 200;
+  font-weight: 350;
   font-size: 1.3rem;
   color: #000000;
   background: #f6f6f6;
+`;
+
+const DropDownHeaderEvent = styled("div")`
+  margin-bottom: 0.8em;
+  padding: 0.4em 2em 0.4em 1em;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.15);
+  font-weight: 350;
+  font-size: 1.3rem;
+  color: #000000;
+  background: #f6f6f6;
+  text-align: left;
 `;
 
 const Container = styled("div")`
@@ -62,10 +73,26 @@ const DropDownList = styled("ul")`
   box-sizing: border-box;
   color: #000000;
   font-size: 1rem;
-  font-weight: 150;
+  font-weight: 350;
   &:first-child {
     padding-top: 0.8em;
   }
+`;
+
+const DropDownListEvent = styled("ul")`
+  padding: 0;
+  margin: 0;
+  padding-left: 1em;
+  background: #f6f6f6;
+  border: 1px solid #000000;
+  box-sizing: border-box;
+  color: #000000;
+  font-size: 1rem;
+  font-weight: 350;
+  &:first-child {
+    padding-top: 0.8em;
+  }
+  text-align: left;
 `;
 
 const ListItem = styled("li")`
@@ -99,8 +126,11 @@ class SearchBar extends React.Component {
       selectedUsers: [],
       selectedDate: new Date(),
       eventList: [],
+      dayTimeList: ['Morning', 'Evening'],
       isOpen: false,
+      isOpenDayTime: false,
       selectedEvent: null,
+      selectedDayTime: null,
       submitSuccess: false,
       
       userName: null,
@@ -112,7 +142,7 @@ class SearchBar extends React.Component {
     };
     this.submitAttendance = this.submitAttendance.bind(this);
     this.login = this.login.bind(this);
-    for (let i = 1900 ; i < 2021 ; ++i) 
+    for (let i = 2003 ; i > 1900 ; --i) 
       this.state.yearList.push(i);
   }
 
@@ -136,7 +166,7 @@ class SearchBar extends React.Component {
     }
 
     
-    console.log(this.state.selectedDOY, this.state.userName)
+    // console.log(this.state.selectedDOY, this.state.userName)
     
     // // Initialize Firebase
     // if (!firebase.apps.length) {
@@ -151,28 +181,35 @@ class SearchBar extends React.Component {
 
     if (String(this.state.userName.dobYear) == this.state.selectedDOY)
     {
-      console.log("user", "isMPGCoordinator" in this.state.userName)
-      console.log("isMPGCoordinator", this.state.userName.isMPGCoordinator)
+      // console.log("user", "isMPGCoordinator" in this.state.userName)
+      // console.log("isMPGCoordinator", this.state.userName.isMPGCoordinator)
 
-      if (("isMPGCoordinator" in this.state.userName) && (this.state.userName.isMPGCoordinator === true)) {
-        console.log("you are here")
+      if (("in_dayalbagh" in this.state.userName) && (this.state.userName.in_dayalbagh === true)) {
+        // console.log("you are here")
         this.setState({
-          login: true,
-          isMPGCoordinator: true
+          login: true
         })        
         
       }
       else {
-        console.log("you shouldn't be here")
+        // console.log("you shouldn't be here")
         let tempEventList = this.state.eventList
-        tempEventList.splice(tempEventList.indexOf("Morning Video E-Satsang"),1)
-        tempEventList.splice(tempEventList.indexOf("Evening Video E-Satsang"),1)
+        tempEventList.splice(tempEventList.indexOf("Dayalbagh Evening Satsang"),1)
+        tempEventList.splice(tempEventList.indexOf("Dayalbagh Health Care PT"),1)
+        tempEventList.splice(tempEventList.indexOf("Dayalbagh March Past"),1)
+        tempEventList.splice(tempEventList.indexOf("Dayalbagh Morning Satsang"),1)
+        
+        if (!(("is_core_team" in this.state.userName) && (this.state.userName.is_core_team === true))) {
+          tempEventList.splice(tempEventList.indexOf("Evening Branch eSatsang"),1)
+          tempEventList.splice(tempEventList.indexOf("Morning Branch eSatsang"),1)
+          
+        }
         this.setState({
           login: true,
           eventList: tempEventList
         })
       }
-      console.log("state", this.state)
+      // console.log("state", this.state)
     }
     else {
       alert("Invalid credentials")
@@ -189,21 +226,26 @@ class SearchBar extends React.Component {
       alert("Please select a valid event")
       return
     }
-    console.log(this.state.selectedDate, this.state.selectedEvent, this.state.selectedUsers)
+
+    if (this.state.selectedUsers.length == 0) {
+      alert("Please select attendees")
+      return
+    }
+    // console.log(this.state.selectedDate, this.state.selectedEvent, this.state.selectedUsers)
 
     // Initialize Firebase
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
       await firebase.auth()
       .signInWithEmailAndPassword("individualattendanceapp@gmail.com", "hjklvbnmuiop")
-      .then((data) => console.log(data))
+      // .then((data) => console.log(data))
       .catch(error => console.log(error))
       
     } else {
       firebase.app(); // if already initialized, use that one
       await firebase.auth()
       .signInWithEmailAndPassword("individualattendanceapp@gmail.com", "hjklvbnmuiop")
-      .then((data) => console.log(data))
+      // .then((data) => console.log(data))
       .catch(error => console.log(error))
     }
     const attendanceDate = ("0" + this.state.selectedDate.getDate()).slice(-2) + "-" + this.state.selectedDate.toLocaleString('default', { month: 'long' }) + "-" + this.state.selectedDate.getFullYear()
@@ -213,12 +255,18 @@ class SearchBar extends React.Component {
       user.attendanceMarkedByName = this.state.userName.nameSatsangi
       user.activityName = this.state.selectedEvent
       user.datePresent = attendanceDate
+      let currentTimestamp = new Date()
+      user.timestamp = currentTimestamp.getDate() + '-' + (currentTimestamp.getMonth()+1) + '-' + currentTimestamp.getFullYear() + " " + currentTimestamp.getHours() + ":" + currentTimestamp.getMinutes() + ":" + currentTimestamp.getSeconds();
+
+      console.log(user)
       firebase.database().ref('satsangiUsers-attendance/' + attendanceDate + "/" + this.state.selectedEvent + "/" + user.newUID).set(user)
+      firebase.database().ref('satsangiUsers-attendance/' + this.state.selectedEvent + "/" + user.branchCode + "/" + attendanceDate).set(user)
     })
     // firebase.database().ref('satsangiUsers-attendance/' + attendanceDate + "/" + this.state.selectedEvent + "/" + this.state.sele)
     console.log("attendance submitted")
     this.setState({ submitSuccess: true })
     //alert(this.props.t('submit_message'))
+    
     setTimeout(() => {
       window.location.reload();
     }, 3000)
@@ -231,7 +279,7 @@ class SearchBar extends React.Component {
       firebase.initializeApp(firebaseConfig);
       await firebase.auth()
       .signInWithEmailAndPassword("individualattendanceapp@gmail.com", "hjklvbnmuiop")
-      .then((data) => console.log(data))
+      //.then((data) => console.log(data))
       .catch(error => console.log(error))
 
     } else {
@@ -239,7 +287,7 @@ class SearchBar extends React.Component {
       firebase.app(); // if already initialized, use that one
       await firebase.auth()
       .signInWithEmailAndPassword("individualattendanceapp@gmail.com", "hjklvbnmuiop")
-      .then((data) => console.log(data))
+      //.then((data) => console.log(data))
       .catch(error => console.log(error))
     }
     const users = await firebase.database().ref('/satsangiUsers/').once('value').then((snapshot) => {
@@ -289,20 +337,27 @@ class SearchBar extends React.Component {
       this.setState({ userName: selectedUsers })
     }
 
-    console.log(this.state.userData)
+    // console.log(this.state.userData)
     const toggling = () => this.setState({ isOpen: !this.state.isOpen });
     const toggling_DOY = () => this.setState({ isOpenDOY: !this.state.isOpenDOY });
+    
+    const togglingDayTime = () => this.setState({ isOpenDayTime: !this.state.isOpenDayTime });
 
     const onOptionClicked = (value) => () => {
       this.setState({ selectedEvent: value });
       this.setState({ isOpen: false })
-      console.log(this.state.selectedEvent);
+      // console.log(this.state.selectedEvent);
     };
+
+    const onOptionDayTimeClicked = (value) => () => {
+      this.setState({ selectedDayTime: value });
+      this.setState({ isOpenDayTime: false })
+    }
 
     const onOptionClickedYOB = (value) => () => {
       this.setState({ selectedDOY: value });
       this.setState({ isOpenDOY: false })
-      console.log(this.state.selectedDOY);
+      // console.log(this.state.selectedDOY);
     };
 
 
@@ -315,36 +370,57 @@ class SearchBar extends React.Component {
             <button onClick={() => this.handleOnCLick("en")}>English</button>
             <button onClick={() => this.handleOnCLick("hi")}>Hindi</button>
             <h1>{t("Satsangis_Attendance")}</h1>
-            <h2>Radhasoami {this.state.userName.nameSatsangi}</h2>
+            <h2>{t("Radhasoami")} {this.state.userName.nameSatsangi}</h2>
             <div>
               <h3>{t("Choose_date")}</h3>
               <DatePicker
                 selected={this.state.selectedDate}
                 onChange={date => this.setState({ selectedDate: date })}
                 dateFormat='dd/MM/yyyy'
+                disabled={true}
               />
             </div>
-            <div>
-              <h3>{t("Choose_event")}</h3>
+            {/* <div>
+              <h3>{t("Choose_day_time")}</h3>
               <DropDownContainer>
-                <DropDownHeader onClick={toggling}>
-                  {this.state.selectedEvent || "Event"}
+                <DropDownHeader onClick={togglingDayTime}>
+                  {this.state.selectedDayTime || "Daytime"}
                 </DropDownHeader>
-                {this.state.isOpen && (
+                {this.state.isOpenDayTime && (
                   <DropDownListContainer>
                     <DropDownList>
-                      {this.state.eventList.map((event) => (
-                        <ListItem onClick={onOptionClicked(event)} key={Math.random()}>
-                          {event}
+                      {this.state.dayTimeList.map((dayTime) => (
+                        <ListItem onClick={onOptionDayTimeClicked(dayTime)} key={Math.random()}>
+                          {dayTime}
                         </ListItem>
                       ))}
                     </DropDownList>
                   </DropDownListContainer>
                 )}
               </DropDownContainer>
+            </div> */}
+            <div>
+              <h3>{t("Choose_event")}</h3>
+              <DropDownContainer>
+                <DropDownHeaderEvent onClick={toggling}>
+                  {this.state.selectedEvent || "Event"}
+                </DropDownHeaderEvent>
+                {this.state.isOpen && (
+                  <DropDownListContainer>
+                    <DropDownListEvent>
+                      {this.state.eventList.map((event) => (
+                        <ListItem onClick={onOptionClicked(event)} key={Math.random()}>
+                          {event}
+                        </ListItem>
+                      ))}
+                    </DropDownListEvent>
+                  </DropDownListContainer>
+                )}
+              </DropDownContainer>
             </div>
             <div>
               <h3>{t("Choose_user")}</h3>
+              <p>{t("Total_attendees")} - {this.state.selectedUsers.length}</p>
               <AutoCompleteSearchBox
                 placeHolderSearchLabel={"Search.."}
                 primaryIndex={"nameSatsangi"}

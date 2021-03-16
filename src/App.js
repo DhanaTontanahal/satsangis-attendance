@@ -11,27 +11,33 @@ i18n
       en: {
         translation: {
           "Satsangis_Attendance": "Satsangis Attendance",
-          "Choose_date":"Choose date",
+          "Choose_date":"Date",
           "Choose_event":"Choose Event",
-          "Choose_user":"Choose User",
+          "Choose_user":"Enter Names",
           "Submit_Attendance":"Submit Attendance",
           "submit_message":"Radhasoami \nYour attendance is marked!",
           "Choose_Year_of_Birth":"Choose Year of Birth",
           "Choose_UID":"Choose UID",
-          "Login":"Login"
+          "Login":"Login",
+          "Radhasoami":"Radhasoami",
+          "Choose_day_time": "Choose Daytime",
+          "Total_attendees": "Total attendees"
         }
       },
       hi: {
         translation: {
           "Satsangis_Attendance": "सत्संगियों की उपस्थिति",
-          "Choose_date":"तिथि चुनें",
+          "Choose_date":"तिथि",
           "Choose_event":"ईवेंट चुनें",
           "Choose_user":"सत्संगियों का नाम चुनें",
           "Submit_Attendance":"उपस्थिति दर्ज करें",
           "submit_message":"राधास्वामी \nआपकी attendance लग गई है।",
           "Choose_Year_of_Birth":"जन्म का वर्ष चुनें",
           "Choose_UID":"UID चुनें",
-          "Login":"लॉग इन करें"
+          "Login":"लॉग इन करें",
+          "Radhasoami":"राधास्वामी",
+          "Choose_day_time": "दिन का समय चुनें",
+          "Total_attendees": "कुल उपस्थित सत्संगी"
         }
       }
     },

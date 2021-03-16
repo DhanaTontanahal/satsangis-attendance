@@ -179,8 +179,8 @@ class AutoCompleteSearchBox extends Component {
         if(this.state.selectedUsers.indexOf(this.state.filteredSuggestions[e.currentTarget.dataset.id]) === -1) {
             this.state.selectedUsers.push(this.state.filteredSuggestions[e.currentTarget.dataset.id])
         }
-        console.log('user input list')
-        console.log(this.state.selectedUsers)
+        // console.log('user input list')
+        // console.log(this.state.selectedUsers)
         this.setState({
             userInput: ""
         })
@@ -191,12 +191,13 @@ class AutoCompleteSearchBox extends Component {
         const index = this.state.selectedUsers.indexOf(user);
         if (index > -1) {
             this.state.selectedUsers.splice(index, 1)
-            console.log('after delete')
-            console.log(this.state.selectedUsers)
+            // console.log('after delete')
+            // console.log(this.state.selectedUsers)
             this.setState({
                 userInput: ""
             })
           }
+        this.props.onClick(this.state.selectedUsers);
     }
 
     render() {
@@ -244,11 +245,11 @@ class AutoCompleteSearchBox extends Component {
                                                     <small>{suggestion[secondaryIndex]}</small> :
                                                     null
                                             }
-                                            {
+                                            {/* {
                                                 this.props.showTertiarySearchCriterion ?
                                                     <small className={this.props.tertiarySearchClassName}>{suggestion[tertiaryIndex]}</small> :
                                                     null
-                                            }
+                                            } */}
                                         </span>
 
                                     </li>
