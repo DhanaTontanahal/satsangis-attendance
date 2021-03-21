@@ -1,4 +1,5 @@
 import React, { Component, useEffect, useState } from 'react';
+import ReactDOM from 'react-dom';
 import search from './search.svg';
 import './App.css';
 import AutoCompleteSearchBox from './src/AutoCompleteSearchBox';
@@ -117,6 +118,17 @@ const firebaseConfig = {
   appId: "1:821251191711:web:dd4ce38f4dca3eb45d03aa"
 };
 
+function handleEnter(event) {
+  if (event.target.value.length === event.target.maxLength) {
+    const form = event.target.form;
+    console.log(event.target.maxLength)
+    console.log(event.target.value.length)
+    const index = Array.prototype.indexOf.call(form, event.target);
+    form.elements[index + 1].focus();
+    event.preventDefault();
+  }
+}
+
 
 class SearchBar extends React.Component {
   constructor(props) {
@@ -132,17 +144,21 @@ class SearchBar extends React.Component {
       selectedEvent: null,
       selectedDayTime: null,
       submitSuccess: false,
-      
+
       userName: null,
       selectedDOY: null,
       isOpenDOY: false,
       yearList: [],
       login: false,
-      isMPGCoordinator: false
+      isMPGCoordinator: false,
+      year1: null,
+      year2: null,
+      year3: null,
+      year4: null
     };
     this.submitAttendance = this.submitAttendance.bind(this);
     this.login = this.login.bind(this);
-    for (let i = 2003 ; i > 1900 ; --i) 
+    for (let i = 2003; i > 1900; --i)
       this.state.yearList.push(i);
   }
 
@@ -153,21 +169,36 @@ class SearchBar extends React.Component {
 
 
   login() {
-    if(this.state.userName == null)
-    {
+    if (this.state.userName == null) {
       alert("Please select a valid UID")
       return
     }
 
-    if(this.state.selectedDOY == null)
-    {
+    // if(this.state.selectedDOY == null)
+    // {
+    //   alert("Please select a valid year of date")
+    //   return
+    // }
+    if (this.state.year1 == null) {
+      alert("Please select a valid year of date")
+      return
+    }
+    if (this.state.year2 == null) {
+      alert("Please select a valid year of date")
+      return
+    }
+    if (this.state.year3 == null) {
+      alert("Please select a valid year of date")
+      return
+    }
+    if (this.state.year4 == null) {
       alert("Please select a valid year of date")
       return
     }
 
-    
+
     // console.log(this.state.selectedDOY, this.state.userName)
-    
+
     // // Initialize Firebase
     // if (!firebase.apps.length) {
     //   firebase.initializeApp(firebaseConfig);
@@ -179,8 +210,7 @@ class SearchBar extends React.Component {
     // // console.log(formattedDOB, this.state.userName)
     // // todo function to complete
 
-    if (String(this.state.userName.dobYear) == this.state.selectedDOY)
-    {
+    if (String(this.state.userName.dobYear) == this.state.year1 + this.state.year2 + this.state.year3 + this.state.year4) {
       // console.log("user", "isMPGCoordinator" in this.state.userName)
       // console.log("isMPGCoordinator", this.state.userName.isMPGCoordinator)
 
@@ -188,21 +218,21 @@ class SearchBar extends React.Component {
         // console.log("you are here")
         this.setState({
           login: true
-        })        
-        
+        })
+
       }
       else {
         // console.log("you shouldn't be here")
         let tempEventList = this.state.eventList
-        tempEventList.splice(tempEventList.indexOf("Dayalbagh Evening Satsang"),1)
-        tempEventList.splice(tempEventList.indexOf("Dayalbagh Health Care PT"),1)
-        tempEventList.splice(tempEventList.indexOf("Dayalbagh March Past"),1)
-        tempEventList.splice(tempEventList.indexOf("Dayalbagh Morning Satsang"),1)
-        
+        tempEventList.splice(tempEventList.indexOf("Dayalbagh Evening Satsang"), 1)
+        tempEventList.splice(tempEventList.indexOf("Dayalbagh Health Care PT"), 1)
+        tempEventList.splice(tempEventList.indexOf("Dayalbagh March Past"), 1)
+        tempEventList.splice(tempEventList.indexOf("Dayalbagh Morning Satsang"), 1)
+
         if (!(("is_core_team" in this.state.userName) && (this.state.userName.is_core_team === true))) {
-          tempEventList.splice(tempEventList.indexOf("Evening Branch eSatsang"),1)
-          tempEventList.splice(tempEventList.indexOf("Morning Branch eSatsang"),1)
-          
+          tempEventList.splice(tempEventList.indexOf("Evening Branch eSatsang"), 1)
+          tempEventList.splice(tempEventList.indexOf("Morning Branch eSatsang"), 1)
+
         }
         this.setState({
           login: true,
@@ -213,12 +243,35 @@ class SearchBar extends React.Component {
     }
     else {
       alert("Invalid credentials")
-      window.location.reload(); 
+      window.location.reload();
     }
   }
 
+  handleYear1Change = (event) => {
+    this.setState({
+      year1: event.target.value
+    })
+  }
 
-  submitAttendance = async() => {
+  handleYear2Change = (event) => {
+    this.setState({
+      year2: event.target.value
+    })
+  }
+
+  handleYear3Change = (event) => {
+    this.setState({
+      year3: event.target.value
+    })
+  }
+
+  handleYear4Change = (event) => {
+    this.setState({
+      year4: event.target.value
+    })
+  }
+
+  submitAttendance = async () => {
     if (this.state.submitSuccess) {
       return
     }
@@ -237,16 +290,16 @@ class SearchBar extends React.Component {
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
       await firebase.auth()
-      .signInWithEmailAndPassword("individualattendanceapp@gmail.com", "hjklvbnmuiop")
-      // .then((data) => console.log(data))
-      .catch(error => console.log(error))
-      
+        .signInWithEmailAndPassword("individualattendanceapp@gmail.com", "hjklvbnmuiop")
+        // .then((data) => console.log(data))
+        .catch(error => console.log(error))
+
     } else {
       firebase.app(); // if already initialized, use that one
       await firebase.auth()
-      .signInWithEmailAndPassword("individualattendanceapp@gmail.com", "hjklvbnmuiop")
-      // .then((data) => console.log(data))
-      .catch(error => console.log(error))
+        .signInWithEmailAndPassword("individualattendanceapp@gmail.com", "hjklvbnmuiop")
+        // .then((data) => console.log(data))
+        .catch(error => console.log(error))
     }
     const attendanceDate = ("0" + this.state.selectedDate.getDate()).slice(-2) + "-" + this.state.selectedDate.toLocaleString('default', { month: 'long' }) + "-" + this.state.selectedDate.getFullYear()
     // console.log(attendanceDate)
@@ -256,7 +309,7 @@ class SearchBar extends React.Component {
       user.activityName = this.state.selectedEvent
       user.datePresent = attendanceDate
       let currentTimestamp = new Date()
-      user.timestamp = currentTimestamp.getDate() + '-' + (currentTimestamp.getMonth()+1) + '-' + currentTimestamp.getFullYear() + " " + currentTimestamp.getHours() + ":" + currentTimestamp.getMinutes() + ":" + currentTimestamp.getSeconds();
+      user.timestamp = currentTimestamp.getDate() + '-' + (currentTimestamp.getMonth() + 1) + '-' + currentTimestamp.getFullYear() + " " + currentTimestamp.getHours() + ":" + currentTimestamp.getMinutes() + ":" + currentTimestamp.getSeconds();
 
       console.log(user)
       firebase.database().ref('satsangiUsers-attendance/' + attendanceDate + "/" + this.state.selectedEvent + "/" + user.newUID).set(user)
@@ -266,7 +319,7 @@ class SearchBar extends React.Component {
     console.log("attendance submitted")
     this.setState({ submitSuccess: true })
     //alert(this.props.t('submit_message'))
-    
+
     setTimeout(() => {
       window.location.reload();
     }, 3000)
@@ -278,17 +331,17 @@ class SearchBar extends React.Component {
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
       await firebase.auth()
-      .signInWithEmailAndPassword("individualattendanceapp@gmail.com", "hjklvbnmuiop")
-      //.then((data) => console.log(data))
-      .catch(error => console.log(error))
+        .signInWithEmailAndPassword("individualattendanceapp@gmail.com", "hjklvbnmuiop")
+        //.then((data) => console.log(data))
+        .catch(error => console.log(error))
 
     } else {
 
       firebase.app(); // if already initialized, use that one
       await firebase.auth()
-      .signInWithEmailAndPassword("individualattendanceapp@gmail.com", "hjklvbnmuiop")
-      //.then((data) => console.log(data))
-      .catch(error => console.log(error))
+        .signInWithEmailAndPassword("individualattendanceapp@gmail.com", "hjklvbnmuiop")
+        //.then((data) => console.log(data))
+        .catch(error => console.log(error))
     }
     const users = await firebase.database().ref('/satsangiUsers/').once('value').then((snapshot) => {
       return snapshot.val()
@@ -300,7 +353,7 @@ class SearchBar extends React.Component {
     const eventListFromFirebase = await firebase.database().ref('/activities/').once('value').then((snapshot) => {
       return snapshot.val()
     })
-      this.setState({
+    this.setState({
       eventList: Object.keys(eventListFromFirebase)
     });
 
@@ -340,7 +393,7 @@ class SearchBar extends React.Component {
     // console.log(this.state.userData)
     const toggling = () => this.setState({ isOpen: !this.state.isOpen });
     const toggling_DOY = () => this.setState({ isOpenDOY: !this.state.isOpenDOY });
-    
+
     const togglingDayTime = () => this.setState({ isOpenDayTime: !this.state.isOpenDayTime });
 
     const onOptionClicked = (value) => () => {
@@ -363,7 +416,7 @@ class SearchBar extends React.Component {
 
     //console.log("sumsa ki jai",this.props.t('Welcome_to_React'))
 
-    if(this.state.login == true)
+    if (this.state.login == true)
       return (
         <div className="App">
           <Container onClick={this.updateEvetToggle}>
@@ -453,33 +506,33 @@ class SearchBar extends React.Component {
         </div>
       );
     else
-    return (
-      <div className="App">
-        <Container onClick={this.updateEvetToggleDOY}>
-        <button onClick={() => this.handleOnCLick("en")}>English</button>
-        <button onClick={() => this.handleOnCLick("hi")}>Hindi</button>
-        <h1>Satsangis Attendance </h1>
-        <div>
-        <h3>{t("Choose_UID")}</h3>
-          <AutoCompleteSearchBoxLogin 
-            placeHolderSearchLabel={"Search.."}
-            primaryIndex={"nameSatsangi"}
-            secondaryIndex={"newUID"}
-            showSecondarySearchCriterion={true}
-            secondarySearchClassName="secondarySearchClassName"
-            tertiaryIndex={"branchCode"}
-            showTertiarySearchCriterion={true}
-            tertiarySearchClassName="tertiarySearchClassName"
-            suggestions={Object.values(this.state.userData)}
-            onClick={onLoginClick}
-            showSearchBtn={true}
-            searchImg={search}
-          />
-        </div>
+      return (
+        <div className="App">
+          <Container onClick={this.updateEvetToggleDOY}>
+            <button onClick={() => this.handleOnCLick("en")}>English</button>
+            <button onClick={() => this.handleOnCLick("hi")}>Hindi</button>
+            <h1>Satsangis Attendance </h1>
+            <div>
+              <h3>{t("Choose_UID")}</h3>
+              <AutoCompleteSearchBoxLogin
+                placeHolderSearchLabel={"Search.."}
+                primaryIndex={"nameSatsangi"}
+                secondaryIndex={"newUID"}
+                showSecondarySearchCriterion={true}
+                secondarySearchClassName="secondarySearchClassName"
+                tertiaryIndex={"branchCode"}
+                showTertiarySearchCriterion={true}
+                tertiarySearchClassName="tertiarySearchClassName"
+                suggestions={Object.values(this.state.userData)}
+                onClick={onLoginClick}
+                showSearchBtn={true}
+                searchImg={search}
+              />
+            </div>
 
-        <div>
-        <h3>{t("Choose_Year_of_Birth")}</h3>
-              <DropDownContainer>
+            <div>
+              <h3>{t("Choose_Year_of_Birth")}</h3>
+              {/* <DropDownContainer>
                 <DropDownHeader onClick={toggling_DOY}>
                   {this.state.selectedDOY || "Year"}
                 </DropDownHeader>
@@ -494,21 +547,29 @@ class SearchBar extends React.Component {
                     </DropDownList>
                   </DropDownListContainer>
                 )}
-              </DropDownContainer>
+              </DropDownContainer> */}
+
+              <form>
+                <input placeholder="1" style={{ width: "10px", color: "black" }} value={this.state.year1} onChange={this.handleYear1Change} maxLength="1" onKeyUp={handleEnter} />
+                <input placeholder="9" style={{ width: "10px", color: "black" }} value={this.state.year2} onChange={this.handleYear2Change} maxLength="1" onKeyUp={handleEnter} />
+                <input placeholder="5" style={{ width: "10px", color: "black" }} value={this.state.year3} onChange={this.handleYear3Change} maxLength="1" onKeyUp={handleEnter} />
+                <input placeholder="0" style={{ width: "10px", color: "black" }} value={this.state.year4} onChange={this.handleYear4Change} />
+              </form>
+
             </div>
 
 
-        <div>
-          <br></br>
-          <button onClick={this.login} style = {button}>
-          {t("Login")}
-          </button>
+            <div>
+              <br></br>
+              <button onClick={this.login} style={button}>
+                {t("Login")}
+              </button>
+            </div>
+          </Container>
         </div>
-        </Container>
-      </div>
-      
 
-    );
+
+      );
 
 
   }
