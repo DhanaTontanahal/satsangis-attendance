@@ -1,4 +1,5 @@
 import React, { Component, useEffect, useState } from 'react';
+import ReactDOM from 'react-dom';
 import search from './search.svg';
 import './App.css';
 import AutoCompleteSearchBox from './src/AutoCompleteSearchBox';
@@ -14,6 +15,7 @@ import { withTranslation } from 'react-i18next';
 import i18n from "i18next";
 import Lottie from 'react-lottie';
 import thumbsUp from './856-thumbs-up-grey-blue.json';
+// import Script from "react-inline-script";
 
 require('firebase/auth');
 require('firebase/database');
@@ -88,6 +90,24 @@ const firebaseConfig = {
 
 };
 
+// const movetoNext = function (current, nextFieldID) {
+//   console.log(current, nextFieldID, document.getElementById(current), document.getElementById(nextFieldID));
+//   // if (document.getElementById(current).value.length >= document.getElementById(current).maxLength) {
+//   //   document.getElementById(nextFieldID).focus();
+//   // }
+// };
+
+function handleEnter(event) {
+  if (event.target.value.length === event.target.maxLength) {
+    const form = event.target.form;
+    console.log(event.target.maxLength)
+    console.log(event.target.value.length)
+    const index = Array.prototype.indexOf.call(form, event.target);
+    form.elements[index + 1].focus();
+    event.preventDefault();
+  }
+}
+
 
 class SearchBar extends React.Component {
   constructor(props) {
@@ -100,16 +120,21 @@ class SearchBar extends React.Component {
       isOpen: false,
       selectedEvent: null,
       submitSuccess: false,
-      
+
       userName: null,
       selectedDOY: null,
       isOpenDOY: false,
       yearList: [],
-      login: false
+      login: false,
+      year1: null,
+      year2: null,
+      year3: null,
+      year4: null,
+
     };
     this.submitAttendance = this.submitAttendance.bind(this);
     this.login = this.login.bind(this);
-    for (let i = 1950 ; i < 2021 ; ++i) 
+    for (let i = 1950; i < 2021; ++i)
       this.state.yearList.push(i);
   }
 
@@ -120,21 +145,35 @@ class SearchBar extends React.Component {
 
 
   login() {
-    if(this.state.userName == null)
-    {
+    if (this.state.userName == null) {
       alert("Please select a valid UUID")
       return
     }
 
-    if(this.state.selectedDOY == null)
-    {
+    // if (this.state.selectedDOY == null) {
+    //   alert("Please select a valid year of date")
+    //   return
+    // }
+    if (this.state.year1 == null) {
+      alert("Please select a valid year of date")
+      return
+    }
+    if (this.state.year2 == null) {
+      alert("Please select a valid year of date")
+      return
+    }
+    if (this.state.year3 == null) {
+      alert("Please select a valid year of date")
+      return
+    }
+    if (this.state.year4 == null) {
       alert("Please select a valid year of date")
       return
     }
 
-    
+
     console.log(this.state.selectedDOY, this.state.userName)
-    
+
     // // Initialize Firebase
     // if (!firebase.apps.length) {
     //   firebase.initializeApp(firebaseConfig);
@@ -146,15 +185,14 @@ class SearchBar extends React.Component {
     // // console.log(formattedDOB, this.state.userName)
     // // todo function to complete
 
-    if (String(this.state.userName.dobYear) == this.state.selectedDOY)
-    {
+    if (String(this.state.userName.dobYear) == this.state.year1+this.state.year2+this.state.year3+this.state.year4) {
       this.setState({
         login: true
       })
     }
     else {
       alert("Invalid credentials")
-      window.location.reload(); 
+      window.location.reload();
     }
   }
 
@@ -233,6 +271,30 @@ class SearchBar extends React.Component {
     } else { return }
   }
 
+  handleYear1Change = (event) => {
+    this.setState({
+      year1: event.target.value
+    })
+  }
+
+  handleYear2Change = (event) => {
+    this.setState({
+      year2: event.target.value
+    })
+  }
+
+  handleYear3Change = (event) => {
+    this.setState({
+      year3: event.target.value
+    })
+  }
+
+  handleYear4Change = (event) => {
+    this.setState({
+      year4: event.target.value
+    })
+  }
+
   render() {
     const { t } = this.props;
     const onClick = (selectedUsers) => {
@@ -259,10 +321,7 @@ class SearchBar extends React.Component {
       console.log(this.state.selectedDOY);
     };
 
-
-    //console.log("sumsa ki jai",this.props.t('Welcome_to_React'))
-
-    if(this.state.login == true)
+    if (this.state.login == true)
       return (
         <div className="App">
           <Container onClick={this.updateEvetToggle}>
@@ -331,31 +390,32 @@ class SearchBar extends React.Component {
         </div>
       );
     else
-    return (
-      <div className="App">
-        <Container onClick={this.updateEvetToggleDOY}>
-        <h1>Satsangis Attendance </h1>
-        <div>
-          <h3>Choose UUID</h3>
-          <AutoCompleteSearchBoxLogin 
-            placeHolderSearchLabel={"Search.."}
-            primaryIndex={"nameSatsangi"}
-            secondaryIndex={"newUID"}
-            showSecondarySearchCriterion={true}
-            secondarySearchClassName="secondarySearchClassName"
-            tertiaryIndex={"branchCode"}
-            showTertiarySearchCriterion={true}
-            tertiarySearchClassName="tertiarySearchClassName"
-            suggestions={Object.values(this.state.userData)}
-            onClick={onLoginClick}
-            showSearchBtn={true}
-            searchImg={search}
-          />
-        </div>
+      return (
+        <div className="App">
 
-        <div>
+          <Container onClick={this.updateEvetToggleDOY}>
+            <h1>Satsangis Attendance </h1>
+            <div>
+              <h3>Choose UUID</h3>
+              <AutoCompleteSearchBoxLogin
+                placeHolderSearchLabel={"Search.."}
+                primaryIndex={"nameSatsangi"}
+                secondaryIndex={"newUID"}
+                showSecondarySearchCriterion={true}
+                secondarySearchClassName="secondarySearchClassName"
+                tertiaryIndex={"branchCode"}
+                showTertiarySearchCriterion={true}
+                tertiarySearchClassName="tertiarySearchClassName"
+                suggestions={Object.values(this.state.userData)}
+                onClick={onLoginClick}
+                showSearchBtn={true}
+                searchImg={search}
+              />
+            </div>
+
+            <div>
               <h3>{t("Choose Year of Birth")}</h3>
-              <DropDownContainer>
+              {/* <DropDownContainer>
                 <DropDownHeader onClick={toggling_DOY}>
                   {this.state.selectedDOY || "Year"}
                 </DropDownHeader>
@@ -370,21 +430,25 @@ class SearchBar extends React.Component {
                     </DropDownList>
                   </DropDownListContainer>
                 )}
-              </DropDownContainer>
+              </DropDownContainer> */}
+              <form>
+                <input placeholder="1" style={{ width: "10px", color: "black" }} value={this.state.year1} onChange={this.handleYear1Change} maxLength="1" onKeyUp={handleEnter} />
+                <input placeholder="9" style={{ width: "10px", color: "black" }} value={this.state.year2} onChange={this.handleYear2Change} maxLength="1" onKeyUp={handleEnter} />
+                <input placeholder="5" style={{ width: "10px", color: "black" }} value={this.state.year3} onChange={this.handleYear3Change} maxLength="1" onKeyUp={handleEnter} />
+                <input placeholder="0" style={{ width: "10px", color: "black" }} value={this.state.year4} onChange={this.handleYear4Change} />
+              </form>
             </div>
-
-
-        <div>
-          <br></br>
-          <button onClick={this.login} style = {button}>
-            Login
-          </button>
+            <div>
+              <br></br>
+              <button onClick={this.login} style={button}>
+                Login
+              </button>
+            </div>
+          </Container>
         </div>
-        </Container>
-      </div>
-      
 
-    );
+
+      );
 
 
   }
