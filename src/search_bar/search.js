@@ -117,15 +117,33 @@ const firebaseConfig = {
   messagingSenderId: "821251191711",
   appId: "1:821251191711:web:dd4ce38f4dca3eb45d03aa"
 };
-
+var backspace_count = 0;
 function handleEnter(event) {
+  const form = event.target.form;
+  const index = Array.prototype.indexOf.call(form, event.target);
+  //console.log(index)
+  
+  console.log("before if" + backspace_count);
   if (event.target.value.length === event.target.maxLength) {
-    const form = event.target.form;
-    console.log(event.target.maxLength)
-    console.log(event.target.value.length)
-    const index = Array.prototype.indexOf.call(form, event.target);
-    form.elements[index + 1].focus();
-    event.preventDefault();
+    if (index < 3 ){
+      const form = event.target.form;
+      console.log(event.target.maxLength);
+      console.log(event.target.value.length);
+      form.elements[index + 1].focus();
+      event.preventDefault();
+      backspace_count = 0;
+    }
+  }
+  else if (event.keyCode == 8){
+    console.log("backspace pressed");
+    backspace_count = backspace_count + 1;
+    console.log("backspace_count="+backspace_count);
+    if(index != 0 && backspace_count > 1 && event.target.value.length == 0){
+      console.log("inside bck codtion");
+      form.elements[index - 1].focus();
+      // event.preventDefault();
+      backspace_count = 0;
+    }
   }
 }
 
@@ -550,10 +568,10 @@ class SearchBar extends React.Component {
               </DropDownContainer> */}
 
               <form>
-                <input placeholder="1" style={{ width: "10px", color: "black" }} value={this.state.year1} onChange={this.handleYear1Change} maxLength="1" onKeyUp={handleEnter} />
-                <input placeholder="9" style={{ width: "10px", color: "black" }} value={this.state.year2} onChange={this.handleYear2Change} maxLength="1" onKeyUp={handleEnter} />
-                <input placeholder="5" style={{ width: "10px", color: "black" }} value={this.state.year3} onChange={this.handleYear3Change} maxLength="1" onKeyUp={handleEnter} />
-                <input placeholder="0" style={{ width: "10px", color: "black" }} value={this.state.year4} onChange={this.handleYear4Change} />
+                <input placeholder="1" style={{ width: "10px", color: "black" }} value={this.state.year1} onChange={this.handleYear1Change} maxLength="1" inputmode="numeric" pattern="\d[1]" onKeyUp={handleEnter} />
+                <input placeholder="9" style={{ width: "10px", color: "black" }} value={this.state.year2} onChange={this.handleYear2Change} maxLength="1" inputmode="numeric" pattern="\d[1]" onKeyUp={handleEnter} />
+                <input placeholder="5" style={{ width: "10px", color: "black" }} value={this.state.year3} onChange={this.handleYear3Change} maxLength="1" inputmode="numeric" pattern="\d[1]" onKeyUp={handleEnter} />
+                <input placeholder="0" style={{ width: "10px", color: "black" }} value={this.state.year4} onChange={this.handleYear4Change} maxLength="1" inputmode="numeric" pattern="\d[1]" onKeyUp={handleEnter}/>
               </form>
 
             </div>
