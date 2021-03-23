@@ -21,7 +21,8 @@ i18n
           "Login":"Login",
           "Radhasoami":"Radhasoami",
           "Choose_day_time": "Choose Daytime",
-          "Total_attendees": "Total attendees"
+          "Total_attendees": "Total attendees",
+          "Example":"Example"
         }
       },
       hi: {
@@ -37,7 +38,8 @@ i18n
           "Login":"लॉग इन करें",
           "Radhasoami":"राधास्वामी",
           "Choose_day_time": "दिन का समय चुनें",
-          "Total_attendees": "कुल उपस्थित सत्संगी"
+          "Total_attendees": "कुल उपस्थित सत्संगी",
+          "Example":"उदाहरण"
         }
       }
     },
