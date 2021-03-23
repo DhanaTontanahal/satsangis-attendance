@@ -568,15 +568,13 @@ class SearchBar extends React.Component {
               </DropDownContainer> */}
 
               <form>
-                <input placeholder="1" style={{ width: "10px", color: "black" }} value={this.state.year1} onChange={this.handleYear1Change} maxLength="1" inputmode="numeric" pattern="\d[1]" onKeyUp={handleEnter} />
-                <input placeholder="9" style={{ width: "10px", color: "black" }} value={this.state.year2} onChange={this.handleYear2Change} maxLength="1" inputmode="numeric" pattern="\d[1]" onKeyUp={handleEnter} />
-                <input placeholder="5" style={{ width: "10px", color: "black" }} value={this.state.year3} onChange={this.handleYear3Change} maxLength="1" inputmode="numeric" pattern="\d[1]" onKeyUp={handleEnter} />
-                <input placeholder="0" style={{ width: "10px", color: "black" }} value={this.state.year4} onChange={this.handleYear4Change} maxLength="1" inputmode="numeric" pattern="\d[1]" onKeyUp={handleEnter}/>
+                <input style={{ width: "10px", color: "black" }} value={this.state.year1} onChange={this.handleYear1Change} maxLength="1" inputmode="numeric" pattern="\d[1]" onKeyUp={handleEnter} />
+                <input style={{ width: "10px", color: "black" }} value={this.state.year2} onChange={this.handleYear2Change} maxLength="1" inputmode="numeric" pattern="\d[1]" onKeyUp={handleEnter} />
+                <input style={{ width: "10px", color: "black" }} value={this.state.year3} onChange={this.handleYear3Change} maxLength="1" inputmode="numeric" pattern="\d[1]" onKeyUp={handleEnter} />
+                <input style={{ width: "10px", color: "black" }} value={this.state.year4} onChange={this.handleYear4Change} maxLength="1" inputmode="numeric" pattern="\d[1]" onKeyUp={handleEnter}/>
               </form>
-
+              <h7>{t("Example")}:1950</h7>
             </div>
-
-
             <div>
               <br></br>
               <button onClick={this.login} style={button}>
