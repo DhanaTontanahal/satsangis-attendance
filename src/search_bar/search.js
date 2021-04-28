@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom';
 import search from './search.svg';
 import './App.css';
 import AutoCompleteSearchBox from './src/AutoCompleteSearchBox';
-import AutoCompleteSearchBoxLogin from './AutoCompleteSearchBoxLogin'
+import AutoCompleteSearchBoxLogin from './AutoCompleteSearchBoxLogin';
+import Scanner from './src/BarcodeScanner';
 import { stocksData } from './data/stocks'
 import firebase from "firebase/app";
 import { ThemeProvider } from 'styled-components';
@@ -488,6 +489,9 @@ class SearchBar extends React.Component {
                   </DropDownListContainer>
                 )}
               </DropDownContainer>
+            </div>
+            <div>
+              <Scanner/>
             </div>
             <div>
               <h3>{t("Choose_user")}</h3>
