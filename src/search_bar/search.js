@@ -124,7 +124,6 @@ function handleEnter(event) {
   const index = Array.prototype.indexOf.call(form, event.target);
   //console.log(index)
   
-  console.log("before if" + backspace_count);
   if (event.target.value.length === event.target.maxLength) {
     if (index < 3 ){
       const form = event.target.form;
@@ -489,9 +488,6 @@ class SearchBar extends React.Component {
                   </DropDownListContainer>
                 )}
               </DropDownContainer>
-            </div>
-            <div>
-              <Scanner/>
             </div>
             <div>
               <h3>{t("Choose_user")}</h3>

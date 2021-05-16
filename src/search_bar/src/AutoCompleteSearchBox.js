@@ -1,17 +1,35 @@
 import React, { Component } from 'react'
 import styled from 'styled-components';
+import QrScanner from './qr-scanner'
 //import Chip from '@material-ui/core/Chip';
 // import { makeStyles } from '@material-ui/core/styles';
 import Chip from './Chips'
-
+const qr_image = '%PUBLIC_URL%/qr-code.png'
 const StyledNoSuggsDiv = styled.div`
     color: #999;
     padding: 0.5rem;
 `;
-
+const scannerStyle = {
+    width : '1000%',
+    height : '1000%'
+  }
+  
 const StyledContainer = styled.div`
  
  position: relative;
+
+ .photo {
+    height: 50px;
+    width: 50px; 
+    position:right;
+    border-style: none;
+    vertical-align: middle;
+    padding-left: 0;
+    margin-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}   
 
  input{
   width:100%;
@@ -111,15 +129,22 @@ class AutoCompleteSearchBox extends Component {
             activeSuggestions: 0,
             showSuggestions: false,
             userInput: "",
-            selectedUsers: []
+            selectedUsers: [],
+            isQRScannerOpen: false
         }
 
         this.onChange = this.onChange.bind(this);
         this.onKeyDown = this.onKeyDown.bind(this);
         this.onClick = this.onClick.bind(this);
         this.onDelete = this.onDelete.bind(this);
+        this.changeQRState = this.changeQRState.bind(this);
     }
 
+    changeQRState() {
+        this.setState({
+            isQRScannerOpen: !this.state.isQRScannerOpen
+        })
+    }
 
     onChange(e){
         // console.log(e)
@@ -271,31 +296,46 @@ class AutoCompleteSearchBox extends Component {
                 
             }
         }
-        return (
+        if (this.state.isQRScannerOpen == false)
+        {
+            return (
 
-            <div style={styles.container}>
-                <StyledContainer>
-                <div>
-                    {this.state.selectedUsers.map((user, index) => (
-                        <Chip 
-                            label={user.nameSatsangi}
-                            onDelete={() => this.onDelete(user)}
+                <div style={styles.container}>
+                    <StyledContainer>
+                    <div>
+                        {this.state.selectedUsers.map((user, index) => (
+                            <Chip 
+                                label={user.nameSatsangi}
+                                onDelete={() => this.onDelete(user)}
+                            />
+                        ))}          
+                        </div>
+                        <input
+                            placeholder={this.props.placeHolderSearchLabel}
+                            type="text"
+                            onChange={this.onChange}
+                            onKeyDown={this.onKeyDown}
+                            value={userInput}
                         />
-                    ))}          
-                    </div>
-                    <input
-                        placeholder={this.props.placeHolderSearchLabel}
-                        type="text"
-                        onChange={this.onChange}
-                        onKeyDown={this.onKeyDown}
-                        value={userInput}
-                    />
+                        <button onClick={this.changeQRState}>
+                            <img className="photo" src = "/qr-code.png" />
+                        </button>
+    
+                        
+                    </StyledContainer>
+                    {autoCompleteSuggestions}
+                </div>
+            )
+        }
+        else {
+            return (
 
-                    
-                </StyledContainer>
-                {autoCompleteSuggestions}
-            </div>
-        )
+                <div style={scannerStyle} >
+                    <QrScanner/>
+                </div>
+            )
+        }
+        
     }
 }
 
