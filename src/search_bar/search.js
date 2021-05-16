@@ -305,75 +305,86 @@ class SearchBar extends React.Component {
     // console.log(this.state.selectedDate, this.state.selectedEvent, this.state.selectedUsers)
 
     // Initialize Firebase
+    try {
+
+
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
       await firebase.auth()
         .signInWithEmailAndPassword("individualattendanceapp@gmail.com", "hjklvbnmuiop")
         // .then((data) => console.log(data))
-        .catch(error => console.log(error))
+        // .catch(error => console.log(error))
 
     } else {
       firebase.app(); // if already initialized, use that one
       await firebase.auth()
         .signInWithEmailAndPassword("individualattendanceapp@gmail.com", "hjklvbnmuiop")
         // .then((data) => console.log(data))
-        .catch(error => console.log(error))
+        // .catch(error => console.log(error))
     }
     const attendanceDate = ("0" + this.state.selectedDate.getDate()).slice(-2) + "-" + this.state.selectedDate.toLocaleString('default', { month: 'long' }) + "-" + this.state.selectedDate.getFullYear()
     // console.log(attendanceDate)
-    this.state.selectedUsers.forEach((user) => {
-      user.attendanceMarkedByUID = this.state.userName.newUID
-      user.attendanceMarkedByName = this.state.userName.nameSatsangi
-      user.activityName = this.state.selectedEvent
-      user.datePresent = attendanceDate
-      let currentTimestamp = new Date()
-      user.timestamp = currentTimestamp.getDate() + '-' + (currentTimestamp.getMonth() + 1) + '-' + currentTimestamp.getFullYear() + " " + currentTimestamp.getHours() + ":" + currentTimestamp.getMinutes() + ":" + currentTimestamp.getSeconds();
-
-      console.log(user)
-      firebase.database().ref('satsangiUsers-attendance/' + attendanceDate + "/" + this.state.selectedEvent + "/" + user.newUID).set(user)
-      firebase.database().ref('satsangiUsers-attendance/' + this.state.selectedEvent + "/" + user.branchCode + "/" + attendanceDate).set(user)
-    })
-    // firebase.database().ref('satsangiUsers-attendance/' + attendanceDate + "/" + this.state.selectedEvent + "/" + this.state.sele)
-    console.log("attendance submitted")
-    this.setState({ submitSuccess: true })
-    //alert(this.props.t('submit_message'))
-
-    setTimeout(() => {
-      window.location.reload();
-    }, 3000)
+    
+      this.state.selectedUsers.forEach((user) => {
+        user.attendanceMarkedByUID = this.state.userName.newUID
+        user.attendanceMarkedByName = this.state.userName.nameSatsangi
+        user.activityName = this.state.selectedEvent
+        user.datePresent = attendanceDate
+        let currentTimestamp = new Date()
+        user.timestamp = currentTimestamp.getDate() + '-' + (currentTimestamp.getMonth() + 1) + '-' + currentTimestamp.getFullYear() + " " + currentTimestamp.getHours() + ":" + currentTimestamp.getMinutes() + ":" + currentTimestamp.getSeconds();
+  
+        console.log(user)
+        firebase.database().ref('satsangiUsers-attendance/' + attendanceDate + "/" + this.state.selectedEvent + "/" + user.newUID).set(user)
+        firebase.database().ref('satsangiUsers-attendance/' + this.state.selectedEvent + "/" + user.branchCode + "/" + attendanceDate).set(user)
+      })
+      // firebase.database().ref('satsangiUsers-attendance/' + attendanceDate + "/" + this.state.selectedEvent + "/" + this.state.sele)
+      console.log("attendance submitted")
+      this.setState({ submitSuccess: true })
+      setTimeout(() => {
+        window.location.reload();
+      }, 3000)
+    }
+    catch {
+      alert(this.props.t('no_internet_connection'))
+    }
   }
 
   fetchData = async () => {
 
     // Initialize Firebase
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-      await firebase.auth()
-        .signInWithEmailAndPassword("individualattendanceapp@gmail.com", "hjklvbnmuiop")
-        //.then((data) => console.log(data))
-        .catch(error => console.log(error))
+    try {
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+        await firebase.auth()
+          .signInWithEmailAndPassword("individualattendanceapp@gmail.com", "hjklvbnmuiop")
+          //.then((data) => console.log(data))
+          //.catch(error => console.log(error))
 
-    } else {
+      } else {
 
-      firebase.app(); // if already initialized, use that one
-      await firebase.auth()
-        .signInWithEmailAndPassword("individualattendanceapp@gmail.com", "hjklvbnmuiop")
-        //.then((data) => console.log(data))
-        .catch(error => console.log(error))
+        firebase.app(); // if already initialized, use that one
+        await firebase.auth()
+          .signInWithEmailAndPassword("individualattendanceapp@gmail.com", "hjklvbnmuiop")
+          //.then((data) => console.log(data))
+          //.catch(error => console.log(error))
+      }
+      const users = await firebase.database().ref('/satsangiUsers/').once('value').then((snapshot) => {
+        return snapshot.val()
+      })
+      this.setState({
+        userData: users
+      });
+
+      const eventListFromFirebase = await firebase.database().ref('/activities/').once('value').then((snapshot) => {
+        return snapshot.val()
+      })
+      this.setState({
+        eventList: Object.keys(eventListFromFirebase)
+      });
     }
-    const users = await firebase.database().ref('/satsangiUsers/').once('value').then((snapshot) => {
-      return snapshot.val()
-    })
-    this.setState({
-      userData: users
-    });
-
-    const eventListFromFirebase = await firebase.database().ref('/activities/').once('value').then((snapshot) => {
-      return snapshot.val()
-    })
-    this.setState({
-      eventList: Object.keys(eventListFromFirebase)
-    });
+    catch {
+      alert(this.props.t('no_internet_connection'))
+    }
 
   }
 
