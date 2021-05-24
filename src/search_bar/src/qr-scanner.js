@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import QrReader from 'react-qr-scanner'
+import QrReader from 'react-qr-reader'
 
 class QrContainer extends Component {
     constructor(props) {
@@ -8,6 +8,8 @@ class QrContainer extends Component {
             result: null
         }
         this.handleScan = this.handleScan.bind(this)
+        this.openImageDialog = this.openImageDialog.bind(this)
+        this.qr_reader = React.createRef()
     }
     handleScan(result) {
         console.log(result)
@@ -16,8 +18,12 @@ class QrContainer extends Component {
         // })
     }
     handleError(err) {
+        console.log('suhavan ........')
         console.log(err)
     }
+    openImageDialog() {
+        this.qr_reader.current.openImageDialog()
+      }
 
     render() {
         const previewStyle = {
@@ -39,16 +45,22 @@ class QrContainer extends Component {
             <React.Fragment>
                 <div style = {camStyle}>
                     <QrReader
+                        ref={this.qr_reader}
                         delay={100}
+                        facingMode={'environment'}
                         style={previewStyle}
                         onError={this.handleError}
                         onScan={this.handleScan}
+                        legacyMode
                     />
 
-                </div>
+                
+                <input type="button" value="Submit QR Code" onClick={this.openImageDialog} />
+                <p>{this.state.result}</p>
                 <p style = {textStyle}>
                 Hold QR Code Steady and Clear to scan
                 </p>
+                </div>
             </React.Fragment>
         )
     }
