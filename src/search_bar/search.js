@@ -386,11 +386,9 @@ class SearchBar extends React.Component {
       const users = await firebase.database().ref('/satsangiUsers/').once('value').then((snapshot) => {
         return snapshot.val()
       })
-      
-      var usrs_data = {}
-      Object.values(users).map((data) => {
-        data['uid'] = data['name']
-      })
+
+      var usersHash = {}
+      Object.values(users).flatMap((data) => {  usersHash[data.uid] = data.nameSatsangi})
 
       this.setState({
         userData: users,
