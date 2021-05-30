@@ -15,6 +15,7 @@ import { withTranslation } from 'react-i18next';
 import i18n from "i18next";
 import Lottie from 'react-lottie';
 import thumbsUp from './856-thumbs-up-grey-blue.json';
+import QrReader from 'react-qr-reader';
 
 require('firebase/auth');
 require('firebase/database');
@@ -147,7 +148,6 @@ function handleEnter(event) {
   }
 }
 
-
 class SearchBar extends React.Component {
   constructor(props) {
     super(props);
@@ -163,16 +163,19 @@ class SearchBar extends React.Component {
       selectedDayTime: null,
       submitSuccess: false,
 
-      userName: null,
+      userName: { nameSatsangi: 'Srti' },
       selectedDOY: null,
       isOpenDOY: false,
       yearList: [],
-      login: false,
+      login: true,
       isMPGCoordinator: false,
       year1: null,
       year2: null,
       year3: null,
-      year4: null
+      year4: null,
+      result: 'No result',
+      usersDataHash: {},
+      scan: false
     };
     this.submitAttendance = this.submitAttendance.bind(this);
     this.login = this.login.bind(this);
@@ -183,6 +186,18 @@ class SearchBar extends React.Component {
 
   componentDidMount() {
     this.fetchData();
+  }
+
+  handleScan = data => {
+    if (data) {
+      this.setState({
+        result: data
+      })
+    }
+  }
+
+  handleError = err => {
+    console.error(err)
   }
 
 
@@ -371,8 +386,15 @@ class SearchBar extends React.Component {
       const users = await firebase.database().ref('/satsangiUsers/').once('value').then((snapshot) => {
         return snapshot.val()
       })
+      
+      var usrs_data = {}
+      Object.values(users).map((data) => {
+        data['uid'] = data['name']
+      })
+
       this.setState({
-        userData: users
+        userData: users,
+        usersDataHash: usrs_data
       });
 
       const eventListFromFirebase = await firebase.database().ref('/activities/').once('value').then((snapshot) => {
@@ -407,6 +429,22 @@ class SearchBar extends React.Component {
     if (this.state.isOpenDOY) {
       this.setState({ isOpenDOY: false })
     } else { return }
+  }
+
+  handleScan = data => {
+    if (data) {
+      this.setState({
+        result: data
+      })
+    }
+  }
+
+  handleError = err => {
+    console.error(err)
+  }
+
+  startScan = () => {
+    this.setState({ scan: !this.state.scan })
   }
 
   render() {
@@ -517,6 +555,27 @@ class SearchBar extends React.Component {
                 showSearchBtn={true}
                 searchImg={search}
               />
+              or
+              {
+                this.state.scan ?
+                (
+                  <div style={{ alignSelf: 'center' }}>
+                    <QrReader
+                      delay={300}
+                      onError={this.handleError}
+                      onScan={this.handleScan}
+                      style={{ width: '30%' }}
+                    />
+                  </div>
+                ) :
+                (
+                  <div>
+                    <button onClick={this.startScan} style={button}>
+                      Scan
+                    </button>
+                  </div>
+                )
+              }
             </div>
             {this.state.submitSuccess ? <div>
               <div>{t("submit_message")}</div>
