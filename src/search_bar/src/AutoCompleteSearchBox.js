@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import styled from 'styled-components';
 //import Chip from '@material-ui/core/Chip';
 // import { makeStyles } from '@material-ui/core/styles';
-import Chip from './Chips'
+import Chip from '../Chips'
 
 const StyledNoSuggsDiv = styled.div`
     color: #999;
@@ -117,7 +117,7 @@ class AutoCompleteSearchBox extends Component {
         this.onChange = this.onChange.bind(this);
         this.onKeyDown = this.onKeyDown.bind(this);
         this.onClick = this.onClick.bind(this);
-        this.onDelete = this.onDelete.bind(this);
+        // this.onDelete = this.onDelete.bind(this);
     }
 
 
@@ -187,18 +187,18 @@ class AutoCompleteSearchBox extends Component {
         this.props.onClick(this.state.selectedUsers);
     }
 
-    onDelete(user) {
-        const index = this.state.selectedUsers.indexOf(user);
-        if (index > -1) {
-            this.state.selectedUsers.splice(index, 1)
-            // console.log('after delete')
-            // console.log(this.state.selectedUsers)
-            this.setState({
-                userInput: ""
-            })
-          }
-        this.props.onClick(this.state.selectedUsers);
-    }
+    // onDelete(user) {
+    //     const index = this.state.selectedUsers.indexOf(user);
+    //     if (index > -1) {
+    //         this.state.selectedUsers.splice(index, 1)
+    //         // console.log('after delete')
+    //         // console.log(this.state.selectedUsers)
+    //         this.setState({
+    //             userInput: ""
+    //         })
+    //       }
+    //     this.props.onClick(this.state.selectedUsers);
+    // }
 
     render() {
 
@@ -275,14 +275,14 @@ class AutoCompleteSearchBox extends Component {
 
             <div style={styles.container}>
                 <StyledContainer>
-                <div>
+                {/* <div>
                     {this.state.selectedUsers.map((user, index) => (
                         <Chip 
                             label={user.nameSatsangi}
                             onDelete={() => this.onDelete(user)}
                         />
                     ))}          
-                    </div>
+                    </div> */}
                     <input
                         placeholder={this.props.placeHolderSearchLabel}
                         type="text"

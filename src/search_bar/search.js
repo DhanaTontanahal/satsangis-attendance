@@ -16,6 +16,7 @@ import i18n from "i18next";
 import Lottie from 'react-lottie';
 import thumbsUp from './856-thumbs-up-grey-blue.json';
 import QrReader from 'react-qr-reader';
+import Chip from './Chips'
 
 require('firebase/auth');
 require('firebase/database');
@@ -188,13 +189,13 @@ class SearchBar extends React.Component {
     this.fetchData();
   }
 
-  handleScan = data => {
-    if (data) {
-      this.setState({
-        result: data
-      })
-    }
-  }
+  // handleScan = data => {
+  //   if (data) {
+  //     this.setState({
+  //       result: data
+  //     })
+  //   }
+  // }
 
   handleError = err => {
     console.error(err)
@@ -392,7 +393,7 @@ class SearchBar extends React.Component {
 
       this.setState({
         userData: users,
-        usersDataHash: usrs_data
+        usersDataHash: usersHash
       });
 
       const eventListFromFirebase = await firebase.database().ref('/activities/').once('value').then((snapshot) => {
@@ -431,8 +432,9 @@ class SearchBar extends React.Component {
 
   handleScan = data => {
     if (data) {
+      this.state.selectedUsers.push(this.state.userData[data])
       this.setState({
-        result: data
+        selectedUsers: this.state.selectedUsers
       })
     }
   }
@@ -445,7 +447,22 @@ class SearchBar extends React.Component {
     this.setState({ scan: !this.state.scan })
   }
 
+  onDelete(user) {
+    return
+      // const index = this.state.selectedUsers.indexOf(user);
+      // if (index > -1) {
+      //     this.state.selectedUsers.splice(index, 1)
+      //     // console.log('after delete')
+      //     // console.log(this.state.selectedUsers)
+      //     this.setState({
+      //         userInput: ""
+      //     })
+      //   }
+      // this.props.onClick(this.state.selectedUsers);
+  }
+
   render() {
+    debugger
     const { t } = this.props;
     const onClick = (selectedUsers) => {
       this.setState({ selectedUsers: selectedUsers })
@@ -478,6 +495,7 @@ class SearchBar extends React.Component {
       // console.log(this.state.selectedDOY);
     };
 
+    
 
     //console.log("sumsa ki jai",this.props.t('Welcome_to_React'))
 
@@ -539,6 +557,14 @@ class SearchBar extends React.Component {
             <div>
               <h3>{t("Choose_user")}</h3>
               <p>{t("Total_attendees")} - {this.state.selectedUsers.length}</p>
+              <div>
+                    {this.state.selectedUsers.map((user, index) => (
+                        <Chip 
+                            label={user.nameSatsangi}
+                            onDelete={() => this.onDelete(user)}
+                        />
+                    ))}          
+                    </div>
               <AutoCompleteSearchBox
                 placeHolderSearchLabel={"Search.."}
                 primaryIndex={"nameSatsangi"}
