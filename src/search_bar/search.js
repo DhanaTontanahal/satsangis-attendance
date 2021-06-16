@@ -164,11 +164,11 @@ class SearchBar extends React.Component {
       selectedDayTime: null,
       submitSuccess: false,
 
-      userName: { nameSatsangi: 'Srti' },
+      userName: {},
       selectedDOY: null,
       isOpenDOY: false,
       yearList: [],
-      login: true,
+      login: false,
       isMPGCoordinator: false,
       year1: null,
       year2: null,
@@ -176,7 +176,8 @@ class SearchBar extends React.Component {
       year4: null,
       result: 'No result',
       usersDataHash: {},
-      scan: false
+      scan: false,
+      is_phone: (/Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(navigator.userAgent)) 
     };
     this.submitAttendance = this.submitAttendance.bind(this);
     this.login = this.login.bind(this);
@@ -350,10 +351,10 @@ class SearchBar extends React.Component {
         user.timestamp = currentTimestamp.getDate() + '-' + (currentTimestamp.getMonth() + 1) + '-' + currentTimestamp.getFullYear() + " " + currentTimestamp.getHours() + ":" + currentTimestamp.getMinutes() + ":" + currentTimestamp.getSeconds();
   
         console.log(user)
+        // These two lines are commented to disable the submit attendance
         firebase.database().ref('satsangiUsers-attendance/' + attendanceDate + "/" + this.state.selectedEvent + "/" + user.newUID).set(user)
         firebase.database().ref('satsangiUsers-attendance/' + this.state.selectedEvent + "/" + user.branchCode + "/" + attendanceDate).set(user)
       })
-      // firebase.database().ref('satsangiUsers-attendance/' + attendanceDate + "/" + this.state.selectedEvent + "/" + this.state.sele)
       console.log("attendance submitted")
       this.setState({ submitSuccess: true })
       setTimeout(() => {
@@ -432,10 +433,12 @@ class SearchBar extends React.Component {
 
   handleScan = data => {
     if (data) {
-      this.state.selectedUsers.push(this.state.userData[data])
-      this.setState({
-        selectedUsers: this.state.selectedUsers
-      })
+      if(this.state.userData[data] != undefined && this.state.selectedUsers.indexOf(this.state.userData[data]) === -1) {
+        this.state.selectedUsers.push(this.state.userData[data])
+        this.setState({
+          selectedUsers: this.state.selectedUsers
+        })  
+      }
     }
   }
 
@@ -448,21 +451,26 @@ class SearchBar extends React.Component {
   }
 
   onDelete(user) {
-    return
-      // const index = this.state.selectedUsers.indexOf(user);
-      // if (index > -1) {
-      //     this.state.selectedUsers.splice(index, 1)
-      //     // console.log('after delete')
-      //     // console.log(this.state.selectedUsers)
-      //     this.setState({
-      //         userInput: ""
-      //     })
-      //   }
-      // this.props.onClick(this.state.selectedUsers);
+    
+      var index_1 = this.state.selectedUsers.indexOf(user);
+      if (index_1 > -1) {
+        
+        this.state.selectedUsers.splice(index_1, 1)
+        
+        this.setState(
+          {selectedUsers: this.state.selectedUsers}
+        )  
+        // this.state.selectedUsers.splice(index, 1)
+          // console.log('after delete')
+          // console.log(this.state.selectedUsers)
+          // this.setState({
+          //     userInput: ""
+          // })
+        }
+      // this.onClick(this.state.selectedUsers);
   }
 
   render() {
-    debugger
     const { t } = this.props;
     const onClick = (selectedUsers) => {
       this.setState({ selectedUsers: selectedUsers })
@@ -583,13 +591,22 @@ class SearchBar extends React.Component {
               {
                 this.state.scan ?
                 (
-                  <div style={{ alignSelf: 'center' }}>
-                    <QrReader
-                      delay={300}
-                      onError={this.handleError}
-                      onScan={this.handleScan}
-                      style={{ width: '30%' }}
-                    />
+                  <div style={{ display: 'flex', width: '30%', height: 'auto', position: 'relative', justifyContent: "center"}}>
+
+                    <div style={{ position: 'absolute'}}>
+                      <button style = {{text: "white", top: 10, right: 10}}> close </button>
+                      <QrReader
+                        delay={300}
+                        onError={this.handleError}
+                        onScan={this.handleScan}
+                      
+                        style={{width: this.state.is_phone ? '100%' : '30%'}}>
+                    
+                      
+                    
+                      </QrReader>
+                    
+                    </div>
                   </div>
                 ) :
                 (

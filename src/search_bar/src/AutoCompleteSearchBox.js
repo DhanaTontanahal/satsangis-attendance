@@ -146,13 +146,13 @@ class AutoCompleteSearchBox extends Component {
         const { activeSuggestions, filteredSuggestions } = this.state;
 
         if (e.keyCode === 13) {
-
+            this.state.selectedUsers.push(filteredSuggestions[activeSuggestions])
             this.setState({
                 showSuggestions: false,
-                userInput: filteredSuggestions[activeSuggestions][this.props.primaryIndex]
+                userInput: ""
             })
 
-            this.props.onClick(filteredSuggestions[activeSuggestions]);
+            this.props.onClick(this.state.selectedUsers);
         }
         //user has clicked down arrow
         else if (e.keyCode == 40) {
