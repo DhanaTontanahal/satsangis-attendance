@@ -232,20 +232,16 @@ class SearchBar extends React.Component {
       // console.log("user", "isMPGCoordinator" in this.state.userName)
       // console.log("isMPGCoordinator", this.state.userName.isMPGCoordinator)
 
-      if (("in_dayalbagh" in this.state.userName) && (this.state.userName.in_dayalbagh === true)) {
-        // console.log("you are here")
-        this.setState({
-          login: true
-        })
+      // if (("in_dayalbagh" in this.state.userName) && (this.state.userName.in_dayalbagh === true)) {
+      //   // console.log("you are here")
+      //   this.setState({
+      //     login: true
+      //   })
 
-      }
-      else {
+      // }
+      // else {
         // console.log("you shouldn't be here")
         let tempEventList = this.state.eventList
-        tempEventList.splice(tempEventList.indexOf("Dayalbagh Evening Satsang"), 1)
-        tempEventList.splice(tempEventList.indexOf("Dayalbagh Health Care PT"), 1)
-        tempEventList.splice(tempEventList.indexOf("Dayalbagh March Past"), 1)
-        tempEventList.splice(tempEventList.indexOf("Dayalbagh Morning Satsang"), 1)
 
         if (!(("is_core_team" in this.state.userName) && (this.state.userName.is_core_team === true))) {
           tempEventList.splice(tempEventList.indexOf("Evening Branch eSatsang"), 1)
@@ -256,7 +252,7 @@ class SearchBar extends React.Component {
           login: true,
           eventList: tempEventList
         })
-      }
+      // }
       // console.log("state", this.state)
     }
     else {
