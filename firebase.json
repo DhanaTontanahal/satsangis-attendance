@@ -1,6 +1,6 @@
 {
   "hosting": [{
-    "target": "test-individualattendance",
+    "target": "individualattendanceapp",
     "public": "build",
     "ignore": [
       "firebase.json",

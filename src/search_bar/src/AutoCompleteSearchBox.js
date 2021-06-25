@@ -146,6 +146,7 @@ class AutoCompleteSearchBox extends Component {
         const { activeSuggestions, filteredSuggestions } = this.state;
 
         if (e.keyCode === 13) {
+            
             this.state.selectedUsers.push(filteredSuggestions[activeSuggestions])
             this.setState({
                 showSuggestions: false,

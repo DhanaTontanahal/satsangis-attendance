@@ -15,7 +15,9 @@ import { withTranslation } from 'react-i18next';
 import i18n from "i18next";
 import Lottie from 'react-lottie';
 import thumbsUp from './856-thumbs-up-grey-blue.json';
-import QrReader from 'react-qr-reader';
+import QRReader from './QRReader/QRReader';
+// import QrReader from 'react-qr-reader';
+
 import Chip from './Chips'
 
 require('firebase/auth');
@@ -198,9 +200,9 @@ class SearchBar extends React.Component {
   //   }
   // }
 
-  handleError = err => {
-    console.error(err)
-  }
+  // handleError = err => {
+  //   console.error(err)
+  // }
 
 
   login() {
@@ -246,6 +248,7 @@ class SearchBar extends React.Component {
     // // todo function to complete
 
     if (String(this.state.userName.dobYear) == this.state.year1 + this.state.year2 + this.state.year3 + this.state.year4) {
+      
       // console.log("user", "isMPGCoordinator" in this.state.userName)
       // console.log("isMPGCoordinator", this.state.userName.isMPGCoordinator)
 
@@ -431,9 +434,14 @@ class SearchBar extends React.Component {
     } else { return }
   }
 
-  handleScan = data => {
+  handleScanFinished = data => {
+    
+
     if (data) {
-      if(this.state.userData[data] != undefined && this.state.selectedUsers.indexOf(this.state.userData[data]) === -1) {
+      const ifAvailable = this.state.selectedUsers.findIndex(user => user.newUID === data)
+      console.log(this.state.userData[data])
+      
+      if(this.state.userData[data] != undefined && ifAvailable === -1) {
         this.state.selectedUsers.push(this.state.userData[data])
         this.setState({
           selectedUsers: this.state.selectedUsers
@@ -442,9 +450,9 @@ class SearchBar extends React.Component {
     }
   }
 
-  handleError = err => {
-    console.error(err)
-  }
+  // handleError = err => {
+  //   console.error(err)
+  // }
 
   startScan = () => {
     this.setState({ scan: !this.state.scan })
@@ -473,7 +481,10 @@ class SearchBar extends React.Component {
   render() {
     const { t } = this.props;
     const onClick = (selectedUsers) => {
-      this.setState({ selectedUsers: selectedUsers })
+      
+      const result = [...this.state.selectedUsers, ...selectedUsers]
+      
+      this.setState({ selectedUsers: [...new Set(result)]})
     }
 
     const onLoginClick = (selectedUsers) => {
@@ -566,7 +577,7 @@ class SearchBar extends React.Component {
               <h3>{t("Choose_user")}</h3>
               <p>{t("Total_attendees")} - {this.state.selectedUsers.length}</p>
               <div>
-                    {this.state.selectedUsers.map((user, index) => (
+                    {this.state.selectedUsers?.map((user, index) => (
                         <Chip 
                             label={user.nameSatsangi}
                             onDelete={() => this.onDelete(user)}
@@ -589,33 +600,8 @@ class SearchBar extends React.Component {
               />
               or
               {
-                this.state.scan ?
-                (
-                  <div style={{ display: 'flex', width: '30%', height: 'auto', position: 'relative', justifyContent: "center"}}>
-
-                    <div style={{ position: 'absolute'}}>
-                      <button style = {{text: "white", top: 10, right: 10}}> close </button>
-                      <QrReader
-                        delay={300}
-                        onError={this.handleError}
-                        onScan={this.handleScan}
-                      
-                        style={{width: this.state.is_phone ? '100%' : '30%'}}>
-                    
-                      
-                    
-                      </QrReader>
-                    
-                    </div>
-                  </div>
-                ) :
-                (
-                  <div>
-                    <button onClick={this.startScan} style={button}>
-                      Scan
-                    </button>
-                  </div>
-                )
+                
+                <QRReader handleScanFinished={this.handleScanFinished} />
               }
             </div>
             {this.state.submitSuccess ? <div>
