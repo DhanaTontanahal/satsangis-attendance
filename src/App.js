@@ -22,7 +22,8 @@ i18n
           "Radhasoami":"Radhasoami",
           "Choose_day_time": "Choose Daytime",
           "Total_attendees": "Total attendees",
-          "Example":"Example"
+          "Example":"Example",
+          "no_internet_connection": "No internet connection"
         }
       },
       hi: {
@@ -39,7 +40,8 @@ i18n
           "Radhasoami":"राधास्वामी",
           "Choose_day_time": "दिन का समय चुनें",
           "Total_attendees": "कुल उपस्थित सत्संगी",
-          "Example":"उदाहरण"
+          "Example":"उदाहरण",
+          "no_internet_connection": "कोई इंटरनेट कनेक्शन नहीं"
         }
       }
     },

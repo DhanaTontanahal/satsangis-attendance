@@ -16,6 +16,10 @@ import { withTranslation } from 'react-i18next';
 import i18n from "i18next";
 import Lottie from 'react-lottie';
 import thumbsUp from './856-thumbs-up-grey-blue.json';
+import QRReader from './QRReader/QRReader';
+// import QrReader from 'react-qr-reader';
+
+import Chip from './Chips'
 
 require('firebase/auth');
 require('firebase/database');
@@ -148,7 +152,6 @@ function handleEnter(event) {
   }
 }
 
-
 class SearchBar extends React.Component {
   constructor(props) {
     super(props);
@@ -164,7 +167,7 @@ class SearchBar extends React.Component {
       selectedDayTime: null,
       submitSuccess: false,
 
-      userName: null,
+      userName: {},
       selectedDOY: null,
       isOpenDOY: false,
       yearList: [],
@@ -173,7 +176,11 @@ class SearchBar extends React.Component {
       year1: null,
       year2: null,
       year3: null,
-      year4: null
+      year4: null,
+      result: 'No result',
+      usersDataHash: {},
+      scan: false,
+      is_phone: (/Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(navigator.userAgent)) 
     };
     this.submitAttendance = this.submitAttendance.bind(this);
     this.login = this.login.bind(this);
@@ -185,6 +192,18 @@ class SearchBar extends React.Component {
   componentDidMount() {
     this.fetchData();
   }
+
+  // handleScan = data => {
+  //   if (data) {
+  //     this.setState({
+  //       result: data
+  //     })
+  //   }
+  // }
+
+  // handleError = err => {
+  //   console.error(err)
+  // }
 
 
   login() {
@@ -230,23 +249,20 @@ class SearchBar extends React.Component {
     // // todo function to complete
 
     if (String(this.state.userName.dobYear) == this.state.year1 + this.state.year2 + this.state.year3 + this.state.year4) {
+      
       // console.log("user", "isMPGCoordinator" in this.state.userName)
       // console.log("isMPGCoordinator", this.state.userName.isMPGCoordinator)
 
-      if (("in_dayalbagh" in this.state.userName) && (this.state.userName.in_dayalbagh === true)) {
-        // console.log("you are here")
-        this.setState({
-          login: true
-        })
+      // if (("in_dayalbagh" in this.state.userName) && (this.state.userName.in_dayalbagh === true)) {
+      //   // console.log("you are here")
+      //   this.setState({
+      //     login: true
+      //   })
 
-      }
-      else {
+      // }
+      // else {
         // console.log("you shouldn't be here")
         let tempEventList = this.state.eventList
-        tempEventList.splice(tempEventList.indexOf("Dayalbagh Evening Satsang"), 1)
-        tempEventList.splice(tempEventList.indexOf("Dayalbagh Health Care PT"), 1)
-        tempEventList.splice(tempEventList.indexOf("Dayalbagh March Past"), 1)
-        tempEventList.splice(tempEventList.indexOf("Dayalbagh Morning Satsang"), 1)
 
         if (!(("is_core_team" in this.state.userName) && (this.state.userName.is_core_team === true))) {
           tempEventList.splice(tempEventList.indexOf("Evening Branch eSatsang"), 1)
@@ -257,7 +273,7 @@ class SearchBar extends React.Component {
           login: true,
           eventList: tempEventList
         })
-      }
+      // }
       // console.log("state", this.state)
     }
     else {
@@ -306,75 +322,91 @@ class SearchBar extends React.Component {
     // console.log(this.state.selectedDate, this.state.selectedEvent, this.state.selectedUsers)
 
     // Initialize Firebase
+    try {
+
+
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
       await firebase.auth()
         .signInWithEmailAndPassword("individualattendanceapp@gmail.com", "hjklvbnmuiop")
         // .then((data) => console.log(data))
-        .catch(error => console.log(error))
+        // .catch(error => console.log(error))
 
     } else {
       firebase.app(); // if already initialized, use that one
       await firebase.auth()
         .signInWithEmailAndPassword("individualattendanceapp@gmail.com", "hjklvbnmuiop")
         // .then((data) => console.log(data))
-        .catch(error => console.log(error))
+        // .catch(error => console.log(error))
     }
     const attendanceDate = ("0" + this.state.selectedDate.getDate()).slice(-2) + "-" + this.state.selectedDate.toLocaleString('default', { month: 'long' }) + "-" + this.state.selectedDate.getFullYear()
     // console.log(attendanceDate)
-    this.state.selectedUsers.forEach((user) => {
-      user.attendanceMarkedByUID = this.state.userName.newUID
-      user.attendanceMarkedByName = this.state.userName.nameSatsangi
-      user.activityName = this.state.selectedEvent
-      user.datePresent = attendanceDate
-      let currentTimestamp = new Date()
-      user.timestamp = currentTimestamp.getDate() + '-' + (currentTimestamp.getMonth() + 1) + '-' + currentTimestamp.getFullYear() + " " + currentTimestamp.getHours() + ":" + currentTimestamp.getMinutes() + ":" + currentTimestamp.getSeconds();
-
-      console.log(user)
-      firebase.database().ref('satsangiUsers-attendance/' + attendanceDate + "/" + this.state.selectedEvent + "/" + user.newUID).set(user)
-      firebase.database().ref('satsangiUsers-attendance/' + this.state.selectedEvent + "/" + user.branchCode + "/" + attendanceDate).set(user)
-    })
-    // firebase.database().ref('satsangiUsers-attendance/' + attendanceDate + "/" + this.state.selectedEvent + "/" + this.state.sele)
-    console.log("attendance submitted")
-    this.setState({ submitSuccess: true })
-    //alert(this.props.t('submit_message'))
-
-    setTimeout(() => {
-      window.location.reload();
-    }, 3000)
+    
+      this.state.selectedUsers.forEach((user) => {
+        user.attendanceMarkedByUID = this.state.userName.newUID
+        user.attendanceMarkedByName = this.state.userName.nameSatsangi
+        user.activityName = this.state.selectedEvent
+        user.datePresent = attendanceDate
+        let currentTimestamp = new Date()
+        user.timestamp = currentTimestamp.getDate() + '-' + (currentTimestamp.getMonth() + 1) + '-' + currentTimestamp.getFullYear() + " " + currentTimestamp.getHours() + ":" + currentTimestamp.getMinutes() + ":" + currentTimestamp.getSeconds();
+  
+        console.log(user)
+        // These two lines are commented to disable the submit attendance
+        firebase.database().ref('satsangiUsers-attendance/' + attendanceDate + "/" + this.state.selectedEvent + "/" + user.newUID).set(user)
+        firebase.database().ref('satsangiUsers-attendance/' + this.state.selectedEvent + "/" + user.branchCode + "/" + attendanceDate).set(user)
+      })
+      console.log("attendance submitted")
+      this.setState({ submitSuccess: true })
+      setTimeout(() => {
+        window.location.reload();
+      }, 3000)
+    }
+    catch {
+      alert(this.props.t('no_internet_connection'))
+    }
   }
 
   fetchData = async () => {
 
     // Initialize Firebase
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-      await firebase.auth()
-        .signInWithEmailAndPassword("individualattendanceapp@gmail.com", "hjklvbnmuiop")
-        //.then((data) => console.log(data))
-        .catch(error => console.log(error))
+    try {
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+        await firebase.auth()
+          .signInWithEmailAndPassword("individualattendanceapp@gmail.com", "hjklvbnmuiop")
+          //.then((data) => console.log(data))
+          //.catch(error => console.log(error))
 
-    } else {
+      } else {
 
-      firebase.app(); // if already initialized, use that one
-      await firebase.auth()
-        .signInWithEmailAndPassword("individualattendanceapp@gmail.com", "hjklvbnmuiop")
-        //.then((data) => console.log(data))
-        .catch(error => console.log(error))
+        firebase.app(); // if already initialized, use that one
+        await firebase.auth()
+          .signInWithEmailAndPassword("individualattendanceapp@gmail.com", "hjklvbnmuiop")
+          //.then((data) => console.log(data))
+          //.catch(error => console.log(error))
+      }
+      const users = await firebase.database().ref('/satsangiUsers/').once('value').then((snapshot) => {
+        return snapshot.val()
+      })
+
+      var usersHash = {}
+      Object.values(users).flatMap((data) => {  usersHash[data.uid] = data.nameSatsangi})
+
+      this.setState({
+        userData: users,
+        usersDataHash: usersHash
+      });
+
+      const eventListFromFirebase = await firebase.database().ref('/activities/').once('value').then((snapshot) => {
+        return snapshot.val()
+      })
+      this.setState({
+        eventList: Object.keys(eventListFromFirebase)
+      });
     }
-    const users = await firebase.database().ref('/satsangiUsers/').once('value').then((snapshot) => {
-      return snapshot.val()
-    })
-    this.setState({
-      userData: users
-    });
-
-    const eventListFromFirebase = await firebase.database().ref('/activities/').once('value').then((snapshot) => {
-      return snapshot.val()
-    })
-    this.setState({
-      eventList: Object.keys(eventListFromFirebase)
-    });
+    catch {
+      alert(this.props.t('no_internet_connection'))
+    }
 
   }
 
@@ -399,10 +431,57 @@ class SearchBar extends React.Component {
     } else { return }
   }
 
+  handleScanFinished = data => {
+    
+
+    if (data) {
+      const ifAvailable = this.state.selectedUsers.findIndex(user => user.newUID === data)
+      console.log(this.state.userData[data])
+      
+      if(this.state.userData[data] != undefined && ifAvailable === -1) {
+        this.state.selectedUsers.push(this.state.userData[data])
+        this.setState({
+          selectedUsers: this.state.selectedUsers
+        })  
+      }
+    }
+  }
+
+  // handleError = err => {
+  //   console.error(err)
+  // }
+
+  startScan = () => {
+    this.setState({ scan: !this.state.scan })
+  }
+
+  onDelete(user) {
+    
+      var index_1 = this.state.selectedUsers.indexOf(user);
+      if (index_1 > -1) {
+        
+        this.state.selectedUsers.splice(index_1, 1)
+        
+        this.setState(
+          {selectedUsers: this.state.selectedUsers}
+        )  
+        // this.state.selectedUsers.splice(index, 1)
+          // console.log('after delete')
+          // console.log(this.state.selectedUsers)
+          // this.setState({
+          //     userInput: ""
+          // })
+        }
+      // this.onClick(this.state.selectedUsers);
+  }
+
   render() {
     const { t } = this.props;
     const onClick = (selectedUsers) => {
-      this.setState({ selectedUsers: selectedUsers })
+      
+      const result = [...this.state.selectedUsers, ...selectedUsers]
+      
+      this.setState({ selectedUsers: [...new Set(result)]})
     }
 
     const onLoginClick = (selectedUsers) => {
@@ -432,6 +511,7 @@ class SearchBar extends React.Component {
       // console.log(this.state.selectedDOY);
     };
 
+    
 
     //console.log("sumsa ki jai",this.props.t('Welcome_to_React'))
 
@@ -496,6 +576,14 @@ class SearchBar extends React.Component {
             <div>
               <h3>{t("Choose_user")}</h3>
               <p>{t("Total_attendees")} - {this.state.selectedUsers.length}</p>
+              <div>
+                    {this.state.selectedUsers?.map((user, index) => (
+                        <Chip 
+                            label={user.nameSatsangi}
+                            onDelete={() => this.onDelete(user)}
+                        />
+                    ))}          
+                    </div>
               <AutoCompleteSearchBox
                 placeHolderSearchLabel={"Search.."}
                 primaryIndex={"nameSatsangi"}
@@ -510,6 +598,11 @@ class SearchBar extends React.Component {
                 showSearchBtn={true}
                 searchImg={search}
               />
+              or
+              {
+                
+                <QRReader handleScanFinished={this.handleScanFinished} />
+              }
             </div>
             {this.state.submitSuccess ? <div>
               <div>{t("submit_message")}</div>
