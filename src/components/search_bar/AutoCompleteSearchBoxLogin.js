@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-//import Chip from '@material-ui/core/Chip';
+// import Chip from '@material-ui/core/Chip';
 // import { makeStyles } from '@material-ui/core/styles';
 
 const StyledNoSuggsDiv = styled.div`
