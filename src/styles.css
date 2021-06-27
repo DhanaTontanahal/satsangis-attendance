@@ -5,11 +5,37 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #FFFF99;
+  background-color: #ffff99;
   color: darkblue;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+/*Search Bar*/
+
+input {
+  border: 1px solid #999;
+  padding: 0.5rem;
+  width: 300px;
+}
+
+.tertiarySearchClassName {
+  color: blue;
+}
+
+.tertiarySearchClassName:before {
+  color: blue;
+  content: ' UID:  (';
+}
+
+.tertiarySearchClassName:after {
+  color: blue;
+  content: ' )';
+}
+
+.App {
+  text-align: center;
 }
