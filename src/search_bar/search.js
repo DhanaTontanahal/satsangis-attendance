@@ -439,10 +439,12 @@ class SearchBar extends React.Component {
 
     if (data) {
       const ifAvailable = this.state.selectedUsers.findIndex(user => user.newUID === data)
+      const filteredUserObject = Object.values(this.state.userData).find(element => element.newUID === data)
       console.log(this.state.userData[data])
       
-      if(this.state.userData[data] != undefined && ifAvailable === -1) {
-        this.state.selectedUsers.push(this.state.userData[data])
+      if(filteredUserObject && ifAvailable === -1) {
+        
+        this.state.selectedUsers.push(filteredUserObject)
         this.setState({
           selectedUsers: this.state.selectedUsers
         })  
