@@ -5,8 +5,8 @@
   "targets": {
     "pams-e7971": {
       "hosting": {
-        "test-individualattendance": [
-          "test-individualattendance"
+        "individualattendanceapp": [
+          "individualattendanceapp"
         ]
       }
     }
