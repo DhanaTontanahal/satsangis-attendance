@@ -39,3 +39,14 @@ input {
 .App {
   text-align: center;
 }
+
+.btn-logout {
+  background-color: #d63031;
+  color: #fff;
+  float: right;
+  border-radius: 5px;
+}
+
+.btn-container {
+  padding: 10px;
+}

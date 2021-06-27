@@ -148,6 +148,9 @@ function handleEnter(event) {
 class SearchBar extends React.Component {
   constructor(props) {
     super(props);
+
+    const loginObj = JSON.parse(localStorage.getItem('loginObject'));
+
     this.state = {
       userData: [],
       selectedUsers: [],
@@ -160,16 +163,16 @@ class SearchBar extends React.Component {
       selectedDayTime: null,
       submitSuccess: false,
 
-      userName: {},
+      userName: loginObj?.userName || {},
       selectedDOY: null,
       isOpenDOY: false,
       yearList: [],
       login: false,
       isMPGCoordinator: false,
-      year1: null,
-      year2: null,
-      year3: null,
-      year4: null,
+      year1: loginObj?.year1 || null,
+      year2: loginObj?.year2 || null,
+      year3: loginObj?.year3 || null,
+      year4: loginObj?.year4 || null,
       result: 'No result',
       usersDataHash: {},
       scan: false,
@@ -185,19 +188,9 @@ class SearchBar extends React.Component {
 
   componentDidMount() {
     this.fetchData();
+    const loginObj = JSON.parse(localStorage.getItem('loginObject'));
+    if (loginObj) this.login();
   }
-
-  // handleScan = data => {
-  //   if (data) {
-  //     this.setState({
-  //       result: data
-  //     })
-  //   }
-  // }
-
-  // handleError = err => {
-  //   console.error(err)
-  // }
 
   login() {
     if (this.state.userName === null) {
@@ -205,25 +198,20 @@ class SearchBar extends React.Component {
       return;
     }
 
-    // if(this.state.selectedDOY === null)
-    // {
-    //   alert("Please select a valid year of date")
-    //   return
-    // }
     if (this.state.year1 === null) {
-      alert('Please select a valid year of date');
+      alert('Please select a valid year of birthdate');
       return;
     }
     if (this.state.year2 === null) {
-      alert('Please select a valid year of date');
+      alert('Please select a valid year of birthdate');
       return;
     }
     if (this.state.year3 === null) {
-      alert('Please select a valid year of date');
+      alert('Please select a valid year of birthdate');
       return;
     }
     if (this.state.year4 === null) {
-      alert('Please select a valid year of date');
+      alert('Please select a valid year of birthdate');
       return;
     }
 
@@ -241,21 +229,21 @@ class SearchBar extends React.Component {
     // // todo function to complete
 
     if (
-      String(this.state.userName.dobYear) ==
+      String(this.state.userName.dobYear) ===
       this.state.year1 + this.state.year2 + this.state.year3 + this.state.year4
     ) {
-      // console.log("user", "isMPGCoordinator" in this.state.userName)
-      // console.log("isMPGCoordinator", this.state.userName.isMPGCoordinator)
+      const { userName, year1, year2, year3, year4 } = this.state;
 
-      // if (("in_dayalbagh" in this.state.userName) && (this.state.userName.in_dayalbagh === true)) {
-      //   // console.log("you are here")
-      //   this.setState({
-      //     login: true
-      //   })
+      const loginObj = {
+        userName,
+        year1,
+        year2,
+        year3,
+        year4,
+      };
 
-      // }
-      // else {
-      // console.log("you shouldn't be here")
+      localStorage.setItem('loginObject', JSON.stringify(loginObj));
+
       let tempEventList = this.state.eventList;
 
       if (
@@ -571,14 +559,53 @@ class SearchBar extends React.Component {
       // console.log(this.state.selectedDOY);
     };
 
+    const handleLogout = e => {
+      e.preventDefault();
+      localStorage.removeItem('loginObject');
+      this.setState({
+        selectedUsers: [],
+        selectedDate: new Date(),
+        eventList: [],
+        dayTimeList: ['Morning', 'Evening'],
+        isOpen: false,
+        isOpenDayTime: false,
+        selectedEvent: null,
+        selectedDayTime: null,
+        submitSuccess: false,
+        userName: {},
+        selectedDOY: null,
+        isOpenDOY: false,
+        yearList: [],
+        login: false,
+        isMPGCoordinator: false,
+        year1: null,
+        year2: null,
+        year3: null,
+        year4: null,
+        result: 'No result',
+        usersDataHash: {},
+        scan: false,
+        is_phone:
+          /Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(
+            navigator.userAgent
+          ),
+      });
+    };
+
     //console.log("sumsa ki jai",this.props.t('Welcome_to_React'))
 
     if (this.state.login === true)
       return (
         <div className="App">
           <Container onClick={this.updateEvetToggle}>
-            <button onClick={() => this.handleOnCLick('en')}>English</button>
-            <button onClick={() => this.handleOnCLick('hi')}>Hindi</button>
+            <div className="btn-container">
+              <button onClick={() => this.handleOnCLick('en')}>English</button>
+              <button onClick={() => this.handleOnCLick('hi')}>Hindi</button>
+              <button className="btn-logout" onClick={handleLogout}>
+                {t('Logout')}
+              </button>
+            </div>
+
             <h1>{t('Satsangis_Attendance')}</h1>
             <h2>
               {t('Radhasoami')} {this.state.userName.nameSatsangi}
@@ -661,7 +688,12 @@ class SearchBar extends React.Component {
                 searchImg={search}
               />
               or
-              {<QRReader handleScanFinished={this.handleScanFinished} />}
+              {
+                <QRReader
+                  handleScanFinished={this.handleScanFinished}
+                  buttonText={t('Scan')}
+                />
+              }
             </div>
             {this.state.submitSuccess ? (
               <div>
@@ -682,9 +714,11 @@ class SearchBar extends React.Component {
       return (
         <div className="App">
           <Container onClick={this.updateEvetToggleDOY}>
-            <button onClick={() => this.handleOnCLick('en')}>English</button>
-            <button onClick={() => this.handleOnCLick('hi')}>Hindi</button>
-            <h1>Satsangis Attendance </h1>
+            <div className="btn-container">
+              <button onClick={() => this.handleOnCLick('en')}>English</button>
+              <button onClick={() => this.handleOnCLick('hi')}>Hindi</button>
+            </div>
+            <h1>{t('Satsangis_Attendance')} </h1>
             <div>
               <h3>{t('Choose_UID')}</h3>
               <AutoCompleteSearchBoxLogin

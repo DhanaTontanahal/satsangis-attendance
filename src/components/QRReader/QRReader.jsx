@@ -5,7 +5,7 @@ import useSound from 'use-sound';
 
 import classes from './qr-reader.module.css';
 
-const QRReader = ({handleScanFinished}) => {
+const QRReader = ({ handleScanFinished, buttonText }) => {
   const [showModal, setShowModal] = useState(false);
   const [data, setData] = useState(null);
   const [barScan, setBarScan] = useState(false);
@@ -17,7 +17,7 @@ const QRReader = ({handleScanFinished}) => {
   const handleBarcodeScan = (err, res) => {
     if (err) console.error(err);
     if (!res) return;
-    
+
     setData(res.text);
     playAlert();
     handleScanFinished(res.text);
@@ -34,7 +34,7 @@ const QRReader = ({handleScanFinished}) => {
           setData(null);
         }}
       >
-        Scan QR or Barcode
+        {buttonText}
       </button>
       {showModal && (
         <Modal>

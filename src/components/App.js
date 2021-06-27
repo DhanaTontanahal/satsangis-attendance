@@ -24,6 +24,8 @@ i18n
           Total_attendees: 'Total attendees',
           Example: 'Example',
           no_internet_connection: 'No internet connection',
+          Logout: 'Logout',
+          Scan: 'Scan QR Code / Barcode',
         },
       },
       hi: {
@@ -42,6 +44,8 @@ i18n
           Total_attendees: 'कुल उपस्थित सत्संगी',
           Example: 'उदाहरण',
           no_internet_connection: 'कोई इंटरनेट कनेक्शन नहीं',
+          Logout: 'लॉग आउट',
+          Scan: 'स्कैन क्यूआर कोड / बारकोड',
         },
       },
     },
