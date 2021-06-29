@@ -14,9 +14,7 @@ import Lottie from 'react-lottie';
 import thumbsUp from './856-thumbs-up-grey-blue.json';
 import QRReader from '../QRReader/QRReader';
 // import QrReader from 'react-qr-reader';
-
 import Chip from './Chips';
-
 require('firebase/auth');
 require('firebase/database');
 
@@ -120,24 +118,16 @@ var backspace_count = 0;
 function handleEnter(event) {
   const form = event.target.form;
   const index = Array.prototype.indexOf.call(form, event.target);
-  //console.log(index)
-
-  console.log('before if' + backspace_count);
   if (event.target.value.length === event.target.maxLength) {
     if (index < 3) {
       const form = event.target.form;
-      console.log(event.target.maxLength);
-      console.log(event.target.value.length);
       form.elements[index + 1].focus();
       event.preventDefault();
       backspace_count = 0;
     }
   } else if (event.keyCode === 8) {
-    console.log('backspace pressed');
     backspace_count = backspace_count + 1;
-    console.log('backspace_count=' + backspace_count);
     if (index !== 0 && backspace_count > 1 && event.target.value.length === 0) {
-      console.log('inside bck codtion');
       form.elements[index - 1].focus();
       // event.preventDefault();
       backspace_count = 0;
@@ -151,7 +141,13 @@ class SearchBar extends React.Component {
 
     const loginObj = JSON.parse(localStorage.getItem('loginObject'));
 
+    
+  // handleClose = () => {
+  //   this.setState({open:false});
+  // };
+
     this.state = {
+      open:false,
       userData: [],
       selectedUsers: [],
       selectedDate: new Date(),
@@ -463,6 +459,26 @@ class SearchBar extends React.Component {
     i18n.changeLanguage(lang);
   };
 
+  handleHistory=async()=>{
+    this.setState({open:true});
+    const loginObj = JSON.parse(localStorage.getItem('loginObject'));
+    // const refAddress = 'satsangiUsers-attendance/'+this.state.selectedEvent+'/'+loginObj.userName.branchCode
+    const refAddress = 'satsangiUsers-attendance/Night Duty/ABO2014122720791'
+    //Start from here Teja
+    //1.)Use a pop up modal to show the history
+    //2.)Also pass the dynamic values to ref Address
+    // console.log(refAddress)
+    const users = await firebase
+      .database()
+      .ref(refAddress)
+      .once('value')
+      .then(snapshot => {
+        console.log(snapshot.val())
+        return snapshot.val();
+      });
+
+  }
+
   updateEvetToggle = () => {
     if (this.state.isOpen) {
       this.setState({ isOpen: false });
@@ -559,6 +575,8 @@ class SearchBar extends React.Component {
       // console.log(this.state.selectedDOY);
     };
 
+      
+
     const handleLogout = e => {
       e.preventDefault();
       localStorage.removeItem('loginObject');
@@ -592,8 +610,6 @@ class SearchBar extends React.Component {
       });
     };
 
-    //console.log("sumsa ki jai",this.props.t('Welcome_to_React'))
-
     if (this.state.login === true)
       return (
         <div className="App">
@@ -603,6 +619,9 @@ class SearchBar extends React.Component {
               <button onClick={() => this.handleOnCLick('hi')}>Hindi</button>
               <button className="btn-logout" onClick={handleLogout}>
                 {t('Logout')}
+              </button>
+              <button className="btn-history" onClick={()=>this.handleHistory()}>
+                {t('History')}
               </button>
             </div>
 
@@ -802,7 +821,9 @@ class SearchBar extends React.Component {
                 {t('Login')}
               </button>
             </div>
+           
           </Container>
+          
         </div>
       );
   }
