@@ -616,7 +616,8 @@ class SearchBar extends React.Component {
                 selected={this.state.selectedDate}
                 onChange={date => this.setState({ selectedDate: date })}
                 dateFormat="dd/MM/yyyy"
-                disabled={true}
+                disabled={false}
+                maxDate={this.state.selectedDate}
               />
             </div>
             {/* <div>
