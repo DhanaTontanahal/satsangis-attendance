@@ -162,21 +162,11 @@ class AutoCompleteSearchBox extends Component {
   }
 
   onClick(e) {
-    if (
-      this.state.selectedUsers.indexOf(
-        this.state.filteredSuggestions[e.currentTarget.dataset.id]
-      ) === -1
-    ) {
-      this.state.selectedUsers.push(
-        this.state.filteredSuggestions[e.currentTarget.dataset.id]
-      );
-    }
-    // console.log('user input list')
-    // console.log(this.state.selectedUsers)
+    const user = this.state.filteredSuggestions[e.currentTarget.dataset.id];
     this.setState({
       userInput: '',
     });
-    this.props.onClick(this.state.selectedUsers);
+    this.props.onClick(user);
   }
 
   // onDelete(user) {

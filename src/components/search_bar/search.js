@@ -506,28 +506,52 @@ class SearchBar extends React.Component {
     this.setState({ scan: !this.state.scan });
   };
 
-  onDelete(user) {
-    var index_1 = this.state.selectedUsers.indexOf(user);
-    if (index_1 > -1) {
-      this.state.selectedUsers.splice(index_1, 1);
+  // onDelete(user) {
+  //   var index_1 = this.state.selectedUsers.indexOf(user);
+  //   if (index_1 > -1) {
+  //     this.state.selectedUsers.splice(index_1, 1);
 
-      this.setState({ selectedUsers: this.state.selectedUsers });
-      // this.state.selectedUsers.splice(index, 1)
-      // console.log('after delete')
-      // console.log(this.state.selectedUsers)
-      // this.setState({
-      //     userInput: ""
-      // })
+  //     this.setState({ selectedUsers: this.state.selectedUsers });
+  //     // this.state.selectedUsers.splice(index, 1)
+  //     // console.log('after delete')
+  //     // console.log(this.state.selectedUsers)
+  //     // this.setState({
+  //     //     userInput: ""
+  //     // })
+  //   }
+  //   // this.onClick(this.state.selectedUsers);
+  // }
+
+  onDelete(user) {
+    const users = JSON.parse(JSON.stringify(this.state.selectedUsers));
+    const index = users.findIndex(u => u.newUID === user.newUID);
+    if (users.some(el => el.newUID === user.newUID)) {
+      users.splice(index, 1);
     }
-    // this.onClick(this.state.selectedUsers);
+    this.setState({
+      selectedUsers: users,
+    });
   }
 
   render() {
     const { t } = this.props;
-    const onClick = selectedUsers => {
-      const result = [...this.state.selectedUsers, ...selectedUsers];
 
-      this.setState({ selectedUsers: [...new Set(result)] });
+    const onUserClick = user => {
+      const index = this.state.selectedUsers.findIndex(
+        el => el.newUID === user.newUID
+      );
+      if (index === -1) {
+        const selectedUsers = [
+          ...new Set([
+            user,
+            ...JSON.parse(JSON.stringify(this.state.selectedUsers)),
+          ]),
+        ];
+
+        this.setState({
+          selectedUsers,
+        });
+      }
     };
 
     const onLoginClick = selectedUsers => {
@@ -683,7 +707,11 @@ class SearchBar extends React.Component {
                 showTertiarySearchCriterion={true}
                 tertiarySearchClassName="tertiarySearchClassName"
                 suggestions={Object.values(this.state.userData)}
-                onClick={onClick}
+                onClick={onUserClick}
+                parentComponentSearch={true}
+                parentSelectedUsers={JSON.parse(
+                  JSON.stringify(this.state.selectedUsers)
+                )}
                 showSearchBtn={true}
                 searchImg={search}
               />
