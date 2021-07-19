@@ -14,7 +14,6 @@ import Lottie from 'react-lottie';
 import thumbsUp from './856-thumbs-up-grey-blue.json';
 import QRReader from '../QRReader/QRReader';
 // import QrReader from 'react-qr-reader';
-
 import Chip from './Chips';
 
 require('firebase/auth');
@@ -35,6 +34,18 @@ const DropDownContainer = styled('div')`
   align: centre;
 `;
 
+
+const StyledHistoryPopUp = styled('div')`
+    position: relative;
+    z-index: 99;
+    top: 10%;
+    width: 500px;
+    height: 200px;
+    overflow: auto;
+    left: 34%;
+    list-style-type: upper-roman;
+
+`;
 const DropDownHeader = styled('div')`
   margin-bottom: 0.8em;
   padding: 0.4em 2em 0.4em 1em;
@@ -120,24 +131,16 @@ var backspace_count = 0;
 function handleEnter(event) {
   const form = event.target.form;
   const index = Array.prototype.indexOf.call(form, event.target);
-  //console.log(index)
-
-  console.log('before if' + backspace_count);
   if (event.target.value.length === event.target.maxLength) {
     if (index < 3) {
       const form = event.target.form;
-      console.log(event.target.maxLength);
-      console.log(event.target.value.length);
       form.elements[index + 1].focus();
       event.preventDefault();
       backspace_count = 0;
     }
   } else if (event.keyCode === 8) {
-    console.log('backspace pressed');
     backspace_count = backspace_count + 1;
-    console.log('backspace_count=' + backspace_count);
     if (index !== 0 && backspace_count > 1 && event.target.value.length === 0) {
-      console.log('inside bck codtion');
       form.elements[index - 1].focus();
       // event.preventDefault();
       backspace_count = 0;
@@ -151,7 +154,14 @@ class SearchBar extends React.Component {
 
     const loginObj = JSON.parse(localStorage.getItem('loginObject'));
 
+    
+  // handleClose = () => {
+  //   this.setState({open:false});
+  // };
+
     this.state = {
+      historyData:[],
+      open:false,
       userData: [],
       selectedUsers: [],
       selectedDate: new Date(),
@@ -463,6 +473,27 @@ class SearchBar extends React.Component {
     i18n.changeLanguage(lang);
   };
 
+  handleHistory=async()=>{
+    this.setState({open:!this.state.open});
+    const loginObj = JSON.parse(localStorage.getItem('loginObject'));
+    const refAddress = 'satsangiUsers-attendance/'+this.state.selectedEvent+'/'+loginObj.userName.branchCode
+    // const refAddress = 'satsangiUsers-attendance/Night Duty/ABO2014122720791'
+    const users = await firebase
+      .database()
+      .ref(refAddress)
+      .once('value')
+      .then(snapshot => {
+        const keys=[]
+        snapshot.forEach(function(item) {
+          var itemVal = item.val();
+          keys.push(itemVal);
+      });
+        console.log(keys)
+        this.setState({historyData:keys})
+        return snapshot.val();
+      });
+  }
+
   updateEvetToggle = () => {
     if (this.state.isOpen) {
       this.setState({ isOpen: false });
@@ -559,6 +590,8 @@ class SearchBar extends React.Component {
       // console.log(this.state.selectedDOY);
     };
 
+      
+
     const handleLogout = e => {
       e.preventDefault();
       localStorage.removeItem('loginObject');
@@ -591,18 +624,31 @@ class SearchBar extends React.Component {
           ),
       });
     };
+    const historyDataMap = this.state.historyData.map(function(data,index){
+      return <li key={index}>{data.datePresent}</li>
+    })
 
-    //console.log("sumsa ki jai",this.props.t('Welcome_to_React'))
-
-    if (this.state.login === true)
+    if (this.state.login === true) 
       return (
         <div className="App">
           <Container onClick={this.updateEvetToggle}>
+          {
+            this.state.open &&
+            <StyledHistoryPopUp className="historyPopUp">
+                {
+                  historyDataMap
+                }
+
+            </StyledHistoryPopUp>
+          }
             <div className="btn-container">
               <button onClick={() => this.handleOnCLick('en')}>English</button>
               <button onClick={() => this.handleOnCLick('hi')}>Hindi</button>
               <button className="btn-logout" onClick={handleLogout}>
                 {t('Logout')}
+              </button>
+              <button className="btn-history" onClick={()=>this.handleHistory()}>
+                {t('History')}
               </button>
             </div>
 
@@ -803,7 +849,9 @@ class SearchBar extends React.Component {
                 {t('Login')}
               </button>
             </div>
+           
           </Container>
+          
         </div>
       );
   }
