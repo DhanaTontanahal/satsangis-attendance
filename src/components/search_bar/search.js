@@ -15,6 +15,7 @@ import thumbsUp from './856-thumbs-up-grey-blue.json';
 import QRReader from '../QRReader/QRReader';
 // import QrReader from 'react-qr-reader';
 import Chip from './Chips';
+
 require('firebase/auth');
 require('firebase/database');
 
@@ -33,6 +34,19 @@ const DropDownContainer = styled('div')`
   align: centre;
 `;
 
+
+const StyledHistoryPopUp = styled('div')`
+  background-color:gray;
+  background-color: gray;
+    position: relative;
+    z-index: 99;
+    top: 10%;
+    width: 500px;
+    height: 200px;
+    overflow: auto;
+    left: 34%;
+
+`;
 const DropDownHeader = styled('div')`
   margin-bottom: 0.8em;
   padding: 0.4em 2em 0.4em 1em;
@@ -147,6 +161,7 @@ class SearchBar extends React.Component {
   // };
 
     this.state = {
+      historyData:[],
       open:false,
       userData: [],
       selectedUsers: [],
@@ -460,23 +475,25 @@ class SearchBar extends React.Component {
   };
 
   handleHistory=async()=>{
-    this.setState({open:true});
+    this.setState({open:!this.state.open});
     const loginObj = JSON.parse(localStorage.getItem('loginObject'));
-    // const refAddress = 'satsangiUsers-attendance/'+this.state.selectedEvent+'/'+loginObj.userName.branchCode
-    const refAddress = 'satsangiUsers-attendance/Night Duty/ABO2014122720791'
-    //Start from here Teja
-    //1.)Use a pop up modal to show the history
-    //2.)Also pass the dynamic values to ref Address
-    // console.log(refAddress)
+    const refAddress = 'satsangiUsers-attendance/'+this.state.selectedEvent+'/'+loginObj.userName.branchCode
+    // const refAddress = 'satsangiUsers-attendance/Night Duty/ABO2014122720791'
+    alert(refAddress)
     const users = await firebase
       .database()
       .ref(refAddress)
       .once('value')
       .then(snapshot => {
-        console.log(snapshot.val())
+        const keys=[]
+        snapshot.forEach(function(item) {
+          var itemVal = item.val();
+          keys.push(itemVal);
+      });
+        console.log(keys)
+        this.setState({historyData:keys})
         return snapshot.val();
       });
-
   }
 
   updateEvetToggle = () => {
@@ -609,11 +626,23 @@ class SearchBar extends React.Component {
           ),
       });
     };
+    const historyDataMap = this.state.historyData.map(function(data,index){
+      return <li key={index}>{data.datePresent}</li>
+    })
 
-    if (this.state.login === true)
+    if (this.state.login === true) 
       return (
         <div className="App">
           <Container onClick={this.updateEvetToggle}>
+          {
+            this.state.open &&
+            <StyledHistoryPopUp className="historyPopUp">
+                {
+                  historyDataMap
+                }
+
+            </StyledHistoryPopUp>
+          }
             <div className="btn-container">
               <button onClick={() => this.handleOnCLick('en')}>English</button>
               <button onClick={() => this.handleOnCLick('hi')}>Hindi</button>
