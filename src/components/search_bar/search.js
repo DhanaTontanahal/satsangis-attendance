@@ -36,8 +36,6 @@ const DropDownContainer = styled('div')`
 
 
 const StyledHistoryPopUp = styled('div')`
-  background-color:gray;
-  background-color: gray;
     position: relative;
     z-index: 99;
     top: 10%;
@@ -45,6 +43,7 @@ const StyledHistoryPopUp = styled('div')`
     height: 200px;
     overflow: auto;
     left: 34%;
+    list-style-type: upper-roman;
 
 `;
 const DropDownHeader = styled('div')`
@@ -479,7 +478,6 @@ class SearchBar extends React.Component {
     const loginObj = JSON.parse(localStorage.getItem('loginObject'));
     const refAddress = 'satsangiUsers-attendance/'+this.state.selectedEvent+'/'+loginObj.userName.branchCode
     // const refAddress = 'satsangiUsers-attendance/Night Duty/ABO2014122720791'
-    alert(refAddress)
     const users = await firebase
       .database()
       .ref(refAddress)
