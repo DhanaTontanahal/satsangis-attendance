@@ -13,7 +13,7 @@ const StyledContainer = styled.div`
   position: relative;
 
   input {
-    width: 100%;
+    width: 80%;
     height: 45px;
     border: 0px solid black;
     border-radius: 0px;

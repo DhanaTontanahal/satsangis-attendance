@@ -34,18 +34,20 @@ const DropDownContainer = styled('div')`
   align: centre;
 `;
 
-
 const StyledHistoryPopUp = styled('div')`
-    position: relative;
-    z-index: 99;
-    top: 10%;
-    width: 500px;
-    height: 200px;
-    overflow: auto;
-    left: 34%;
-    list-style-type: upper-roman;
-
+  position: absolute;
+  border-style: solid;
+  border-color: coral;
+  z-index: 99;
+  top: 760px;
+  width: 50%;
+  height: 200px;
+  overflow: auto;
+  text-align: left;
+  left: 25%;
+  list-style-type: decimal;
 `;
+
 const DropDownHeader = styled('div')`
   margin-bottom: 0.8em;
   padding: 0.4em 2em 0.4em 1em;
@@ -154,14 +156,13 @@ class SearchBar extends React.Component {
 
     const loginObj = JSON.parse(localStorage.getItem('loginObject'));
 
-    
-  // handleClose = () => {
-  //   this.setState({open:false});
-  // };
+    // handleClose = () => {
+    //   this.setState({open:false});
+    // };
 
     this.state = {
-      historyData:[],
-      open:false,
+      historyData: [],
+      open: false,
       userData: [],
       selectedUsers: [],
       selectedDate: new Date(),
@@ -186,6 +187,8 @@ class SearchBar extends React.Component {
       result: 'No result',
       usersDataHash: {},
       scan: false,
+      historyMonth: '',
+      historyDate: '',
       is_phone:
         /Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(
           navigator.userAgent
@@ -473,26 +476,34 @@ class SearchBar extends React.Component {
     i18n.changeLanguage(lang);
   };
 
-  handleHistory=async()=>{
-    this.setState({open:!this.state.open});
+  handleHistory = async () => {
+    this.setState({ open: !this.state.open });
     const loginObj = JSON.parse(localStorage.getItem('loginObject'));
-    const refAddress = 'satsangiUsers-attendance/'+this.state.selectedEvent+'/'+loginObj.userName.branchCode
+    const refAddress =
+      'satsangiUsers-attendance/' +
+      this.state.selectedEvent +
+      '/' +
+      loginObj.userName.branchCode;
     // const refAddress = 'satsangiUsers-attendance/Night Duty/ABO2014122720791'
     const users = await firebase
       .database()
       .ref(refAddress)
       .once('value')
       .then(snapshot => {
-        const keys=[]
-        snapshot.forEach(function(item) {
+        const keys = [];
+        snapshot.forEach(function (item) {
           var itemVal = item.val();
           keys.push(itemVal);
-      });
-        console.log(keys)
-        this.setState({historyData:keys})
+        });
+        console.log(keys);
+        this.setState({ historyData: keys });
         return snapshot.val();
       });
-  }
+    if (this.state.selectedEvent === null) {
+      alert('Please select event');
+      return;
+    }
+  };
 
   updateEvetToggle = () => {
     if (this.state.isOpen) {
@@ -590,8 +601,6 @@ class SearchBar extends React.Component {
       // console.log(this.state.selectedDOY);
     };
 
-      
-
     const handleLogout = e => {
       e.preventDefault();
       localStorage.removeItem('loginObject');
@@ -624,32 +633,98 @@ class SearchBar extends React.Component {
           ),
       });
     };
-    const historyDataMap = this.state.historyData.map(function(data,index){
-      return <li key={index}>{data.datePresent}</li>
-    })
 
-    if (this.state.login === true) 
+    const dateSorter = datesArr => {
+      const months = {
+        January: [],
+        February: [],
+        March: [],
+        April: [],
+        May: [],
+        June: [],
+        July: [],
+        August: [],
+        September: [],
+        October: [],
+        November: [],
+        December: [],
+      };
+      for (let el of datesArr) {
+        if (el.includes('Jan')) months.January.push(el);
+        else if (el.includes('Feb')) months.February.push(el);
+        else if (el.includes('Mar')) months.March.push(el);
+        else if (el.includes('Apr')) months.April.push(el);
+        else if (el.includes('May')) months.May.push(el);
+        else if (el.includes('Jun')) months.June.push(el);
+        else if (el.includes('Jul')) months.July.push(el);
+        else if (el.includes('Aug')) months.August.push(el);
+        else if (el.includes('Sep')) months.September.push(el);
+        else if (el.includes('Oct')) months.October.push(el);
+        else if (el.includes('Nov')) months.November.push(el);
+        else if (el.includes('Dec')) months.December.push(el);
+      }
+      return months;
+    };
+
+    const getHistory = () => {
+      const dates = this.state.historyData.map(el => el.datePresent);
+      const sortedDates = dateSorter(dates);
+      debugger;
+      return Object.entries(sortedDates).map((date, index, ar) => {
+        return (
+          <React.Fragment key={index}>
+            {this.state.historyData.length ? (
+              <>
+                <h5>
+                  {date[0]} (Total Attendance for {date[0]} : {date[1].length} ){' '}
+                </h5>
+                <ul>
+                  {date[1].map(el => (
+                    <li>{el}</li>
+                  ))}
+                </ul>
+              </>
+            ) : null}
+          </React.Fragment>
+        );
+      }, this);
+    };
+
+    if (this.state.login === true)
       return (
         <div className="App">
           <Container onClick={this.updateEvetToggle}>
-          {
-            this.state.open &&
-            <StyledHistoryPopUp className="historyPopUp">
-                {
-                  historyDataMap
-                }
-
-            </StyledHistoryPopUp>
-          }
+            {this.state.open && (
+              <StyledHistoryPopUp className="historyPopUp">
+                <div>
+                  {
+                    //History not found text
+                    !this.state.historyData.length ? (
+                      <div>
+                        {' '}
+                        History not found, Please select another event{' '}
+                      </div>
+                    ) : (
+                      <div>
+                        {' '}
+                        History for the event : {this.state.selectedEvent}
+                      </div>
+                    )
+                  }
+                  <br />
+                </div>
+                {this.state.historyData ? getHistory() : null}
+              </StyledHistoryPopUp>
+            )}
             <div className="btn-container">
               <button onClick={() => this.handleOnCLick('en')}>English</button>
               <button onClick={() => this.handleOnCLick('hi')}>Hindi</button>
               <button className="btn-logout" onClick={handleLogout}>
                 {t('Logout')}
               </button>
-              <button className="btn-history" onClick={()=>this.handleHistory()}>
-                {t('History')}
-              </button>
+              {/* <button className="btn-history" onClick={()=>this.handleHistory()}>
+                {t('My Attendance')}
+              </button> */}
             </div>
 
             <h1>{t('Satsangis_Attendance')}</h1>
@@ -721,7 +796,7 @@ class SearchBar extends React.Component {
                 ))}
               </div>
               <AutoCompleteSearchBox
-                placeHolderSearchLabel={'Search..'}
+                placeHolderSearchLabel={'Search .. '}
                 primaryIndex={'nameSatsangi'}
                 secondaryIndex={'newUID'}
                 showSecondarySearchCriterion={true}
@@ -753,6 +828,15 @@ class SearchBar extends React.Component {
               <button onClick={this.submitAttendance} style={button}>
                 {t('Submit_Attendance')}
               </button>
+              <br></br>
+              <br></br>
+              {/* history button  */}
+              <button
+                className="btn-history"
+                onClick={() => this.handleHistory()}
+              >
+                {t('My Attendance')}
+              </button>
             </div>
           </Container>
         </div>
@@ -762,7 +846,12 @@ class SearchBar extends React.Component {
         <div className="App">
           <Container onClick={this.updateEvetToggleDOY}>
             <div className="btn-container">
-              <button onClick={() => this.handleOnCLick('en')}>English</button>
+              <button
+                classname="btn-english"
+                onClick={() => this.handleOnCLick('en')}
+              >
+                English
+              </button>
               <button onClick={() => this.handleOnCLick('hi')}>Hindi</button>
             </div>
             <h1>{t('Satsangis_Attendance')} </h1>
@@ -849,9 +938,7 @@ class SearchBar extends React.Component {
                 {t('Login')}
               </button>
             </div>
-           
           </Container>
-          
         </div>
       );
   }
