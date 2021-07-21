@@ -38,6 +38,7 @@ input {
 
 .App {
   text-align: center;
+  float: center;
 }
 
 .btn-logout {
@@ -47,9 +48,24 @@ input {
   border-radius: 5px;
 }
 
-.btn-history{
-  
+.btn-history {
+  /* background-color:#4CAF50;
+  color: #fff;
+  float: left;
+  border-radius: 5px; */
+  cursor: pointer;
+  background-color: coral;
+  border: none;
+  color: white;
+  padding: 10px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 5px;
+}
+.historyPopUp {
 }
 .btn-container {
-  padding: 10px;
+  padding: 10px 10px;
 }
