@@ -39,7 +39,7 @@ const StyledHistoryPopUp = styled('div')`
   border-style: solid;
   border-color: coral;
   z-index: 99;
-  top: 760px;
+  top: 755px;
   width: 50%;
   height: 200px;
   overflow: auto;
@@ -381,22 +381,22 @@ class SearchBar extends React.Component {
           .database()
           .ref(
             'satsangiUsers-attendance/' +
-              attendanceDate +
-              '/' +
-              this.state.selectedEvent +
-              '/' +
-              user.newUID
+            attendanceDate +
+            '/' +
+            this.state.selectedEvent +
+            '/' +
+            user.newUID
           )
           .set(user);
         firebase
           .database()
           .ref(
             'satsangiUsers-attendance/' +
-              this.state.selectedEvent +
-              '/' +
-              user.branchCode +
-              '/' +
-              attendanceDate
+            this.state.selectedEvent +
+            '/' +
+            user.branchCode +
+            '/' +
+            attendanceDate
           )
           .set(user);
       });
@@ -676,7 +676,7 @@ class SearchBar extends React.Component {
             {this.state.historyData.length ? (
               <>
                 <h5>
-                  {date[0]} (Total Attendance for {date[0]} : {date[1].length} ){' '}
+                  {date[0]} (Total: {date[1].length} ){' '}
                 </h5>
                 <ul>
                   {date[1].map(el => (
