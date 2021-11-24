@@ -711,6 +711,7 @@ class SearchBar extends React.Component {
                       </div>
                     )
                   }
+                  <br />
                 </div>
                 {this.state.historyData ? getHistory() : null}
               </StyledHistoryPopUp>

@@ -673,7 +673,7 @@ class SearchBar extends React.Component {
       return Object.entries(sortedDates).map((date, index, ar) => {
         return (
           <React.Fragment key={index}>
-            {date[1].length? (
+            {this.state.historyData.length ? (
               <>
                 <h5>
                   {date[0]} (Total: {date[1].length} ){' '}
@@ -711,6 +711,7 @@ class SearchBar extends React.Component {
                       </div>
                     )
                   }
+                  <br />
                 </div>
                 {this.state.historyData ? getHistory() : null}
               </StyledHistoryPopUp>
