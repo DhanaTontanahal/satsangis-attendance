@@ -38,13 +38,29 @@ const StyledHistoryPopUp = styled("div")`
   position: absolute;
   border-style: solid;
   border-color: coral;
+  background-color: lightgray;
   z-index: 99;
-  top: 755px;
+  top: 75px;
   width: 50%;
   height: 200px;
   overflow: auto;
   text-align: left;
   left: 25%;
+  list-style-type: decimal;
+`;
+
+const StyledStoreHistoryPopUp = styled("div")`
+  position: absolute;
+  border-style: solid;
+  border-color: coral;
+  background-color: lightgray;
+  z-index: 99;
+  top: 150px;
+  width: 75%;
+  height: 250px;
+  overflow: auto;
+  text-align: left;
+  left: 10%;
   list-style-type: decimal;
 `;
 
@@ -195,6 +211,8 @@ class SearchBar extends React.Component {
       selectedStoreItem: null,
       selectedStoreItemQuantity: 0,
       selectedStoreItemColor: null,
+      storeOrders: [],
+      openStoreOrders: false,
       selectedDayTime: null,
       submitSuccess: false,
 
@@ -708,10 +726,60 @@ class SearchBar extends React.Component {
       return months;
     };
 
+    const moveScrollToTop=()=>{
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    }
+
+    const getStoreOrdersData = () => {
+      firebase
+        .database()
+        .ref("/" + "satsangiUsers-store-requests" + "/")
+        .child(this.state.userName.newUID)
+        .once("value")
+        .then((snapshot) => {
+          this.setState({
+            storeOrders: snapshot.val(),
+            openStoreOrders: true,
+          });
+        });
+    };
+    const getStoreHistory = () => {
+      const storeOrdersData = this.state.storeOrders;
+      return (
+        <>
+          <h3>Store Orders ( {Object.values(storeOrdersData).length} )</h3>
+          {Object.values(storeOrdersData).length > 0 &&
+            Object.values(storeOrdersData).map((eachOrder, index) => {
+              return (
+                <div>
+                  <span key={Object.keys(storeOrdersData)[index]}>
+                    {" "}
+                    {eachOrder["storeItem"]} : {eachOrder["quantity"]}
+                  </span>
+                  <button
+                    onClick={() => {
+                      firebase
+                        .database()
+                        .ref("satsangiUsers-store-requests")
+                        .child(this.state.userName.newUID)
+                        .child(Object.keys(storeOrdersData)[index])
+                        .remove();
+                      getStoreOrdersData();
+                    }}
+                  >
+                    delete
+                  </button>
+                </div>
+              );
+            })}
+        </>
+      );
+    };
     const getHistory = () => {
       const dates = this.state.historyData.map((el) => el.datePresent);
       const sortedDates = dateSorter(dates);
-      debugger;
+      // debugger;
       return Object.entries(sortedDates).map((date, index, ar) => {
         return (
           <React.Fragment key={index}>
@@ -756,6 +824,15 @@ class SearchBar extends React.Component {
                     }
                   </div>
                   {this.state.historyData ? getHistory() : null}
+                  <div>
+                    <button
+                      onClick={() => {
+                        this.setState({ open: false });
+                      }}
+                    >
+                      Close
+                    </button>
+                  </div>
                 </StyledHistoryPopUp>
               )}
               <div className="btn-container">
@@ -771,7 +848,7 @@ class SearchBar extends React.Component {
               </button> */}
               </div>
               <h2>
-                {t("Ra-dha-sva-aah-mi")} {this.state.userName.nameSatsangi}
+                {t("Ra-dha-sva-Aa-mi")} {this.state.userName.nameSatsangi}
               </h2>
               <h1>{t("Satsangis_Attendance")}</h1>
 
@@ -885,7 +962,7 @@ class SearchBar extends React.Component {
             </Container>
           </div>
 
-          <div
+          {/* <div
             style={{
               position: "absolute",
               left: 0,
@@ -893,8 +970,9 @@ class SearchBar extends React.Component {
               marginRight: "100px",
               marginTop: "100px",
             }}
-          >
-            <h1>Satsangis Store</h1>
+          > */}
+          <div>
+            <h1>Satsangis Stores</h1>
 
             <h3>Select Store Item</h3>
             <div style={{ marginLeft: "10px" }}>
@@ -945,22 +1023,6 @@ class SearchBar extends React.Component {
             <div style={{ marginTop: "20px" }}>
               <button
                 onClick={async () => {
-                  console.log(this.state.selectedStoreItem);
-
-                  // if (this.state.submitSuccess) {
-                  //   return;
-                  // }
-                  // if (this.state.selectedEvent === null) {
-                  //   alert("Please select a valid event");
-                  //   return;
-                  // }
-
-                  // if (this.state.selectedUsers.length === 0) {
-                  //   alert("Please select attendees");
-                  //   return;
-                  // }
-
-                  // Initialize Firebase
                   try {
                     if (!firebase.apps.length) {
                       firebase.initializeApp(firebaseConfig);
@@ -986,23 +1048,22 @@ class SearchBar extends React.Component {
 
                     let currentTimestamp = new Date();
 
-                    const storeRequest={
+                    const storeRequest = {
                       storeItem: this.state.selectedStoreItem,
                       requestedDate: currentTimestamp,
                       requestedBy: this.state.userName.newUID,
                       requestedByName: this.state.userName.nameSatsangi,
                       quantity: this.state.selectedStoreItemQuantity,
                       color: this.state.selectedStoreItemColor,
-                    }
+                    };
 
-                    console.log(storeRequest)
+                    // console.log(storeRequest)
 
                     firebase
                       .database()
                       .ref(
                         "satsangiUsers-store-requests/" +
-                          this.state.userName.newUID 
-                        
+                          this.state.userName.newUID
                       )
                       .push(storeRequest);
 
@@ -1017,8 +1078,43 @@ class SearchBar extends React.Component {
                 }}
                 className="btn-history"
               >
-                Checkout
+                Submit
               </button>
+
+              <button
+                onClick={() => {
+                  getStoreOrdersData();
+                  moveScrollToTop();
+                }}
+                className="btn-history"
+              >
+                My orders
+              </button>
+
+              {this.state.openStoreOrders && (
+                <StyledStoreHistoryPopUp className="storehistoryPopUp">
+                  <div>
+                    {!Object.values(this.state.storeOrders).length ? (
+                      <div> Store History not found !</div>
+                    ) : (
+                      <div>
+                        {" "}
+                        Store History for the {this.state.userName.newUID}
+                      </div>
+                    )}
+                  </div>
+                  {this.state.storeOrders ? getStoreHistory() : null}
+                  <div>
+                    <button
+                      onClick={() => {
+                        this.setState({ openStoreOrders: false });
+                      }}
+                    >
+                      Close
+                    </button>
+                  </div>
+                </StyledStoreHistoryPopUp>
+              )}
             </div>
           </div>
         </>
