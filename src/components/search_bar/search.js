@@ -726,10 +726,9 @@ class SearchBar extends React.Component {
       return months;
     };
 
-    const moveScrollToTop=()=>{
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-
-    }
+    const moveScrollToTop = () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
 
     const getStoreOrdersData = () => {
       firebase
@@ -752,11 +751,7 @@ class SearchBar extends React.Component {
           {Object.values(storeOrdersData).length > 0 &&
             Object.values(storeOrdersData).map((eachOrder, index) => {
               return (
-                <div>
-                  <span key={Object.keys(storeOrdersData)[index]}>
-                    {" "}
-                    {eachOrder["storeItem"]} : {eachOrder["quantity"]}
-                  </span>
+                <div style={{ textAlign: "center" }}>
                   <button
                     onClick={() => {
                       firebase
@@ -770,6 +765,10 @@ class SearchBar extends React.Component {
                   >
                     delete
                   </button>
+                  <span key={Object.keys(storeOrdersData)[index]}>
+                    {" "}
+                    {eachOrder["storeItem"]} : {eachOrder["quantity"]}
+                  </span>
                 </div>
               );
             })}
@@ -1092,7 +1091,7 @@ class SearchBar extends React.Component {
               </button>
 
               {this.state.openStoreOrders && (
-                <StyledStoreHistoryPopUp className="storehistoryPopUp">
+                <StyledStoreHistoryPopUp id="storehistoryPopUp">
                   <div>
                     {!Object.values(this.state.storeOrders).length ? (
                       <div> Store History not found !</div>
