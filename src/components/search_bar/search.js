@@ -15,6 +15,7 @@ import thumbsUp from "./856-thumbs-up-grey-blue.json";
 import QRReader from "../QRReader/QRReader";
 // import QrReader from 'react-qr-reader';
 import Chip from "./Chips";
+import Register from "./Register";
 
 require("firebase/auth");
 require("firebase/database");
@@ -147,23 +148,15 @@ const button = {
   padding: "10px",
   fontFamily: "Arial",
 };
-// const firebaseConfig = {
-//   apiKey: "AIzaSyApR69k8Oyt0PLCJQSJfHbhBH4aspxtCXQ",
-//   authDomain: "pams-e7971.firebaseapp.com",
-//   databaseURL: "https://pams-e7971.firebaseio.com",
-//   projectId: "pams-e7971",
-//   storageBucket: "pams-e7971.appspot.com",
-//   messagingSenderId: "821251191711",
-//   appId: "1:821251191711:web:dd4ce38f4dca3eb45d03aa",
-// };
+
 const firebaseConfig = {
-  apiKey: "AIzaSyC13btHGEnl-JB6TDaa05D-5Pk28jyWekQ",
-  authDomain: "pune-ams.firebaseapp.com",
-  databaseURL: "https://pune-ams-default-rtdb.firebaseio.com",
-  projectId: "pune-ams",
-  storageBucket: "pune-ams.appspot.com",
-  messagingSenderId: "178023651028",
-  appId: "1:178023651028:web:16bf3a7e6df57cad73cd41",
+  apiKey: "AIzaSyCSr4A3ho16safnfIZdU0ibufeh0woNR-w",
+  authDomain: "sarannagarams.firebaseapp.com",
+  databaseURL: "https://sarannagarams-default-rtdb.firebaseio.com",
+  projectId: "sarannagarams",
+  storageBucket: "sarannagarams.appspot.com",
+  messagingSenderId: "477269300097",
+  appId: "1:477269300097:web:eafbb367cee36d4ed50e80",
 };
 var backspace_count = 0;
 function handleEnter(event) {
@@ -215,7 +208,7 @@ class SearchBar extends React.Component {
       openStoreOrders: false,
       selectedDayTime: null,
       submitSuccess: false,
-
+      showRegisterSection:false,
       userName: loginObj?.userName || {},
       selectedDOY: null,
       isOpenDOY: false,
@@ -373,20 +366,14 @@ class SearchBar extends React.Component {
         firebase.initializeApp(firebaseConfig);
         await firebase
           .auth()
-          .signInWithEmailAndPassword(
-            "individualattendanceapp@gmail.com",
-            "hjklvbnmuiop"
-          );
+          .signInWithEmailAndPassword("sarannagarams@ams.com", "Kamil@123");
         // .then((data) => console.log(data))
         // .catch(error => console.log(error))
       } else {
         firebase.app(); // if already initialized, use that one
         await firebase
           .auth()
-          .signInWithEmailAndPassword(
-            "individualattendanceapp@gmail.com",
-            "hjklvbnmuiop"
-          );
+          .signInWithEmailAndPassword("sarannagarams@ams.com", "Kamil@123");
         // .then((data) => console.log(data))
         // .catch(error => console.log(error))
       }
@@ -448,7 +435,7 @@ class SearchBar extends React.Component {
         window.location.reload();
       }, 3000);
     } catch {
-      alert(this.props.t("no_internet_connection"));
+      // alert(this.props.t("no_internet_connection"));
     }
   };
 
@@ -459,20 +446,14 @@ class SearchBar extends React.Component {
         firebase.initializeApp(firebaseConfig);
         await firebase
           .auth()
-          .signInWithEmailAndPassword(
-            "individualattendanceapp@gmail.com",
-            "hjklvbnmuiop"
-          );
+          .signInWithEmailAndPassword("sarannagarams@ams.com", "Kamil@123");
         //.then((data) => console.log(data))
         //.catch(error => console.log(error))
       } else {
         firebase.app(); // if already initialized, use that one
         await firebase
           .auth()
-          .signInWithEmailAndPassword(
-            "individualattendanceapp@gmail.com",
-            "hjklvbnmuiop"
-          );
+          .signInWithEmailAndPassword("sarannagarams@ams.com", "Kamil@123");
         //.then((data) => console.log(data))
         //.catch(error => console.log(error))
       }
@@ -499,6 +480,7 @@ class SearchBar extends React.Component {
         .ref("/activities/")
         .once("value")
         .then((snapshot) => {
+          // console.log(snapshot)
           return snapshot.val();
         });
       this.setState({
@@ -516,7 +498,7 @@ class SearchBar extends React.Component {
         storeItemsList: Object.keys(storeItemsFromFirebase),
       });
     } catch {
-      alert(this.props.t("no_internet_connection"));
+      // alert(this.props.t("no_internet_connection"));
     }
   };
 
@@ -970,7 +952,8 @@ class SearchBar extends React.Component {
               marginTop: "100px",
             }}
           > */}
-          <div>
+
+          {/* <div>
             <h1>Satsangis Stores</h1>
 
             <h3>Select Store Item</h3>
@@ -1115,7 +1098,7 @@ class SearchBar extends React.Component {
                 </StyledStoreHistoryPopUp>
               )}
             </div>
-          </div>
+          </div> */}
         </>
       );
     else
@@ -1207,15 +1190,30 @@ class SearchBar extends React.Component {
                   onKeyUp={handleEnter}
                 />
               </form>
-              <h7>{t("Example")}:1950</h7>
+              <h6>{t("Example")}:1950</h6>
             </div>
             <div>
               <br></br>
               <button onClick={this.login} style={button}>
                 {t("Login")}
               </button>
+              <button
+                style={button}
+                onClick={() => {
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                  setTimeout(()=>{
+                    this.setState({ showRegisterSection: true });
+                  },1000)
+                  
+                }}
+              >
+                Register
+              </button>
             </div>
           </Container>
+          {this.state.showRegisterSection && <Register />}
+
+          <Container></Container>
         </div>
       );
   }

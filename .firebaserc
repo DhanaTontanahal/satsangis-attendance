@@ -1,14 +1,5 @@
 {
   "projects": {
-    "default": "pams-e7971"
-  },
-  "targets": {
-    "pams-e7971": {
-      "hosting": {
-        "individualattendanceapp": [
-          "individualattendanceapp"
-        ]
-      }
-    }
+    "default": "sarannagarams"
   }
 }

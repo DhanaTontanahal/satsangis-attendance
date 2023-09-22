@@ -10,7 +10,7 @@ i18n
     resources: {
       en: {
         translation: {
-          Satsangis_Attendance: 'Satsangis Attendance',
+          Satsangis_Attendance: 'Satsangis Attendance (Saran Nagar Youth)',
           Choose_date: 'Date',
           Choose_event: 'Choose Event',
           Choose_user: 'Enter Names',

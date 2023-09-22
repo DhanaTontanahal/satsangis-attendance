@@ -167,6 +167,7 @@ class SearchBar extends React.Component {
       selectedUsers: [],
       selectedDate: new Date(),
       eventList: [],
+      storeItemsList:[],
       dayTimeList: ['Morning', 'Evening'],
       isOpen: false,
       isOpenDayTime: false,
@@ -462,6 +463,19 @@ class SearchBar extends React.Component {
       this.setState({
         eventList: Object.keys(eventListFromFirebase),
       });
+
+      const storeItemsListFromFirebase = await firebase
+        .database()
+        .ref('/store/')
+        .once('value')
+        .then(snapshot => {
+          return snapshot.val();
+        });
+      this.setState({
+        storeItemsList: Object.keys(storeItemsListFromFirebase),
+      });
+
+
     } catch {
       alert(this.props.t('no_internet_connection'));
     }
