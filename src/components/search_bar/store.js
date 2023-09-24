@@ -186,7 +186,7 @@ function handleEnter(event) {
   }
 }
 
-class SearchBar extends React.Component {
+class Store extends React.Component {
   constructor(props) {
     super(props);
 
@@ -802,176 +802,7 @@ class SearchBar extends React.Component {
     if (this.state.login === true)
       return (
         <>
-          <div className="App">
-            <Container onClick={this.updateEvetToggle}>
-              {this.state.open && (
-                <StyledHistoryPopUp className="historyPopUp">
-                  <div>
-                    {
-                      //History not found text
-                      !this.state.historyData.length ? (
-                        <div>
-                          {" "}
-                          History not found, Please select another event{" "}
-                        </div>
-                      ) : (
-                        <div>
-                          {" "}
-                          History for the event : {this.state.selectedEvent}
-                        </div>
-                      )
-                    }
-                  </div>
-                  {this.state.historyData ? getHistory() : null}
-                  <div>
-                    <button
-                      onClick={() => {
-                        this.setState({ open: false });
-                      }}
-                    >
-                      Close
-                    </button>
-                  </div>
-                </StyledHistoryPopUp>
-              )}
-              <div className="btn-container">
-                <button onClick={() => this.handleOnCLick("en")}>
-                  English
-                </button>
-                <button onClick={() => this.handleOnCLick("hi")}>Hindi</button>
-                <button className="btn-logout" onClick={handleLogout}>
-                  {t("Logout")}
-                </button>
-                {/* <button className="btn-history" onClick={()=>this.handleHistory()}>
-                {t('My Attendance')}
-              </button> */}
-              </div>
-              <h2>
-                {t("Ra-dha-sva-Aa-mi")} {this.state.userName.nameSatsangi}
-              </h2>
-              <h1>{t("Satsangis_Attendance")}</h1>
-
-              <div>
-                <h3>{t("Choose_date")}</h3>
-                <DatePicker
-                  selected={this.state.selectedDate}
-                  onChange={(date) => this.setState({ selectedDate: date })}
-                  dateFormat="dd/MM/yyyy"
-                  disabled={false}
-                  maxDate={this.state.selectedDate}
-                />
-              </div>
-              {/* <div>
-              <h3>{t("Choose_day_time")}</h3>
-              <DropDownContainer>
-                <DropDownHeader onClick={togglingDayTime}>
-                  {this.state.selectedDayTime || "Daytime"}
-                </DropDownHeader>
-                {this.state.isOpenDayTime && (
-                  <DropDownListContainer>
-                    <DropDownList>
-                      {this.state.dayTimeList.map((dayTime) => (
-                        <ListItem onClick={onOptionDayTimeClicked(dayTime)} key={Math.random()}>
-                          {dayTime}
-                        </ListItem>
-                      ))}
-                    </DropDownList>
-                  </DropDownListContainer>
-                )}
-              </DropDownContainer>
-            </div> */}
-              <div>
-                <h3>{t("Choose_event")}</h3>
-                <DropDownContainer>
-                  <DropDownHeaderEvent onClick={toggling}>
-                    {this.state.selectedEvent || "Event"}
-                  </DropDownHeaderEvent>
-                  {this.state.isOpen && (
-                    <DropDownListContainer>
-                      <DropDownListEvent>
-                        {this.state.eventList.map((event) => (
-                          <ListItem
-                            onClick={onOptionClicked(event)}
-                            key={Math.random()}
-                          >
-                            {event}
-                          </ListItem>
-                        ))}
-                      </DropDownListEvent>
-                    </DropDownListContainer>
-                  )}
-                </DropDownContainer>
-              </div>
-              <div>
-                <h3>{t("Choose_user")}</h3>
-                <p>
-                  {t("Total_attendees")} - {this.state.selectedUsers.length}
-                </p>
-                <div>
-                  {this.state.selectedUsers?.map((user, index) => (
-                    <Chip
-                      label={user.nameSatsangi}
-                      onDelete={() => this.onDelete(user)}
-                    />
-                  ))}
-                </div>
-                <AutoCompleteSearchBox
-                  placeHolderSearchLabel={"Search .. "}
-                  primaryIndex={"nameSatsangi"}
-                  secondaryIndex={"newUID"}
-                  showSecondarySearchCriterion={true}
-                  secondarySearchClassName="secondarySearchClassName"
-                  tertiaryIndex={"branchCode"}
-                  showTertiarySearchCriterion={true}
-                  tertiarySearchClassName="tertiarySearchClassName"
-                  suggestions={Object.values(this.state.userData)}
-                  onClick={onClick}
-                  showSearchBtn={true}
-                  searchImg={search}
-                />
-                or
-                {
-                  <QRReader
-                    handleScanFinished={this.handleScanFinished}
-                    buttonText={t("Scan")}
-                  />
-                }
-              </div>
-              {this.state.submitSuccess ? (
-                <div>
-                  <div>{t("submit_message")}</div>
-                  <Lottie options={defaultOptions} height={20} width={20} />
-                </div>
-              ) : null}
-              <div>
-                <br></br>
-                <button onClick={this.submitAttendance} style={button}>
-                  {t("Submit_Attendance")}
-                </button>
-                <br></br>
-                <br></br>
-                {/* history button  */}
-                <button
-                  className="btn-history"
-                  onClick={() => this.handleHistory()}
-                >
-                  {t("My Attendance")}
-                </button>
-              </div>
-            </Container>
-          </div>
-
-          {/* <div
-            style={{
-              position: "absolute",
-              left: 0,
-              top: "10px",
-              marginRight: "100px",
-              marginTop: "100px",
-            }}
-          > */}
-
-          {/* <div>
+          <div>
             <h1>Satsangis Stores</h1>
 
             <h3>Select Store Item</h3>
@@ -1116,110 +947,15 @@ class SearchBar extends React.Component {
                 </StyledStoreHistoryPopUp>
               )}
             </div>
-          </div> */}
-
+          </div>
         </>
       );
     else
       return (
         <div className="App">
-          <Container onClick={this.updateEvetToggleDOY}>
-            <div className="btn-container">
-              <button
-                classname="btn-english"
-                onClick={() => this.handleOnCLick("en")}
-              >
-                English
-              </button>
-              <button onClick={() => this.handleOnCLick("hi")}>Hindi</button>
-            </div>
-            <h1>{t("Satsangis_Attendance")} </h1>
-            <div>
-              <h3>{t("Choose_UID")}</h3>
-              <AutoCompleteSearchBoxLogin
-                placeHolderSearchLabel={"Search.."}
-                primaryIndex={"nameSatsangi"}
-                secondaryIndex={"newUID"}
-                showSecondarySearchCriterion={true}
-                secondarySearchClassName="secondarySearchClassName"
-                tertiaryIndex={"branchCode"}
-                showTertiarySearchCriterion={true}
-                tertiarySearchClassName="tertiarySearchClassName"
-                suggestions={Object.values(this.state.userData)}
-                onClick={onLoginClick}
-                showSearchBtn={true}
-                searchImg={search}
-              />
-            </div>
-
-            <div>
-              <h3>{t("Choose_Year_of_Birth")}</h3>
-              {/* <DropDownContainer>
-                <DropDownHeader onClick={toggling_DOY}>
-                  {this.state.selectedDOY || "Year"}
-                </DropDownHeader>
-                {this.state.isOpenDOY && (
-                  <DropDownListContainer>
-                    <DropDownList>
-                      {this.state.yearList.map((event) => (
-                        <ListItem onClick={onOptionClickedYOB(event)} key={Math.random()}>
-                          {event}
-                        </ListItem>
-                      ))}
-                    </DropDownList>
-                  </DropDownListContainer>
-                )}
-              </DropDownContainer> */}
-
-              <form>
-                <input
-                  style={{ width: "10px", color: "black" }}
-                  value={this.state.year1}
-                  onChange={this.handleYear1Change}
-                  maxLength="1"
-                  inputmode="numeric"
-                  pattern="\d[1]"
-                  onKeyUp={handleEnter}
-                />
-                <input
-                  style={{ width: "10px", color: "black" }}
-                  value={this.state.year2}
-                  onChange={this.handleYear2Change}
-                  maxLength="1"
-                  inputmode="numeric"
-                  pattern="\d[1]"
-                  onKeyUp={handleEnter}
-                />
-                <input
-                  style={{ width: "10px", color: "black" }}
-                  value={this.state.year3}
-                  onChange={this.handleYear3Change}
-                  maxLength="1"
-                  inputmode="numeric"
-                  pattern="\d[1]"
-                  onKeyUp={handleEnter}
-                />
-                <input
-                  style={{ width: "10px", color: "black" }}
-                  value={this.state.year4}
-                  onChange={this.handleYear4Change}
-                  maxLength="1"
-                  inputmode="numeric"
-                  pattern="\d[1]"
-                  onKeyUp={handleEnter}
-                />
-              </form>
-              <h7>{t("Example")}:1950</h7>
-            </div>
-            <div>
-              <br></br>
-              <button onClick={this.login} style={button}>
-                {t("Login")}
-              </button>
-            </div>
-          </Container>
+          
         </div>
       );
   }
 }
-export default withTranslation()(SearchBar);
+export default withTranslation()(Store);

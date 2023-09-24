@@ -1,6 +1,7 @@
 // import logo from '../logo.svg';
 import '../styles.css';
-import SearchBar from './search_bar/search';
+// import SearchBar from './search_bar/search';
+import TabPage from './search_bar/TabPage';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
@@ -62,7 +63,7 @@ function App() {
   i18n.changeLanguage(l);
   return (
     <div className="App">
-      <SearchBar />
+      <TabPage />
     </div>
   );
 
