@@ -202,7 +202,7 @@ function Register() {
             branchName: "Bolarum",
             category: category == "mr" || category == "PB" ? "Gents" : "Ladies",
             gender: category == "mr" || category == "PB" ? "Male" : "Female",
-            districtName: "Rayalaseema",
+            districtName: "Hyderabad",
             dollarId: uid,
             nameSatsangi: username,
             newUID:uid,
