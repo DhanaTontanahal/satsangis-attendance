@@ -199,6 +199,9 @@ class SearchBar extends React.Component {
       storeItemsList: [],
       dayTimeList: ["Morning", "Evening"],
       isOpen: false,
+      noticesData: [],
+      showPostNotice: false,
+      showNoticeBoard: false,
       isOpenDayTime: false,
       selectedEvent: null,
       selectedStoreItem: null,
@@ -208,7 +211,7 @@ class SearchBar extends React.Component {
       openStoreOrders: false,
       selectedDayTime: null,
       submitSuccess: false,
-      showRegisterSection:false,
+      showRegisterSection: false,
       userName: loginObj?.userName || {},
       selectedDOY: null,
       isOpenDOY: false,
@@ -444,6 +447,25 @@ class SearchBar extends React.Component {
     try {
       if (!firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);
+
+        // console.log("============================");
+        firebase
+          .database()
+          .ref("notices")
+          .once("value")
+          .then((snapshot) => {
+            const keys = [];
+            // console.log("=========snapshot===================");
+            snapshot.forEach(function (item) {
+              var itemVal = item.val();
+              // console.log(itemVal);
+              keys.push(itemVal);
+            });
+            // console.log(keys);
+            this.setState({ noticesData: keys });
+            // return snapshot.val();
+          });
+
         await firebase
           .auth()
           .signInWithEmailAndPassword("sarannagarams@ams.com", "Kamil@123");
@@ -643,6 +665,10 @@ class SearchBar extends React.Component {
       // console.log(this.state.selectedDOY);
     };
 
+    const handleNoticeBoard = (e) => {
+      this.setState({ showNoticeBoard: true });
+    };
+
     const handleLogout = (e) => {
       e.preventDefault();
       localStorage.removeItem("loginObject");
@@ -652,6 +678,9 @@ class SearchBar extends React.Component {
         eventList: [],
         dayTimeList: ["Morning", "Evening"],
         isOpen: false,
+        noticesData: [],
+        showPostNotice: false,
+        showNoticeBoard: false,
         isOpenDayTime: false,
         selectedEvent: null,
         selectedDayTime: null,
@@ -824,12 +853,85 @@ class SearchBar extends React.Component {
                 <button className="btn-logout" onClick={handleLogout}>
                   {t("Logout")}
                 </button>
+                <button className="btn-notice" onClick={handleNoticeBoard}>
+                  {t("Notice board")}
+                </button>
+                {this.state.showNoticeBoard && (
+                  <StyledHistoryPopUp className="historyPopUp">
+                    {(this.state.userName.nameSatsangi ===
+                      "Dhana Shekhar Tontanahal" ||
+                      this.state.userName.nameSatsangi ===
+                        "Ramesh Ramya Smruthi" ||
+                      this.state.userName.nameSatsangi ===
+                        "Teja Vihari Rapaka " ||
+                      this.state.userName.nameSatsangi ===
+                        "Amar Vuppuluri") && (
+                      <div>
+                        <h3>Post Notice Information</h3>
+                        <input
+                          type="text"
+                          onChange={(e) =>
+                            this.setState({ noticeInfo: e.target.value })
+                          }
+                          placeholder="Enter the notice board information"
+                        />
+                        <br />
+                        <button
+                          onClick={() => {
+                            firebase
+                              .database()
+                              .ref(
+                                "notices/" +
+                                  this.state.noticeInfo.substring(0, 5) +
+                                  "/"
+                              )
+                              .set({
+                                notice: this.state.noticeInfo,
+                                datePosted: Date.now(),
+                                postedBy: this.state.userName.nameSatsangi,
+                              });
+                          }}
+                        >
+                          Submit
+                        </button>
+                      </div>
+                    )}
+
+                    <div></div>
+                    <div>
+                      <h3>Notice board</h3>
+                      <p>
+                        This Space shows all the notices related to Youth
+                        association
+                      </p>
+                    </div>
+                    <div>
+                      {this.state.noticesData.map((n) => {
+                        return (
+                          <>
+                            <p>{n.notice}</p> postedby{" "}
+                          </>
+                        );
+                      })}
+                    </div>
+                    <div>
+                      <button
+                        onClick={() => {
+                          this.setState({ showNoticeBoard: false });
+                        }}
+                      >
+                        Close
+                      </button>
+                    </div>
+                  </StyledHistoryPopUp>
+                )}
                 {/* <button className="btn-history" onClick={()=>this.handleHistory()}>
                 {t('My Attendance')}
               </button> */}
               </div>
               <h2>
-                {t("Ra-dha-sva-Aa-mi")} {this.state.userName.nameSatsangi}
+                {t("Hearty Ra-dha-sva-Aa-mi")}{" "}
+                {this.state.userName.nameSatsangi}
               </h2>
               <h1>{t("Satsangis_Attendance")}</h1>
 
@@ -1201,10 +1303,9 @@ class SearchBar extends React.Component {
                 style={button}
                 onClick={() => {
                   window.scrollTo({ top: 0, behavior: "smooth" });
-                  setTimeout(()=>{
+                  setTimeout(() => {
                     this.setState({ showRegisterSection: true });
-                  },1000)
-                  
+                  }, 1000);
                 }}
               >
                 Register

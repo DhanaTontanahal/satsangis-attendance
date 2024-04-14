@@ -1,8 +1,8 @@
 // import logo from '../logo.svg';
-import '../styles.css';
-import SearchBar from './search_bar/search';
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
+import "../styles.css";
+import SearchBar from "./search_bar/search";
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
 
 i18n
   .use(initReactI18next) // passes i18n down to react-i18next
@@ -10,47 +10,47 @@ i18n
     resources: {
       en: {
         translation: {
-          Satsangis_Attendance: 'Satsangis Attendance (Saran Nagar Youth)',
-          Choose_date: 'Date',
-          Choose_event: 'Choose Event',
-          Choose_user: 'Enter Names',
-          Submit_Attendance: 'Submit Attendance',
-          submit_message: 'Ra-dha-sva-Aa-mi \nYour request is submitted!',
-          Choose_Year_of_Birth: 'Choose Year of Birth',
-          Choose_UID: 'Choose UID',
-          Login: 'Login',
-          Radhasoami: 'Ra-dha-sva-Aa-mi',
-          Choose_day_time: 'Choose Daytime',
-          Total_attendees: 'Total attendees',
-          Example: 'Example',
-          no_internet_connection: 'No internet connection',
-          Logout: 'Logout',
-          Scan: 'Scan QR Code / Barcode',
+          Satsangis_Attendance: "Satsangis Attendance (Youth Association)",
+          Choose_date: "Select Date",
+          Choose_event: "Select Event",
+          Choose_user: "Start Typing Name(s)",
+          Submit_Attendance: "Submit Attendance",
+          submit_message: "Ra-dha-sva-Aa-mi \nYour request is submitted!",
+          Choose_Year_of_Birth: "Choose Year of Birth",
+          Choose_UID: "Choose UID",
+          Login: "Login",
+          Radhasoami: "Ra-dha-sva-Aa-mi",
+          Choose_day_time: "Choose Daytime",
+          Total_attendees: "Total attendees",
+          Example: "Example",
+          no_internet_connection: "No internet connection",
+          Logout: "Signout",
+          Scan: "Scan QR Code / Barcode",
         },
       },
       hi: {
         translation: {
-          Satsangis_Attendance: 'सत्संगियों की उपस्थिति',
-          Choose_date: 'तिथि',
-          Choose_event: 'ईवेंट चुनें',
-          Choose_user: 'सत्संगियों का नाम चुनें',
-          Submit_Attendance: 'उपस्थिति दर्ज करें',
-          submit_message: 'राधास्वामी \nआपकी attendance लग गई है।',
-          Choose_Year_of_Birth: 'जन्म का वर्ष चुनें',
-          Choose_UID: 'UID चुनें',
-          Login: 'लॉग इन करें',
-          Radhasoami: 'राधास्वामी',
-          Choose_day_time: 'दिन का समय चुनें',
-          Total_attendees: 'कुल उपस्थित सत्संगी',
-          Example: 'उदाहरण',
-          no_internet_connection: 'कोई इंटरनेट कनेक्शन नहीं',
-          Logout: 'लॉग आउट',
-          Scan: 'स्कैन क्यूआर कोड / बारकोड',
+          Satsangis_Attendance: "सत्संगियों की उपस्थिति",
+          Choose_date: "तिथि",
+          Choose_event: "ईवेंट चुनें",
+          Choose_user: "सत्संगियों का नाम चुनें",
+          Submit_Attendance: "उपस्थिति दर्ज करें",
+          submit_message: "राधास्वामी \nआपकी attendance लग गई है।",
+          Choose_Year_of_Birth: "जन्म का वर्ष चुनें",
+          Choose_UID: "UID चुनें",
+          Login: "लॉग इन करें",
+          Radhasoami: "राधास्वामी",
+          Choose_day_time: "दिन का समय चुनें",
+          Total_attendees: "कुल उपस्थित सत्संगी",
+          Example: "उदाहरण",
+          no_internet_connection: "कोई इंटरनेट कनेक्शन नहीं",
+          Logout: "लॉग आउट",
+          Scan: "स्कैन क्यूआर कोड / बारकोड",
         },
       },
     },
-    lng: 'en',
-    fallbackLng: 'en',
+    lng: "en",
+    fallbackLng: "en",
 
     interpolation: {
       escapeValue: false,
@@ -58,7 +58,7 @@ i18n
   });
 
 function App() {
-  const l = localStorage.getItem('currentLanguage');
+  const l = localStorage.getItem("currentLanguage");
   i18n.changeLanguage(l);
   return (
     <div className="App">

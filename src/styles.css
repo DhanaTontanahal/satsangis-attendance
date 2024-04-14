@@ -48,6 +48,14 @@ input {
   border-radius: 5px;
 }
 
+.btn-notice {
+  margin-right: 10px;
+  background-color: #ffff99;
+  color: #888;
+  float: right;
+  border-radius: 5px;
+}
+
 .btn-history {
   /* background-color:#4CAF50;
   color: #fff;
@@ -64,6 +72,7 @@ input {
   font-size: 16px;
   margin: 5px;
 }
+
 .btn-container {
   padding: 10px 10px;
 }
@@ -78,7 +87,8 @@ input {
   float: left;
   width: 50%;
   padding: 10px;
-  height: 300px; /* Should be removed. Only for demonstration */
+  height: 300px;
+  /* Should be removed. Only for demonstration */
 }
 
 /* Clear floats after the columns */
@@ -88,6 +98,6 @@ input {
   clear: both;
 }
 
-#storehistoryPopUp{
+#storehistoryPopUp {
   text-align: center;
 }
