@@ -908,9 +908,9 @@ class SearchBar extends React.Component {
                     <div>
                       {this.state.noticesData.map((n) => {
                         return (
-                          <>
-                            <p>{n.notice}</p> postedby{" "}
-                          </>
+                          <ul>
+                            <li>{n.notice}</li>
+                          </ul>
                         );
                       })}
                     </div>
