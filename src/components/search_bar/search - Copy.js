@@ -12,11 +12,11 @@ import { withTranslation } from "react-i18next";
 import i18n from "i18next";
 import Lottie from "react-lottie";
 import thumbsUp from "./856-thumbs-up-grey-blue.json";
-// import QRReader from "../QRReader/QRReader";
+import QRReader from "../QRReader/QRReader";
 // import QrReader from 'react-qr-reader';
 import Chip from "./Chips";
 import Register from "./Register";
-import Calendar from "../activity-calendar/Calendar";
+
 require("firebase/auth");
 require("firebase/database");
 
@@ -182,7 +182,6 @@ function handleEnter(event) {
 class SearchBar extends React.Component {
   constructor(props) {
     super(props);
-    let dumm = [];
 
     const loginObj = JSON.parse(localStorage.getItem("loginObject"));
 
@@ -191,8 +190,6 @@ class SearchBar extends React.Component {
     // };
 
     this.state = {
-      openAllMonths: false,
-      activitiesCalendarData: null,
       historyData: [],
       open: false,
       userData: [],
@@ -201,10 +198,11 @@ class SearchBar extends React.Component {
       eventList: [],
       storeItemsList: [],
       dayTimeList: ["Morning", "Evening"],
+      otherSevaEventList: ["Surf Seva"],
+      selectedOtherSevaEvent: "",
+      showOtherSevaList: false,
       isOpen: false,
-      noticesData: [],
-      showPostNotice: false,
-      showNoticeBoard: false,
+      isOtherSevaOpen: false,
       isOpenDayTime: false,
       selectedEvent: null,
       selectedStoreItem: null,
@@ -450,23 +448,6 @@ class SearchBar extends React.Component {
     try {
       if (!firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);
-
-        firebase
-          .database()
-          .ref("notices")
-          .once("value")
-          .then((snapshot) => {
-            const keys = [];
-            snapshot.forEach(function (item) {
-              var itemVal = item.val();
-              // console.log(itemVal);
-              keys.push(itemVal);
-            });
-            // console.log(keys);
-            this.setState({ noticesData: keys });
-            // return snapshot.val();
-          });
-
         await firebase
           .auth()
           .signInWithEmailAndPassword("sarannagarams@ams.com", "Kamil@123");
@@ -534,47 +515,8 @@ class SearchBar extends React.Component {
     i18n.changeLanguage(lang);
   };
 
-  parseDateForCurrentMonth = (timestamp) => {
-    const [day, month, year] = timestamp.split(" ")[0].split("-");
-    return { year: parseInt(year), month: parseInt(month), day: parseInt(day) };
-  };
-
-  transformActivityDataForCurrentMonth = (data) => {
-    const currentYear = new Date().getFullYear();
-    const currentMonth = new Date().getMonth() + 1; // Months are 0-indexed in JS
-
-    return data.reduce((acc, activity) => {
-      const { year, month, day } = this.parseDateForCurrentMonth(
-        activity.timestamp
-      );
-      if (year === currentYear && month === currentMonth) {
-        const dateKey = `${year}-${month}-${day}`;
-        if (!acc[dateKey]) {
-          acc[dateKey] = [];
-        }
-        acc[dateKey].push(activity.activityName);
-      }
-      return acc;
-    }, {});
-  };
-
-  parseDate = (timestamp) => {
-    const [day, month, year] = timestamp.split(" ")[0].split("-");
-    return `${year}-${parseInt(month)}-${parseInt(day)}`;
-  };
-
-  transformActivityData = (data) => {
-    return data.reduce((acc, activity) => {
-      const dateKey = this.parseDate(activity.timestamp);
-      if (!acc[dateKey]) {
-        acc[dateKey] = [];
-      }
-      acc[dateKey].push(activity.activityName);
-      return acc;
-    }, {});
-  };
-
-  handleHistory = async (openAllMonths = false) => {
+  handleHistory = async () => {
+    this.setState({ open: !this.state.open });
     const loginObj = JSON.parse(localStorage.getItem("loginObject"));
     const refAddress =
       "satsangiUsers-attendance/" +
@@ -592,23 +534,8 @@ class SearchBar extends React.Component {
           var itemVal = item.val();
           keys.push(itemVal);
         });
-
-        const activitiesCalendarDataFormed =
-          this.transformActivityDataForCurrentMonth(keys);
-        this.dumm = activitiesCalendarDataFormed;
-        this.setState({
-          activitiesCalendarData: activitiesCalendarDataFormed,
-          historyData: keys,
-          open: true,
-        });
-        if (openAllMonths) {
-          this.setState({
-            activitiesCalendarData: activitiesCalendarDataFormed,
-            historyData: keys,
-            openAllMonths: true,
-            open: false,
-          });
-        }
+        console.log(keys);
+        this.setState({ historyData: keys });
         return snapshot.val();
       });
     if (this.state.selectedEvent === null) {
@@ -689,7 +616,14 @@ class SearchBar extends React.Component {
     };
 
     // console.log(this.state.userData)
-    const toggling = () => this.setState({ isOpen: !this.state.isOpen });
+    const toggling = () =>
+      this.setState({
+        isOpen: !this.state.isOpen,
+        showOtherSevaList: false,
+      });
+    const togglingOtherSeva = () =>
+      this.setState({ isOtherSevaOpen: !this.state.isOpen });
+
     const toggling_DOY = () =>
       this.setState({ isOpenDOY: !this.state.isOpenDOY });
 
@@ -699,8 +633,17 @@ class SearchBar extends React.Component {
     const onOptionClicked = (value) => () => {
       this.setState({ selectedEvent: value });
       this.setState({ isOpen: false });
-      this.handleHistory();
+      console.log(value);
+      if (value === "Other Seva" || value === "Seva - any Other") {
+        this.setState({ showOtherSevaList: "true" });
+      }
+
       // console.log(this.state.selectedEvent);
+    };
+
+    const onOtherSevaOptionClicked = (value) => () => {
+      this.setState({ selectedOtherSevaEvent: value });
+      this.setState({ isOtherSevaOpen: false });
     };
 
     const onOptionClickedStore = (value) => () => {
@@ -721,10 +664,6 @@ class SearchBar extends React.Component {
       // console.log(this.state.selectedDOY);
     };
 
-    const handleNoticeBoard = (e) => {
-      this.setState({ showNoticeBoard: true });
-    };
-
     const handleLogout = (e) => {
       e.preventDefault();
       localStorage.removeItem("loginObject");
@@ -732,11 +671,12 @@ class SearchBar extends React.Component {
         selectedUsers: [],
         selectedDate: new Date(),
         eventList: [],
+        otherSevaEventList: ["Surf Seva"],
+        selectedOtherSevaEvent: "",
+        showOtherSevaList: false,
         dayTimeList: ["Morning", "Evening"],
         isOpen: false,
-        noticesData: [],
-        showPostNotice: false,
-        showNoticeBoard: false,
+        isOtherSevaOpen: false,
         isOpenDayTime: false,
         selectedEvent: null,
         selectedDayTime: null,
@@ -871,7 +811,7 @@ class SearchBar extends React.Component {
         <>
           <div className="App">
             <Container onClick={this.updateEvetToggle}>
-              {this.state.openAllMonths && (
+              {this.state.open && (
                 <StyledHistoryPopUp className="historyPopUp">
                   <div>
                     {
@@ -893,7 +833,7 @@ class SearchBar extends React.Component {
                   <div>
                     <button
                       onClick={() => {
-                        this.setState({ openAllMonths: false });
+                        this.setState({ open: false });
                       }}
                     >
                       Close
@@ -909,109 +849,14 @@ class SearchBar extends React.Component {
                 <button className="btn-logout" onClick={handleLogout}>
                   {t("Logout")}
                 </button>
-                <button className="btn-notice" onClick={handleNoticeBoard}>
-                  {t("Notice board")}
-                </button>
-                {this.state.showNoticeBoard && (
-                  <StyledHistoryPopUp className="historyPopUp">
-                    {(this.state.userName.nameSatsangi ===
-                      "Dhana Shekhar Tontanahal" ||
-                      this.state.userName.nameSatsangi ===
-                        "Ramesh Ramya Smruthi" ||
-                      this.state.userName.nameSatsangi ===
-                        "Teja Vihari Rapaka " ||
-                      this.state.userName.nameSatsangi ===
-                        "Amar Vuppuluri") && (
-                      <div>
-                        <h3>Post Notice Information</h3>
-                        <input
-                          type="text"
-                          onChange={(e) =>
-                            this.setState({ noticeInfo: e.target.value })
-                          }
-                          placeholder="Enter the notice board information"
-                        />
-                        <br />
-                        <button
-                          onClick={() => {
-                            firebase
-                              .database()
-                              .ref(
-                                "notices/" +
-                                  this.state.noticeInfo.substring(0, 5) +
-                                  "/"
-                              )
-                              .set({
-                                notice: this.state.noticeInfo,
-                                datePosted: Date.now(),
-                                postedBy: this.state.userName.nameSatsangi,
-                              });
-                          }}
-                        >
-                          Submit
-                        </button>
-                      </div>
-                    )}
-
-                    <div></div>
-                    <div>
-                      <h3>Notice board</h3>
-                      <p>
-                        This Space shows all the notices related to Youth
-                        association
-                      </p>
-                    </div>
-                    <div>
-                      {this.state.noticesData.map((n) => {
-                        return (
-                          <ul>
-                            <li>{n.notice}</li>
-                          </ul>
-                        );
-                      })}
-                    </div>
-                    <div>
-                      <button
-                        onClick={() => {
-                          this.setState({ showNoticeBoard: false });
-                        }}
-                      >
-                        Close
-                      </button>
-                    </div>
-                  </StyledHistoryPopUp>
-                )}
                 {/* <button className="btn-history" onClick={()=>this.handleHistory()}>
                 {t('My Attendance')}
               </button> */}
               </div>
               <h2>
-                {t("Hearty Ra dha sva Aa mi")}{" "}
-                {this.state.userName?.nameSatsangi}
+                {t("Ra-dha-sva-Aa-mi")} {this.state.userName.nameSatsangi}
               </h2>
-              <button
-                className="btn-history"
-                onClick={() => this.handleHistory()}
-              >
-                {t("My Attendance")}
-              </button>
-              <button
-                className="btn-history"
-                onClick={() => this.handleHistory(true)}
-              >
-                {t("All month activity")}
-              </button>
-              {this.state.open ? (
-                <div className="App">
-                  <Calendar
-                    year={new Date().getFullYear()}
-                    month={new Date().getMonth()}
-                    activities={this.state.activitiesCalendarData}
-                  />
-                </div>
-              ) : (
-                ""
-              )}
+              <h1>{t("Satsangis_Attendance")}</h1>
 
               <div>
                 <h3>{t("Choose_date")}</h3>
@@ -1063,6 +908,27 @@ class SearchBar extends React.Component {
                     </DropDownListContainer>
                   )}
                 </DropDownContainer>
+                {this.state.showOtherSevaList && (
+                  <DropDownContainer>
+                    <DropDownHeaderEvent onClick={togglingOtherSeva}>
+                      {this.state.selectedOtherSevaEvent || "Select Other Seva"}
+                    </DropDownHeaderEvent>
+                    {this.state.isOtherSevaOpen && (
+                      <DropDownListContainer>
+                        <DropDownListEvent>
+                          {this.state.otherSevaEventList?.map((event) => (
+                            <ListItem
+                              onClick={onOtherSevaOptionClicked(event)}
+                              key={Math.random()}
+                            >
+                              {event}
+                            </ListItem>
+                          ))}
+                        </DropDownListEvent>
+                      </DropDownListContainer>
+                    )}
+                  </DropDownContainer>
+                )}
               </div>
               <div>
                 <h3>{t("Choose_user")}</h3>
@@ -1091,6 +957,13 @@ class SearchBar extends React.Component {
                   showSearchBtn={true}
                   searchImg={search}
                 />
+                or
+                {
+                  <QRReader
+                    handleScanFinished={this.handleScanFinished}
+                    buttonText={t("Scan")}
+                  />
+                }
               </div>
               {this.state.submitSuccess ? (
                 <div>
@@ -1106,6 +979,12 @@ class SearchBar extends React.Component {
                 <br></br>
                 <br></br>
                 {/* history button  */}
+                <button
+                  className="btn-history"
+                  onClick={() => this.handleHistory()}
+                >
+                  {t("My Attendance")}
+                </button>
               </div>
             </Container>
           </div>

@@ -101,3 +101,73 @@ input {
 #storehistoryPopUp {
   text-align: center;
 }
+
+
+
+
+
+
+
+
+
+
+
+.calendar {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.calendar-header {
+  display: flex;
+}
+
+.calendar-header-day {
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  font-weight: bold;
+  background-color: #f0f0f0;
+}
+
+.calendar-body {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.calendar-day {
+  width: 14.28%;
+  border: 1px solid #ddd;
+  box-sizing: border-box;
+  padding: 10px;
+  cursor: pointer;
+  position: relative;
+}
+
+.calendar-day.empty {
+  background-color: #f9f9f9;
+  cursor: default;
+}
+
+.calendar-day.selected {
+  background-color: #e0f7fa;
+}
+
+.date {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.activities {
+  margin-top: 5px;
+}
+
+.activity {
+  background-color: #ffeb3b;
+  padding: 2px 4px;
+  margin-bottom: 2px;
+  border-radius: 3px;
+  font-size: 12px;
+}
