@@ -17,6 +17,7 @@ import thumbsUp from "./856-thumbs-up-grey-blue.json";
 import Chip from "./Chips";
 import Register from "./Register";
 import Calendar from "../activity-calendar/Calendar";
+import TimeDurationCalculator from "../activity-calendar/TimeDurationCalculator";
 require("firebase/auth");
 require("firebase/database");
 
@@ -191,6 +192,7 @@ class SearchBar extends React.Component {
     // };
 
     this.state = {
+      durationOfSeva: 0,
       openAllMonths: false,
       activitiesCalendarData: null,
       historyData: [],
@@ -351,6 +353,9 @@ class SearchBar extends React.Component {
     });
   };
 
+  conveyDuration = (d) => {
+    this.setState({ durationOfSeva: d });
+  };
   submitAttendance = async () => {
     if (this.state.submitSuccess) {
       return;
@@ -396,6 +401,7 @@ class SearchBar extends React.Component {
         user.attendanceMarkedByName = this.state.userName.nameSatsangi;
         user.activityName = this.state.selectedEvent;
         user.datePresent = attendanceDate;
+        user.durationOfSeva = this.state.durationOfSeva;
         let currentTimestamp = new Date();
         user.timestamp =
           currentTimestamp.getDate() +
@@ -552,7 +558,9 @@ class SearchBar extends React.Component {
         if (!acc[dateKey]) {
           acc[dateKey] = [];
         }
-        acc[dateKey].push(activity.activityName);
+        const activityNameAndDuration =
+          activity.activityName + " " + activity?.durationOfSeva + " mins";
+        acc[dateKey].push(activityNameAndDuration);
       }
       return acc;
     }, {});
@@ -595,6 +603,8 @@ class SearchBar extends React.Component {
 
         const activitiesCalendarDataFormed =
           this.transformActivityDataForCurrentMonth(keys);
+        console.log(keys);
+        console.log(activitiesCalendarDataFormed);
         this.dumm = activitiesCalendarDataFormed;
         this.setState({
           activitiesCalendarData: activitiesCalendarDataFormed,
@@ -1012,36 +1022,6 @@ class SearchBar extends React.Component {
               ) : (
                 ""
               )}
-
-              <div>
-                <h3>{t("Choose_date")}</h3>
-                <DatePicker
-                  selected={this.state.selectedDate}
-                  onChange={(date) => this.setState({ selectedDate: date })}
-                  dateFormat="dd/MM/yyyy"
-                  disabled={false}
-                  maxDate={this.state.selectedDate}
-                />
-              </div>
-              {/* <div>
-              <h3>{t("Choose_day_time")}</h3>
-              <DropDownContainer>
-                <DropDownHeader onClick={togglingDayTime}>
-                  {this.state.selectedDayTime || "Daytime"}
-                </DropDownHeader>
-                {this.state.isOpenDayTime && (
-                  <DropDownListContainer>
-                    <DropDownList>
-                      {this.state.dayTimeList.map((dayTime) => (
-                        <ListItem onClick={onOptionDayTimeClicked(dayTime)} key={Math.random()}>
-                          {dayTime}
-                        </ListItem>
-                      ))}
-                    </DropDownList>
-                  </DropDownListContainer>
-                )}
-              </DropDownContainer>
-            </div> */}
               <div>
                 <h3>{t("Choose_event")}</h3>
                 <DropDownContainer>
@@ -1064,6 +1044,40 @@ class SearchBar extends React.Component {
                   )}
                 </DropDownContainer>
               </div>
+
+              <div>
+                <h3>{t("Choose_date")}</h3>
+                <DatePicker
+                  selected={this.state.selectedDate}
+                  onChange={(date) => this.setState({ selectedDate: date })}
+                  dateFormat="dd/MM/yyyy"
+                  disabled={false}
+                  maxDate={this.state.selectedDate}
+                />
+              </div>
+
+              <TimeDurationCalculator conveyDuration={this.conveyDuration} />
+
+              {/* <div>
+              <h3>{t("Choose_day_time")}</h3>
+              <DropDownContainer>
+                <DropDownHeader onClick={togglingDayTime}>
+                  {this.state.selectedDayTime || "Daytime"}
+                </DropDownHeader>
+                {this.state.isOpenDayTime && (
+                  <DropDownListContainer>
+                    <DropDownList>
+                      {this.state.dayTimeList.map((dayTime) => (
+                        <ListItem onClick={onOptionDayTimeClicked(dayTime)} key={Math.random()}>
+                          {dayTime}
+                        </ListItem>
+                      ))}
+                    </DropDownList>
+                  </DropDownListContainer>
+                )}
+              </DropDownContainer>
+            </div> */}
+
               <div>
                 <h3>{t("Choose_user")}</h3>
                 <p>
