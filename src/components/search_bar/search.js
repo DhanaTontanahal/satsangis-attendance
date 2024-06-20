@@ -192,6 +192,8 @@ class SearchBar extends React.Component {
     // };
 
     this.state = {
+      allActForUser: [],
+      openAllActivities: false,
       durationOfSeva: 0,
       openAllMonths: false,
       activitiesCalendarData: null,
@@ -582,6 +584,91 @@ class SearchBar extends React.Component {
     }, {});
   };
 
+  parseDateForUser = (timestamp) => {
+    const [day, month, year] = timestamp.split(" ")[0].split("-");
+    return `${year}-${parseInt(month)}-${parseInt(day)}`;
+  };
+
+  // Function to transform the activity data for a specific user
+  transformActivityDataForUser = (data, userId) => {
+    const activities = {};
+
+    for (const [date, activitiesByType] of Object.entries(data)) {
+      for (const [activityName, users] of Object.entries(activitiesByType)) {
+        if (users[userId]) {
+          const parsedDate = this.parseDateForUser(users[userId].timestamp);
+          if (!activities[parsedDate]) {
+            activities[parsedDate] = [];
+          }
+          activities[parsedDate].push(activityName);
+        }
+      }
+    }
+
+    return activities;
+  };
+
+  getMonthName = (monthNumber) => {
+    const monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+    return monthNames[monthNumber];
+  };
+
+  handleHistoryAllActivities = async () => {
+    const loginObj = JSON.parse(localStorage.getItem("loginObject"));
+    console.log(loginObj);
+    const refAddress = "satsangiUsers-attendance/";
+
+    const databaseRef = firebase.database().ref(refAddress);
+    const currentMonth = new Date().getMonth() + 1; // Months are 0-indexed in JS
+    const currentMonthName = this.getMonthName(currentMonth - 1);
+    // Query to get nodes matching "June-2024"
+    databaseRef
+      .orderByKey()
+      .startAt("1-" + currentMonthName + "-" + new Date().getFullYear())
+      .endAt("30-" + currentMonthName + "-" + new Date().getFullYear())
+      .once("value", (snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          // Filter keys that contain "June-2024"
+          const juneData = {};
+          for (const key in data) {
+            if (
+              data.hasOwnProperty(key) &&
+              key.includes("June-" + new Date().getFullYear())
+            ) {
+              juneData[key] = data[key];
+            }
+          }
+          // console.log(juneData);
+
+          const activityData = juneData;
+
+          const userId = loginObj.userName.branchCode;
+          const activities = this.transformActivityDataForUser(
+            activityData,
+            userId
+          );
+
+          this.setState({ allActForUser: activities, openAllActivities: true });
+        } else {
+          console.log("No data found for this month in this year");
+        }
+      });
+  };
+
   handleHistory = async (openAllMonths = false) => {
     const loginObj = JSON.parse(localStorage.getItem("loginObject"));
     const refAddress =
@@ -604,7 +691,7 @@ class SearchBar extends React.Component {
         const activitiesCalendarDataFormed =
           this.transformActivityDataForCurrentMonth(keys);
         console.log(keys);
-        console.log(activitiesCalendarDataFormed);
+        // console.log(activitiesCalendarDataFormed);
         this.dumm = activitiesCalendarDataFormed;
         this.setState({
           activitiesCalendarData: activitiesCalendarDataFormed,
@@ -619,6 +706,7 @@ class SearchBar extends React.Component {
             open: false,
           });
         }
+
         return snapshot.val();
       });
     if (this.state.selectedEvent === null) {
@@ -995,10 +1083,15 @@ class SearchBar extends React.Component {
                 {t('My Attendance')}
               </button> */}
               </div>
-              <h2>
-                {t("Hearty Ra dha sva Aa mi")}{" "}
-                {this.state.userName?.nameSatsangi}
-              </h2>
+              <h3>
+                {t("Ra dha sva Aa mi")} {this.state.userName?.nameSatsangi}
+              </h3>
+              <button
+                className="btn-history"
+                onClick={() => this.handleHistoryAllActivities()}
+              >
+                {t("All activities")}
+              </button>
               <button
                 className="btn-history"
                 onClick={() => this.handleHistory()}
@@ -1011,6 +1104,19 @@ class SearchBar extends React.Component {
               >
                 {t("All month activity")}
               </button>
+
+              {this.state.openAllActivities ? (
+                <div className="App">
+                  <Calendar
+                    year={new Date().getFullYear()}
+                    month={new Date().getMonth()}
+                    activities={this.state.allActForUser}
+                  />
+                </div>
+              ) : (
+                ""
+              )}
+
               {this.state.open ? (
                 <div className="App">
                   <Calendar

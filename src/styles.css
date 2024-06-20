@@ -111,7 +111,7 @@ input {
 
 
 
-
+/*
 .calendar {
   display: flex;
   flex-direction: column;
@@ -165,9 +165,74 @@ input {
 }
 
 .activity {
-  background-color: #ffeb3b;
+  overflow-wrap: break-word;
   padding: 2px 4px;
   margin-bottom: 2px;
   border-radius: 3px;
   font-size: 12px;
+}
+
+*/
+
+
+
+/* src/Calendar.css */
+.calendar {
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.calendar-header {
+  display: flex;
+  background-color: #f4f4f4;
+  padding: 10px 0;
+}
+
+.calendar-header>div {
+  flex: 1;
+  text-align: center;
+  font-weight: bold;
+}
+
+.calendar-body {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.calendar-row {
+  display: flex;
+  width: 100%;
+}
+
+.calendar-cell {
+  flex: 1;
+  border: 1px solid #eee;
+  min-height: 100px;
+  position: relative;
+  text-align: center;
+}
+
+.day-number {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  font-weight: bold;
+}
+
+.activities {
+  padding: 20px 5px 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.activity {
+  margin: 5px 0;
+  padding: 5px;
+  border-radius: 3px;
+  color: #fff;
+  width: 90%;
+  text-align: center;
 }
