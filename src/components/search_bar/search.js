@@ -1007,9 +1007,9 @@ class SearchBar extends React.Component {
                 <button className="btn-logout" onClick={handleLogout}>
                   {t("Logout")}
                 </button>
-                <button className="btn-notice" onClick={handleNoticeBoard}>
+                {/* <button className="btn-notice" onClick={handleNoticeBoard}>
                   {t("Notice board")}
-                </button>
+                </button> */}
                 {this.state.showNoticeBoard && (
                   <StyledHistoryPopUp className="historyPopUp">
                     {(this.state.userName.nameSatsangi ===
@@ -1083,9 +1083,10 @@ class SearchBar extends React.Component {
                 {t('My Attendance')}
               </button> */}
               </div>
-              <h3>
-                {t("Ra dha sva Aa mi")} {this.state.userName?.nameSatsangi}
-              </h3>
+              <h3>{t("Ra dha sva Aa mi")}</h3>
+              <br />
+              {this.state.userName?.nameSatsangi}
+              <br />
               <button
                 className="btn-history"
                 onClick={() => this.handleHistoryAllActivities()}
@@ -1098,12 +1099,12 @@ class SearchBar extends React.Component {
               >
                 {t("My Attendance")}
               </button>
-              <button
+              {/* <button
                 className="btn-history"
                 onClick={() => this.handleHistory(true)}
               >
                 {t("All month activity")}
-              </button>
+              </button> */}
 
               {this.state.openAllActivities ? (
                 <div className="App">

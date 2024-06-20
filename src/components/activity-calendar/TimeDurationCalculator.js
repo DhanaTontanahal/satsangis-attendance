@@ -40,7 +40,8 @@ function TimeDurationCalculator(props) {
       <h2>Activity Duration</h2>
       <div>
         <label>
-          Start Time:
+          Start Time
+          <br />
           <input
             type="time"
             value={startTime}
@@ -50,7 +51,8 @@ function TimeDurationCalculator(props) {
       </div>
       <div>
         <label>
-          End Time:
+          End Time
+          <br />
           <input type="time" value={endTime} onChange={handleEndTimeChange} />
         </label>
       </div>
