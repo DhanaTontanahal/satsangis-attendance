@@ -152,12 +152,12 @@ const button = {
 };
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAU81s1rRvC_Lkj5C7lUGUmGjhocvDRagc",
-  authDomain: "nagpurbranch-ams.firebaseapp.com",
-  projectId: "nagpurbranch-ams",
-  storageBucket: "nagpurbranch-ams.appspot.com",
-  messagingSenderId: "57492848510",
-  appId: "1:57492848510:web:8e9191ccfa3053878a3d2f",
+  apiKey: "AIzaSyBVdtWO9xHT_Xo4zQ7P2BWLPfKiy46r0cw",
+  authDomain: "saran-nagar-ams.firebaseapp.com",
+  projectId: "saran-nagar-ams",
+  storageBucket: "saran-nagar-ams.appspot.com",
+  messagingSenderId: "146909557197",
+  appId: "1:146909557197:web:0571624522d79581549484",
 };
 var backspace_count = 0;
 function handleEnter(event) {
@@ -381,14 +381,14 @@ class SearchBar extends React.Component {
         firebase.initializeApp(firebaseConfig);
         await firebase
           .auth()
-          .signInWithEmailAndPassword("nagpurams@ams.com", "Radhasoami");
+          .signInWithEmailAndPassword("sarannagarams@ams.com", "Radhasvaaami");
         // .then((data) => console.log(data))
         // .catch(error => console.log(error))
       } else {
         firebase.app(); // if already initialized, use that one
         await firebase
           .auth()
-          .signInWithEmailAndPassword("nagpurams@ams.com", "Radhasoami");
+          .signInWithEmailAndPassword("sarannagarams@ams.com", "Radhasvaaami");
         // .then((data) => console.log(data))
         // .catch(error => console.log(error))
       }
@@ -479,14 +479,14 @@ class SearchBar extends React.Component {
 
         await firebase
           .auth()
-          .signInWithEmailAndPassword("nagpurams@ams.com", "Radhasoami");
+          .signInWithEmailAndPassword("sarannagarams@ams.com", "Radhasvaaami");
         //.then((data) => console.log(data))
         //.catch(error => console.log(error))
       } else {
         firebase.app(); // if already initialized, use that one
         await firebase
           .auth()
-          .signInWithEmailAndPassword("nagpurams@ams.com", "Radhasoami");
+          .signInWithEmailAndPassword("sarannagarams@ams.com", "Radhasvaaami");
         //.then((data) => console.log(data))
         //.catch(error => console.log(error))
       }
