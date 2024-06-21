@@ -16,7 +16,7 @@ i18n
           Choose_user: "Start Typing Name(s)",
           Submit_Attendance: "Submit Attendance",
           submit_message: "Ra-dha-sva-Aa-mi \nYour request is submitted!",
-          Choose_Year_of_Birth: "Choose Year of Birth",
+          Choose_Year_of_Birth: "Enter 4 digit code",
           Choose_UID: "Choose UID",
           Login: "Login",
           Radhasoami: "Ra-dha-sva-Aa-mi",
