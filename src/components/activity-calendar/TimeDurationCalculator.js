@@ -37,10 +37,13 @@ function TimeDurationCalculator(props) {
 
   return (
     <div>
-      <h2>Activity Duration</h2>
+      <h3>
+        Activity Duration &nbsp;<i class="fas fa-business-time"></i>
+        {duration}
+      </h3>
       <div>
         <label>
-          Start Time
+          Start Time &nbsp;<i class="fas fa-hourglass-start"></i>
           <br />
           <input
             type="time"
@@ -51,14 +54,14 @@ function TimeDurationCalculator(props) {
       </div>
       <div>
         <label>
-          End Time
+          End Time &nbsp; <i class="fa fa-hourglass-start"></i>
           <br />
           <input type="time" value={endTime} onChange={handleEndTimeChange} />
         </label>
       </div>
-      <div>
+      {/* <div>
         <h3>Duration: {duration}</h3>
-      </div>
+      </div> */}
     </div>
   );
 }

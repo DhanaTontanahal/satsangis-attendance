@@ -17,6 +17,7 @@ import thumbsUp from "./856-thumbs-up-grey-blue.json";
 import Chip from "./Chips";
 import Register from "./Register";
 import Calendar from "../activity-calendar/Calendar";
+import PeopleCalendar from "../activity-calendar/PeopleCalendar";
 import TimeDurationCalculator from "../activity-calendar/TimeDurationCalculator";
 require("firebase/auth");
 require("firebase/database");
@@ -192,6 +193,8 @@ class SearchBar extends React.Component {
     // };
 
     this.state = {
+      openAllAttsFOraMonth: false,
+      allAttsForMonth: [],
       allActForUser: [],
       openAllActivities: false,
       durationOfSeva: 0,
@@ -626,9 +629,50 @@ class SearchBar extends React.Component {
     return monthNames[monthNumber];
   };
 
-  handleHistoryAllActivities = async () => {
-    const loginObj = JSON.parse(localStorage.getItem("loginObject"));
-    console.log(loginObj);
+  getMonthNumber = (monthName) => {
+    const monthNumber = {
+      January: 1,
+      February: 2,
+      March: 3,
+      April: 4,
+      May: 5,
+      June: 6,
+      July: 7,
+      August: 8,
+      September: 9,
+      October: 10,
+      November: 11,
+      December: 12,
+    };
+    return monthNumber[monthName];
+  };
+
+  getDataForParticularMonth = () => {
+    // console.log(loginObj);
+  };
+
+  transformData = (data) => {
+    const people = {};
+
+    data.forEach((item) => {
+      console.log(item.datePresent);
+      const [day, month, year] = item.datePresent.split("-");
+      console.log(month);
+      const currentMonthName = this.getMonthNumber(month);
+      console.log(currentMonthName);
+      const formattedDate = `${year}-${currentMonthName}-${parseInt(day)}`;
+      if (!people[formattedDate]) {
+        people[formattedDate] = [];
+      }
+      if (!people[formattedDate].includes(item.nameSatsangi)) {
+        people[formattedDate].push(item.nameSatsangi);
+      }
+    });
+
+    return people;
+  };
+
+  getAttendeesByActivity() {
     const refAddress = "satsangiUsers-attendance/";
 
     const databaseRef = firebase.database().ref(refAddress);
@@ -652,19 +696,93 @@ class SearchBar extends React.Component {
               juneData[key] = data[key];
             }
           }
-          // console.log(juneData);
+          const activityName = this.state.selectedEvent;
+          //console.log(activityName);
+          //console.log(juneData);
 
-          const activityData = juneData;
+          let attendees = [];
+          // Loop through each date
+          for (let date in juneData) {
+            // Loop through each activity on the current date
+            for (let activity in juneData[date]) {
+              // Check if the current activity matches the provided activity name
+              if (activity === activityName) {
+                // Loop through each attendee in the current activity
+                for (let attendee in juneData[date][activity]) {
+                  // Push attendee details to the attendees array
+                  attendees.push(juneData[date][activity][attendee]);
+                }
+                // Since there should be only one activity matching the name per date,
+                // we can break out of the loop early once found
+                break;
+              }
+            }
+          }
+          //console.log(attendees);
 
+          const people = this.transformData(attendees);
+
+          //console.log(people);
+          this.setState({
+            allAttsForMonth: people,
+            openAllAttsFOraMonth: !this.state.openAllAttsFOraMonth,
+            open: false,
+            openAllActivities: false,
+          });
+        }
+      });
+  }
+
+  getDataForAttendees() {
+    if (this.state.selectedEvent === null) {
+      alert("Please select event");
+      this.setState({
+        open: false,
+        openAllActivities: false,
+        openAllAttsFOraMonth: false,
+      });
+      return;
+    }
+    this.getAttendeesByActivity();
+  }
+
+  handleHistoryAllActivities = async () => {
+    const loginObj = JSON.parse(localStorage.getItem("loginObject"));
+
+    const refAddress = "satsangiUsers-attendance/";
+
+    const databaseRef = firebase.database().ref(refAddress);
+    const currentMonth = new Date().getMonth() + 1; // Months are 0-indexed in JS
+    const currentMonthName = this.getMonthName(currentMonth - 1);
+    // Query to get nodes matching "June-2024"
+    databaseRef
+      .orderByKey()
+      .startAt("1-" + currentMonthName + "-" + new Date().getFullYear())
+      .endAt("30-" + currentMonthName + "-" + new Date().getFullYear())
+      .once("value", (snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          // Filter keys that contain "June-2024"
+          const juneData = {};
+          for (const key in data) {
+            if (
+              data.hasOwnProperty(key) &&
+              key.includes("June-" + new Date().getFullYear())
+            ) {
+              juneData[key] = data[key];
+            }
+          }
           const userId = loginObj.userName.branchCode;
           const activities = this.transformActivityDataForUser(
-            activityData,
+            juneData,
             userId
           );
-
-          this.setState({ allActForUser: activities, openAllActivities: true });
-        } else {
-          console.log("No data found for this month in this year");
+          this.setState({
+            allActForUser: activities,
+            openAllActivities: !this.state.openAllActivities,
+            open: false,
+            openAllMonths: false,
+          });
         }
       });
   };
@@ -690,20 +808,23 @@ class SearchBar extends React.Component {
 
         const activitiesCalendarDataFormed =
           this.transformActivityDataForCurrentMonth(keys);
-        console.log(keys);
+        // console.log(keys);
         // console.log(activitiesCalendarDataFormed);
         this.dumm = activitiesCalendarDataFormed;
         this.setState({
           activitiesCalendarData: activitiesCalendarDataFormed,
           historyData: keys,
-          open: true,
+          open: !this.state.open,
+          openAllActivities: false,
         });
         if (openAllMonths) {
           this.setState({
             activitiesCalendarData: activitiesCalendarDataFormed,
             historyData: keys,
             openAllMonths: true,
+            openAllActivities: false,
             open: false,
+            openAllAttsFOraMonth: false,
           });
         }
 
@@ -711,6 +832,11 @@ class SearchBar extends React.Component {
       });
     if (this.state.selectedEvent === null) {
       alert("Please select event");
+      this.setState({
+        open: false,
+        openAllActivities: false,
+        openAllAttsFOraMonth: false,
+      });
       return;
     }
   };
@@ -796,8 +922,8 @@ class SearchBar extends React.Component {
 
     const onOptionClicked = (value) => () => {
       this.setState({ selectedEvent: value });
-      this.setState({ isOpen: false });
-      this.handleHistory();
+      // this.setState({ isOpen: false });
+      // this.handleHistory();
       // console.log(this.state.selectedEvent);
     };
 
@@ -1000,12 +1126,22 @@ class SearchBar extends React.Component {
                 </StyledHistoryPopUp>
               )}
               <div className="btn-container">
-                <button onClick={() => this.handleOnCLick("en")}>
-                  English
+                <button
+                  className="btn-history"
+                  onClick={() => this.handleOnCLick("en")}
+                >
+                  En
                 </button>
-                <button onClick={() => this.handleOnCLick("hi")}>Hindi</button>
-                <button className="btn-logout" onClick={handleLogout}>
-                  {t("Logout")}
+                &nbsp;&nbsp;
+                <button
+                  className="btn-history"
+                  onClick={() => this.handleOnCLick("hi")}
+                >
+                  हिंदी
+                </button>
+                &nbsp;&nbsp;
+                <button className="btn-history" onClick={handleLogout}>
+                  {t("Logout")}&nbsp;<i class="fas fa-power-off"></i>
                 </button>
                 {/* <button className="btn-notice" onClick={handleNoticeBoard}>
                   {t("Notice board")}
@@ -1083,22 +1219,37 @@ class SearchBar extends React.Component {
                 {t('My Attendance')}
               </button> */}
               </div>
-              <h3>{t("Ra dha sva Aa mi")}</h3>
-              <br />
-              {this.state.userName?.nameSatsangi}
-              <br />
-              <button
-                className="btn-history"
-                onClick={() => this.handleHistoryAllActivities()}
-              >
-                {t("All activities")}
-              </button>
+              <hr />
+              <h3>{t("Ra Dha Sva Aa Mi")}</h3>
+              <b>{this.state.userName?.nameSatsangi}</b>
+              <hr />
               <button
                 className="btn-history"
                 onClick={() => this.handleHistory()}
               >
-                {t("My Attendance")}
+                {t("My Attendance")}&nbsp;
+                {this.state.open ? (
+                  <i class="fas fa-bookmark"></i>
+                ) : (
+                  <i class="far fa-bookmark"></i>
+                )}
               </button>
+
+              <button
+                className="btn-history"
+                onClick={() => this.handleHistoryAllActivities()}
+              >
+                {t("My activities")}&nbsp;<i class="fas fa-network-wired"></i>
+              </button>
+
+              <button
+                className="btn-history"
+                onClick={() => this.getDataForAttendees()}
+              >
+                All attendees &nbsp;
+                <i class="fas fa-users"></i>
+              </button>
+
               {/* <button
                 className="btn-history"
                 onClick={() => this.handleHistory(true)}
@@ -1118,6 +1269,18 @@ class SearchBar extends React.Component {
                 ""
               )}
 
+              {this.state.openAllAttsFOraMonth ? (
+                <div className="App">
+                  <Calendar
+                    year={new Date().getFullYear()}
+                    month={new Date().getMonth()}
+                    activities={this.state.allAttsForMonth}
+                  />
+                </div>
+              ) : (
+                ""
+              )}
+
               {this.state.open ? (
                 <div className="App">
                   <Calendar
@@ -1130,7 +1293,10 @@ class SearchBar extends React.Component {
                 ""
               )}
               <div>
-                <h3>{t("Choose_event")}</h3>
+                <h3>
+                  {t("Choose_event")}&nbsp;
+                  <i class="fas fa-suitcase"></i>
+                </h3>
                 <DropDownContainer>
                   <DropDownHeaderEvent onClick={toggling}>
                     {this.state.selectedEvent || "Event"}
@@ -1153,7 +1319,11 @@ class SearchBar extends React.Component {
               </div>
 
               <div>
-                <h3>{t("Choose_date")}</h3>
+                <h3>
+                  {t("Choose_date")} &nbsp;
+                  <i class="far fa-calendar-alt"></i>
+                </h3>
+
                 <DatePicker
                   selected={this.state.selectedDate}
                   onChange={(date) => this.setState({ selectedDate: date })}
@@ -1186,10 +1356,12 @@ class SearchBar extends React.Component {
             </div> */}
 
               <div>
-                <h3>{t("Choose_user")}</h3>
-                <p>
+                <h3>
+                  {t("Choose_user")} &nbsp;<i class="fas fa-user-alt"></i>
+                </h3>
+                {/* <p>
                   {t("Total_attendees")} - {this.state.selectedUsers.length}
-                </p>
+                </p> */}
                 <div>
                   {this.state.selectedUsers?.map((user, index) => (
                     <Chip
@@ -1398,9 +1570,9 @@ class SearchBar extends React.Component {
                 classname="btn-english"
                 onClick={() => this.handleOnCLick("en")}
               >
-                English
+                En
               </button>
-              <button onClick={() => this.handleOnCLick("hi")}>Hindi</button>
+              <button onClick={() => this.handleOnCLick("hi")}>हिंदी</button>
             </div>
             <h1>{t("Satsangis_Attendance")} </h1>
             <div>

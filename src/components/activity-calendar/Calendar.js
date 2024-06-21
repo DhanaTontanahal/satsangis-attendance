@@ -48,7 +48,7 @@ const Calendar = ({ year, month, activities }) => {
   }
 
   const getActivityStyle = (activityName) => {
-    return { backgroundColor: colorScheme[activityName] || "lightgrey" };
+    return { backgroundColor: colorScheme[activityName] || "lightcoral" };
   };
 
   return (

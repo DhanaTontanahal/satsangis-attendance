@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-const Calendar = ({ year, month, activities }) => {
+const PeopleCalendar = ({ year, month, activities }) => {
   const [selectedDate, setSelectedDate] = useState(null);
 
   const getDaysInMonth = (year, month) => {
@@ -109,4 +109,4 @@ const Calendar = ({ year, month, activities }) => {
   );
 };
 
-export default Calendar;
+export default PeopleCalendar;

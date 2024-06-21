@@ -12,7 +12,7 @@ i18n
         translation: {
           Satsangis_Attendance: "Satsangis Attendance (Youth Association)",
           Choose_date: "Select Date",
-          Choose_event: "Select Event",
+          Choose_event: "Select Activity",
           Choose_user: "Start Typing Name(s)",
           Submit_Attendance: "Submit Attendance",
           submit_message: "Ra-dha-sva-Aa-mi \nYour request is submitted!",
