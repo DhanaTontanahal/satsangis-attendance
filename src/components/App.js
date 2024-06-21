@@ -10,7 +10,7 @@ i18n
     resources: {
       en: {
         translation: {
-          Satsangis_Attendance: "Satsangis Attendance (Youth Association)",
+          Satsangis_Attendance: "Satsangis Attendance",
           Choose_date: "Select Date",
           Choose_event: "Select Activity",
           Choose_user: "Start Typing Name(s)",
