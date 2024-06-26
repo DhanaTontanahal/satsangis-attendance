@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import BarcodeScanner from 'react-qr-barcode-scanner';
-import Modal from './Modal';
-import useSound from 'use-sound';
+import React, { useEffect, useState } from "react";
+import BarcodeScanner from "react-qr-barcode-scanner";
+import Modal from "./Modal";
+import useSound from "use-sound";
 
-import classes from './qr-reader.module.css';
+import classes from "./qr-reader.module.css";
 
-const QRReader = ({ handleScanFinished, buttonText }) => {
+const QRReader = ({ handleScanFinished, buttonText, closeModalNow }) => {
   const [showModal, setShowModal] = useState(false);
   const [data, setData] = useState(null);
   const [barScan, setBarScan] = useState(false);
@@ -13,6 +13,13 @@ const QRReader = ({ handleScanFinished, buttonText }) => {
   const [playAlert] = useSound(`${process.env.PUBLIC_URL}/assets/alert.wav`, {
     volume: 0.25,
   });
+
+  useEffect(() => {
+    if (!!closeModalNow) {
+      setShowModal(false);
+      // markAttendanceNow();
+    }
+  }, [closeModalNow]);
 
   const handleBarcodeScan = (err, res) => {
     if (err) console.error(err);
@@ -27,7 +34,7 @@ const QRReader = ({ handleScanFinished, buttonText }) => {
     <div className={classes.container}>
       <button
         className={classes.btn}
-        onClick={e => {
+        onClick={(e) => {
           e.preventDefault();
           setShowModal(true);
           setBarScan(true);
@@ -43,11 +50,11 @@ const QRReader = ({ handleScanFinished, buttonText }) => {
               className={classes.closeModal}
               onClick={() => setShowModal(false)}
             >
-              X
+              Close X
             </button>
             {barScan && (
               <BarcodeScanner
-                style={{ width: '90%', height: '70%' }}
+                style={{ width: "90%", height: "70%" }}
                 onUpdate={handleBarcodeScan}
               />
             )}

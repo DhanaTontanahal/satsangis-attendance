@@ -25,7 +25,7 @@ i18n
           Example: "Example",
           no_internet_connection: "No internet connection",
           Logout: "Signout",
-          Scan: "Scan QR Code / Barcode",
+          Scan: "Scan QR Code to choose seva activity ",
         },
       },
       hi: {

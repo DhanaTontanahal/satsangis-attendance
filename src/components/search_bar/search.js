@@ -12,8 +12,8 @@ import { withTranslation } from "react-i18next";
 import i18n from "i18next";
 import Lottie from "react-lottie";
 import thumbsUp from "./856-thumbs-up-grey-blue.json";
-// import QRReader from "../QRReader/QRReader";
-// import QrReader from 'react-qr-reader';
+import QRReader from "../QRReader/QRReader";
+import QrReader from "react-qr-reader";
 import Chip from "./Chips";
 import Register from "./Register";
 import Calendar from "../activity-calendar/Calendar";
@@ -192,6 +192,7 @@ class SearchBar extends React.Component {
     // };
 
     this.state = {
+      closeModalNow: false,
       neededHelp: false,
       openAllAttsFOraMonth: false,
       allAttsForMonth: [],
@@ -362,18 +363,18 @@ class SearchBar extends React.Component {
     this.setState({ durationOfSeva: d });
   };
   submitAttendance = async () => {
-    if (this.state.submitSuccess) {
-      return;
-    }
-    if (this.state.selectedEvent === null) {
-      alert("Please select a valid event");
-      return;
-    }
+    // if (this.state.submitSuccess) {
+    //   return;
+    // }
+    // if (this.state.selectedEvent === null) {
+    //   alert("Please select a valid event");
+    //   return;
+    // }
 
-    if (this.state.selectedUsers.length === 0) {
-      alert("Please select attendees");
-      return;
-    }
+    // if (this.state.selectedUsers.length === 0) {
+    //   alert("Please select attendees");
+    //   return;
+    // }
     // console.log(this.state.selectedDate, this.state.selectedEvent, this.state.selectedUsers)
 
     // Initialize Firebase
@@ -400,7 +401,12 @@ class SearchBar extends React.Component {
         "-" +
         this.state.selectedDate.getFullYear();
       // console.log(attendanceDate)
-
+      console.log("this.state.selectedUsers");
+      console.log(this.state.selectedUsers);
+      console.log(this.state.userName);
+      if (this.state.selectedUsers.length === 0) {
+        this.setState({ selectedUsers: [this.state.userName] });
+      }
       this.state.selectedUsers.forEach((user) => {
         user.attendanceMarkedByUID = this.state.userName.newUID;
         user.attendanceMarkedByName = this.state.userName.nameSatsangi;
@@ -422,6 +428,8 @@ class SearchBar extends React.Component {
           currentTimestamp.getSeconds();
 
         console.log(user);
+        console.log(this.state.selectedEvent);
+        console.log(attendanceDate);
         // These two lines are commented to disable the submit attendance
         firebase
           .database()
@@ -589,7 +597,9 @@ class SearchBar extends React.Component {
 
   parseDateForUser = (timestamp) => {
     const [day, month, year] = timestamp.split(" ")[0].split("-");
-    return `${year}-${parseInt(month)}-${parseInt(day)}`;
+    console.log(day, month, year);
+    // return `${year}-${parseInt(month)}-${parseInt(day)}`;
+    return `${year}-${this.getMonthNumber(month)}-${parseInt(day)}`;
   };
 
   // Function to transform the activity data for a specific user
@@ -599,7 +609,9 @@ class SearchBar extends React.Component {
     for (const [date, activitiesByType] of Object.entries(data)) {
       for (const [activityName, users] of Object.entries(activitiesByType)) {
         if (users[userId]) {
-          const parsedDate = this.parseDateForUser(users[userId].timestamp);
+          // const parsedDate = this.parseDateForUser(users[userId].timestamp);
+          const parsedDate = this.parseDateForUser(users[userId].datePresent);
+          console.log(parsedDate);
           if (!activities[parsedDate]) {
             activities[parsedDate] = [];
           }
@@ -755,9 +767,10 @@ class SearchBar extends React.Component {
     const currentMonth = new Date().getMonth() + 1; // Months are 0-indexed in JS
     const currentMonthName = this.getMonthName(currentMonth - 1);
     // Query to get nodes matching "June-2024"
+    console.log(currentMonthName);
     databaseRef
       .orderByKey()
-      .startAt("1-" + currentMonthName + "-" + new Date().getFullYear())
+      .startAt("01-" + currentMonthName + "-" + new Date().getFullYear())
       .endAt("30-" + currentMonthName + "-" + new Date().getFullYear())
       .once("value", (snapshot) => {
         if (snapshot.exists()) {
@@ -773,10 +786,13 @@ class SearchBar extends React.Component {
             }
           }
           const userId = loginObj.userName.branchCode;
+          console.log(juneData);
           const activities = this.transformActivityDataForUser(
             juneData,
             userId
           );
+
+          console.log(activities);
           this.setState({
             allActForUser: activities,
             openAllActivities: !this.state.openAllActivities,
@@ -857,22 +873,101 @@ class SearchBar extends React.Component {
     }
   };
 
-  handleScanFinished = (data) => {
-    if (data) {
-      const ifAvailable = this.state.selectedUsers.findIndex(
-        (user) => user.newUID === data
-      );
-      const filteredUserObject = Object.values(this.state.userData).find(
-        (element) => element.newUID === data
-      );
-      console.log(this.state.userData[data]);
-
-      if (filteredUserObject && ifAvailable === -1) {
-        this.state.selectedUsers.push(filteredUserObject);
-        this.setState({
-          selectedUsers: this.state.selectedUsers,
-        });
+  markAttendanceNow = () => {
+    try {
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+        firebase
+          .auth()
+          .signInWithEmailAndPassword("sarannagarams@ams.com", "Radhasvaaami");
+      } else {
+        firebase.app(); // if already initialized, use that one
+        firebase
+          .auth()
+          .signInWithEmailAndPassword("sarannagarams@ams.com", "Radhasvaaami");
       }
+      const attendanceDate =
+        ("0" + this.state.selectedDate.getDate()).slice(-2) +
+        "-" +
+        this.state.selectedDate.toLocaleString("default", { month: "long" }) +
+        "-" +
+        this.state.selectedDate.getFullYear();
+
+      console.log(attendanceDate);
+      console.log(this.state.userName);
+      //   const selectedUsersHardScan = [this.state.userName];
+      //console.log(selectedUsersHardScan);
+
+      //  selectedUsersHardScan.forEach((user) => {
+      let markUser = {};
+      markUser.branchCode = this.state.userName.newUID;
+      markUser.newUID = this.state.userName.newUID;
+      markUser.attendanceMarkedByUID = this.state.userName.newUID;
+      markUser.attendanceMarkedByName = this.state.userName.nameSatsangi;
+      markUser.activityName = this.state.selectedEvent.replace("\n", "");
+      markUser.datePresent = attendanceDate;
+      markUser.durationOfSeva = this.state.durationOfSeva || 60;
+      let currentTimestamp = new Date();
+      markUser.timestamp =
+        currentTimestamp.getDate() +
+        "-" +
+        (currentTimestamp.getMonth() + 1) +
+        "-" +
+        currentTimestamp.getFullYear() +
+        " " +
+        currentTimestamp.getHours() +
+        ":" +
+        currentTimestamp.getMinutes() +
+        ":" +
+        currentTimestamp.getSeconds();
+
+      console.log(markUser);
+      console.log(this.state.selectedEvent);
+      console.log(attendanceDate);
+      console.log(firebase);
+
+      console.log("about to mark attendance........");
+
+      firebase
+        .database()
+        .ref(
+          "satsangiUsers-attendance/" +
+            this.state.selectedEvent.replace("\n", "") +
+            "/" +
+            markUser.branchCode +
+            "/" +
+            attendanceDate
+        )
+        .set(markUser);
+
+      firebase
+        .database()
+        .ref(
+          "satsangiUsers-attendance/" +
+            attendanceDate +
+            "/" +
+            this.state.selectedEvent.replace("\n", "") +
+            "/" +
+            markUser.newUID
+        )
+        .set(markUser);
+
+      console.log("control here...");
+      //  });
+
+      console.log("attendance submitted now !!");
+
+      this.setState({ submitSuccess: true });
+    } catch {}
+  };
+  handleScanFinished = (data) => {
+    console.log(data);
+    console.log("==============================handleScanFinished========");
+    if (data) {
+      // console.log(data);
+      this.setState({ selectedEvent: data });
+      this.setState({ closeModalNow: true });
+      this.markAttendanceNow();
     }
   };
 
@@ -1259,6 +1354,14 @@ class SearchBar extends React.Component {
                 {t("All month activity")}
               </button> */}
 
+              <QRReader
+                //markAttendanceNow={this.markAttendanceNow}
+                closeModalNow={this.state.closeModalNow}
+                handleScanFinished={this.handleScanFinished}
+                buttonText={t("Scan")}
+              />
+              <p>Selected Activity is {this.state.selectedEvent}</p>
+              <p>Or</p>
               {this.state.openAllActivities ? (
                 <div className="App">
                   <Calendar
