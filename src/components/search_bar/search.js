@@ -1571,7 +1571,7 @@ class SearchBar extends React.Component {
                       background: "aliceblue",
                       width: "max-content",
                       margin: "auto",
-                      fontSize: "27px",
+                      fontSize: "15px",
                       bottom: "500px",
                     }}
                   >
