@@ -17,7 +17,7 @@ import QRReader from "../QRReader/QRReader";
 import Chip from "./Chips";
 import Register from "./Register";
 import Calendar from "../activity-calendar/Calendar";
-import PeopleCalendar from "../activity-calendar/PeopleCalendar";
+// import PeopleCalendar from "../activity-calendar/PeopleCalendar";
 import TimeDurationCalculator from "../activity-calendar/TimeDurationCalculator";
 require("firebase/auth");
 require("firebase/database");
@@ -193,6 +193,8 @@ class SearchBar extends React.Component {
     // };
 
     this.state = {
+      selectMultipleUsers: false,
+      showDatePicker: false,
       closeModalNow: false,
       neededHelp: false,
       openAllAttsFOraMonth: false,
@@ -1243,19 +1245,20 @@ class SearchBar extends React.Component {
                 </StyledHistoryPopUp>
               )}
               <div className="btn-container">
-                <button
+                {/* <button
                   className="btn-history"
                   onClick={() => this.handleOnCLick("en")}
                 >
                   En
-                </button>
+                </button> */}
                 &nbsp;&nbsp;
-                <button
+                {/* <button
+
                   className="btn-history"
                   onClick={() => this.handleOnCLick("hi")}
                 >
                   हिंदी
-                </button>
+                </button> */}
                 &nbsp;&nbsp;
                 <button className="btn-history" onClick={handleLogout}>
                   {t("Logout")}&nbsp;<i class="fas fa-power-off"></i>
@@ -1337,7 +1340,12 @@ class SearchBar extends React.Component {
               </button> */}
               </div>
               <hr />
-              <h3>{t("Ra Dha Sva Aa Mi")}</h3>
+              <h3>
+                {`Scan QR Code of the activity to mark the attendance
+                    for selected date directly for loggedin user`}
+              </h3>
+              <br />
+              {/* <h3>{t("Ra Dha Sva Aa Mi")}</h3> */}
               <b>{this.state.userName?.nameSatsangi}</b>
               <hr />
               <button
@@ -1374,14 +1382,43 @@ class SearchBar extends React.Component {
                 {t("All month activity")}
               </button> */}
 
+              <div>
+                <h3>
+                  {t("Choose_date")} &nbsp;
+                  <i
+                    onClick={() => {
+                      this.setState({ showDatePicker: true });
+                    }}
+                    class="far fa-calendar-alt"
+                  ></i>
+                </h3>
+                {this.state.showDatePicker && (
+                  <DatePicker
+                    selected={this.state.selectedDate}
+                    onChange={(date) => this.setState({ selectedDate: date })}
+                    dateFormat="dd/MM/yyyy"
+                    disabled={false}
+                    maxDate={this.state.selectedDate}
+                  />
+                )}
+              </div>
+
               <QRReader
                 //markAttendanceNow={this.markAttendanceNow}
                 closeModalNow={this.state.closeModalNow}
                 handleScanFinished={this.handleScanFinished}
                 buttonText={t("Scan")}
               />
-              <p>Selected Activity is {this.state.selectedEvent}</p>
-              <p>Or</p>
+
+              {this.state.selectedEvent !== null ? (
+                <>
+                  <p>Selected Activity is {this.state.selectedEvent}</p>
+                </>
+              ) : (
+                <>
+                  <p>Or</p>
+                </>
+              )}
 
               {this.state.openAllActivities ? (
                 <div className="App">
@@ -1444,22 +1481,9 @@ class SearchBar extends React.Component {
                 </DropDownContainer>
               </div>
 
-              <div>
-                <h3>
-                  {t("Choose_date")} &nbsp;
-                  <i class="far fa-calendar-alt"></i>
-                </h3>
-
-                <DatePicker
-                  selected={this.state.selectedDate}
-                  onChange={(date) => this.setState({ selectedDate: date })}
-                  dateFormat="dd/MM/yyyy"
-                  disabled={false}
-                  maxDate={this.state.selectedDate}
-                />
-              </div>
-
-              <TimeDurationCalculator conveyDuration={this.conveyDuration} />
+              {this.state.selectedEvent !== null && (
+                <TimeDurationCalculator conveyDuration={this.conveyDuration} />
+              )}
 
               {/* <div>
               <h3>{t("Choose_day_time")}</h3>
@@ -1482,15 +1506,6 @@ class SearchBar extends React.Component {
             </div> */}
 
               <div>
-                <h3>
-                  {t("Choose_user")} &nbsp;<i class="fas fa-user-alt"></i>
-                  <br />
-                  <u>Selected users</u> <br />{" "}
-                </h3>
-                <Chip
-                  label={this.state.userName.nameSatsangi}
-                  onDelete={() => {}}
-                />
                 {/* <p>
                   {t("Total_attendees")} - {this.state.selectedUsers.length}
                 </p> */}
@@ -1502,20 +1517,42 @@ class SearchBar extends React.Component {
                     />
                   ))}
                 </div>
-                <AutoCompleteSearchBox
-                  placeHolderSearchLabel={"Search .. "}
-                  primaryIndex={"nameSatsangi"}
-                  secondaryIndex={"newUID"}
-                  showSecondarySearchCriterion={true}
-                  secondarySearchClassName="secondarySearchClassName"
-                  tertiaryIndex={"branchCode"}
-                  showTertiarySearchCriterion={true}
-                  tertiarySearchClassName="tertiarySearchClassName"
-                  suggestions={Object.values(this.state.userData)}
-                  onClick={onClick}
-                  showSearchBtn={true}
-                  searchImg={search}
-                />
+
+                <button
+                  onClick={() => {
+                    this.setState({ selectMultipleUsers: true });
+                  }}
+                  className="btn-history"
+                >
+                  Select multiple users
+                </button>
+                {this.state.selectMultipleUsers && (
+                  <div>
+                    <h3>
+                      <br />
+                      <u>Selected user(s)</u> <br />{" "}
+                      <Chip
+                        label={this.state.userName.nameSatsangi}
+                        onDelete={() => {}}
+                      />
+                    </h3>
+                    {t("Choose_user")} &nbsp;<i class="fas fa-user-alt"></i>
+                    <AutoCompleteSearchBox
+                      placeHolderSearchLabel={"Search .. "}
+                      primaryIndex={"nameSatsangi"}
+                      secondaryIndex={"newUID"}
+                      showSecondarySearchCriterion={true}
+                      secondarySearchClassName="secondarySearchClassName"
+                      tertiaryIndex={"branchCode"}
+                      showTertiarySearchCriterion={true}
+                      tertiarySearchClassName="tertiarySearchClassName"
+                      suggestions={Object.values(this.state.userData)}
+                      onClick={onClick}
+                      showSearchBtn={true}
+                      searchImg={search}
+                    />
+                  </div>
+                )}
               </div>
               {this.state.submitSuccess ? (
                 <div>
@@ -1528,7 +1565,7 @@ class SearchBar extends React.Component {
                       width: "max-content",
                       margin: "auto",
                       fontSize: "27px",
-                      bottom: "800px",
+                      bottom: "500px",
                     }}
                   >
                     {t("submit_message")}
