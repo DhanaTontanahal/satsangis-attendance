@@ -193,7 +193,6 @@ class SearchBar extends React.Component {
     // };
 
     this.state = {
-      showSummaryButtons: false,
       selectMultipleUsers: false,
       showDatePicker: false,
       closeModalNow: false,
@@ -1337,58 +1336,53 @@ class SearchBar extends React.Component {
                     </div>
                   </StyledHistoryPopUp>
                 )}
+                {/* <button className="btn-history" onClick={()=>this.handleHistory()}>
+                {t('My Attendance')}
+              </button> */}
               </div>
+              {/* <hr /> */}
               <h3>
                 {`Scan QR Code of the activity to mark the attendance
                     for selected date directly for loggedin user`}
               </h3>
+              <br />
+              {/* <h3>{t("Ra Dha Sva Aa Mi")}</h3> */}
+
               <hr />
-              {!this.state.showSummaryButtons && (
-                <button
-                  onClick={() => {
-                    this.setState({ showSummaryButtons: true });
-                  }}
-                  className="btn-history"
-                >
-                  <i className="fas fa-arrow-alt-circle-right">
-                    &nbsp; View Activity Summary
-                  </i>
-                </button>
-              )}
-
-              <>
-                {this.state.showSummaryButtons && (
-                  <>
-                    <button
-                      className="btn-history"
-                      onClick={() => this.handleHistory()}
-                    >
-                      {t("My Attendance")}&nbsp;
-                      {this.state.open ? (
-                        <i class="fas fa-bookmark"></i>
-                      ) : (
-                        <i class="far fa-bookmark"></i>
-                      )}
-                    </button>
-
-                    <button
-                      className="btn-history"
-                      onClick={() => this.handleHistoryAllActivities()}
-                    >
-                      {t("My activities")}&nbsp;
-                      <i class="fas fa-network-wired"></i>
-                    </button>
-
-                    <button
-                      className="btn-history"
-                      onClick={() => this.getDataForAttendees()}
-                    >
-                      All attendees &nbsp;
-                      <i class="fas fa-users"></i>
-                    </button>
-                  </>
+              <button
+                className="btn-history"
+                onClick={() => this.handleHistory()}
+              >
+                {t("My Attendance")}&nbsp;
+                {this.state.open ? (
+                  <i class="fas fa-bookmark"></i>
+                ) : (
+                  <i class="far fa-bookmark"></i>
                 )}
-              </>
+              </button>
+
+              <button
+                className="btn-history"
+                onClick={() => this.handleHistoryAllActivities()}
+              >
+                {t("My activities")}&nbsp;<i class="fas fa-network-wired"></i>
+              </button>
+
+              <button
+                className="btn-history"
+                onClick={() => this.getDataForAttendees()}
+              >
+                All attendees &nbsp;
+                <i class="fas fa-users"></i>
+              </button>
+
+              {/* <button
+                className="btn-history"
+                onClick={() => this.handleHistory(true)}
+              >
+                {t("All month activity")}
+              </button> */}
+
               <div>
                 <h3>
                   {t("Choose_date")} &nbsp;
@@ -1409,12 +1403,14 @@ class SearchBar extends React.Component {
                   />
                 )}
               </div>
+
               <QRReader
                 //markAttendanceNow={this.markAttendanceNow}
                 closeModalNow={this.state.closeModalNow}
                 handleScanFinished={this.handleScanFinished}
                 buttonText={t("Scan")}
               />
+
               {this.state.selectedEvent !== null ? (
                 <>
                   <p>Selected Activity is {this.state.selectedEvent}</p>
@@ -1424,6 +1420,7 @@ class SearchBar extends React.Component {
                   <p>Or</p>
                 </>
               )}
+
               {this.state.openAllActivities ? (
                 <div className="App">
                   <Calendar
@@ -1435,6 +1432,7 @@ class SearchBar extends React.Component {
               ) : (
                 ""
               )}
+
               {this.state.openAllAttsFOraMonth ? (
                 <div className="App">
                   <Calendar
@@ -1446,6 +1444,7 @@ class SearchBar extends React.Component {
               ) : (
                 ""
               )}
+
               {this.state.open ? (
                 <div className="App">
                   <Calendar
@@ -1482,9 +1481,11 @@ class SearchBar extends React.Component {
                   )}
                 </DropDownContainer>
               </div>
+
               {this.state.selectedEvent !== null && (
                 <TimeDurationCalculator conveyDuration={this.conveyDuration} />
               )}
+
               {/* <div>
               <h3>{t("Choose_day_time")}</h3>
               <DropDownContainer>
@@ -1504,6 +1505,7 @@ class SearchBar extends React.Component {
                 )}
               </DropDownContainer>
             </div> */}
+
               <div>
                 {/* <p>
                   {t("Total_attendees")} - {this.state.selectedUsers.length}
