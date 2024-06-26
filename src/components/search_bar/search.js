@@ -193,6 +193,7 @@ class SearchBar extends React.Component {
     // };
 
     this.state = {
+      showActivitySelector: false,
       showSummaryButtons: false,
       selectMultipleUsers: false,
       showDatePicker: false,
@@ -1460,27 +1461,34 @@ class SearchBar extends React.Component {
               <div>
                 <h3>
                   {t("Choose_event")}&nbsp;
-                  <i class="fas fa-suitcase"></i>
+                  <i
+                    onClick={() => {
+                      this.setState({ showActivitySelector: true });
+                    }}
+                    class="fas fa-suitcase"
+                  ></i>
                 </h3>
-                <DropDownContainer>
-                  <DropDownHeaderEvent onClick={toggling}>
-                    {this.state.selectedEvent || "Event"}
-                  </DropDownHeaderEvent>
-                  {this.state.isOpen && (
-                    <DropDownListContainer>
-                      <DropDownListEvent>
-                        {this.state.eventList.map((event) => (
-                          <ListItem
-                            onClick={onOptionClicked(event)}
-                            key={Math.random()}
-                          >
-                            {event}
-                          </ListItem>
-                        ))}
-                      </DropDownListEvent>
-                    </DropDownListContainer>
-                  )}
-                </DropDownContainer>
+                {this.state.showActivitySelector && (
+                  <DropDownContainer>
+                    <DropDownHeaderEvent onClick={toggling}>
+                      {this.state.selectedEvent || "Event"}
+                    </DropDownHeaderEvent>
+                    {this.state.isOpen && (
+                      <DropDownListContainer>
+                        <DropDownListEvent>
+                          {this.state.eventList.map((event) => (
+                            <ListItem
+                              onClick={onOptionClicked(event)}
+                              key={Math.random()}
+                            >
+                              {event}
+                            </ListItem>
+                          ))}
+                        </DropDownListEvent>
+                      </DropDownListContainer>
+                    )}
+                  </DropDownContainer>
+                )}
               </div>
               {this.state.selectedEvent !== null && (
                 <TimeDurationCalculator conveyDuration={this.conveyDuration} />
