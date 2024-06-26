@@ -402,8 +402,16 @@ class SearchBar extends React.Component {
         "-" +
         this.state.selectedDate.getFullYear();
       // console.log(attendanceDate)
-
-      this.state.selectedUsers.forEach((user) => {
+      let allUsers = [];
+      if (this.state.selectedUsers.length === 0) {
+        //this.setState({ selectedUsers: [this.state.userName] });
+        allUsers = [this.state.userName];
+      } else if (this.state.selectedUsers.length >= 1) {
+        allUsers = this.state.selectedUsers;
+        allUsers.push(this.state.userName);
+      }
+      //this.state.selectedUsers.forEach((user) => {
+      allUsers.forEach((user) => {
         user.attendanceMarkedByUID = this.state.userName.newUID;
         user.attendanceMarkedByName = this.state.userName.nameSatsangi;
         user.activityName = this.state.selectedEvent;
@@ -425,6 +433,12 @@ class SearchBar extends React.Component {
 
         console.log(user);
         // These two lines are commented to disable the submit attendance
+
+        console.log(user);
+
+        console.log(this.state.selectedEvent);
+        console.log(attendanceDate);
+
         firebase
           .database()
           .ref(
@@ -549,7 +563,12 @@ class SearchBar extends React.Component {
 
   parseDateForCurrentMonth = (timestamp) => {
     const [day, month, year] = timestamp.split(" ")[0].split("-");
-    return { year: parseInt(year), month: parseInt(month), day: parseInt(day) };
+    // return { year: parseInt(year), month: parseInt(month), day: parseInt(day) };
+    return {
+      year: parseInt(year),
+      month: this.getMonthNumber(month),
+      day: parseInt(day),
+    };
   };
 
   transformActivityDataForCurrentMonth = (data) => {
@@ -557,8 +576,11 @@ class SearchBar extends React.Component {
     const currentMonth = new Date().getMonth() + 1; // Months are 0-indexed in JS
 
     return data.reduce((acc, activity) => {
+      // const { year, month, day } = this.parseDateForCurrentMonth(
+      //   activity.timestamp
+      // );
       const { year, month, day } = this.parseDateForCurrentMonth(
-        activity.timestamp
+        activity.datePresent
       );
       if (year === currentYear && month === currentMonth) {
         const dateKey = `${year}-${month}-${day}`;
@@ -575,7 +597,8 @@ class SearchBar extends React.Component {
 
   parseDate = (timestamp) => {
     const [day, month, year] = timestamp.split(" ")[0].split("-");
-    return `${year}-${parseInt(month)}-${parseInt(day)}`;
+    // return `${year}-${parseInt(month)}-${parseInt(day)}`;
+    return `${year}-${this.getMonthNumber(month)}-${parseInt(day)}`;
   };
 
   transformActivityData = (data) => {
@@ -683,7 +706,7 @@ class SearchBar extends React.Component {
     // Query to get nodes matching "June-2024"
     databaseRef
       .orderByKey()
-      .startAt("1-" + currentMonthName + "-" + new Date().getFullYear())
+      .startAt("01-" + currentMonthName + "-" + new Date().getFullYear())
       .endAt("30-" + currentMonthName + "-" + new Date().getFullYear())
       .once("value", (snapshot) => {
         if (snapshot.exists()) {
@@ -691,16 +714,17 @@ class SearchBar extends React.Component {
           // Filter keys that contain "June-2024"
           const juneData = {};
           for (const key in data) {
+            console.log(key);
             if (
               data.hasOwnProperty(key) &&
-              key.includes("June-" + new Date().getFullYear())
+              key.includes(currentMonthName + "-" + new Date().getFullYear())
             ) {
               juneData[key] = data[key];
             }
           }
           const activityName = this.state.selectedEvent;
-          //console.log(activityName);
-          //console.log(juneData);
+          console.log(activityName);
+          console.log(juneData);
 
           let attendees = [];
           // Loop through each date
@@ -720,11 +744,10 @@ class SearchBar extends React.Component {
               }
             }
           }
-          //console.log(attendees);
-
+          console.log(attendees);
           const people = this.transformData(attendees);
 
-          //console.log(people);
+          console.log(people);
           this.setState({
             allAttsForMonth: people,
             openAllAttsFOraMonth: !this.state.openAllAttsFOraMonth,
@@ -759,7 +782,7 @@ class SearchBar extends React.Component {
     // Query to get nodes matching "June-2024"
     databaseRef
       .orderByKey()
-      .startAt("1-" + currentMonthName + "-" + new Date().getFullYear())
+      .startAt("01-" + currentMonthName + "-" + new Date().getFullYear())
       .endAt("30-" + currentMonthName + "-" + new Date().getFullYear())
       .once("value", (snapshot) => {
         if (snapshot.exists()) {
@@ -1461,7 +1484,13 @@ class SearchBar extends React.Component {
               <div>
                 <h3>
                   {t("Choose_user")} &nbsp;<i class="fas fa-user-alt"></i>
+                  <br />
+                  <u>Selected users</u> <br />{" "}
                 </h3>
+                <Chip
+                  label={this.state.userName.nameSatsangi}
+                  onDelete={() => {}}
+                />
                 {/* <p>
                   {t("Total_attendees")} - {this.state.selectedUsers.length}
                 </p> */}
