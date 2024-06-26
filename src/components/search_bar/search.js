@@ -192,6 +192,7 @@ class SearchBar extends React.Component {
     // };
 
     this.state = {
+      neededHelp: false,
       openAllAttsFOraMonth: false,
       allAttsForMonth: [],
       allActForUser: [],
@@ -908,6 +909,7 @@ class SearchBar extends React.Component {
     };
 
     const onLoginClick = (selectedUsers) => {
+      console.log(selectedUsers);
       this.setState({ userName: selectedUsers });
     };
 
@@ -1221,6 +1223,7 @@ class SearchBar extends React.Component {
               <hr />
               <h3>{t("Ra Dha Sva Aa Mi")}</h3>
               <b>{this.state.userName?.nameSatsangi}</b>
+              {/* <p>{this.state.userName?.dobYear}</p> */}
               <hr />
               <button
                 className="btn-history"
@@ -1594,6 +1597,20 @@ class SearchBar extends React.Component {
 
             <div>
               <h3>{t("Choose_Year_of_Birth")}</h3>
+              {!this.state.neededHelp && (
+                <button
+                  onClick={() => {
+                    this.setState({ neededHelp: true });
+                  }}
+                >
+                  Click here to get help to know Year of Initiation{" "}
+                </button>
+              )}
+              <br />
+              {this.state.neededHelp && (
+                <b>Your year of initiation is {this.state.userName.dobYear}</b>
+              )}
+
               {/* <DropDownContainer>
                 <DropDownHeader onClick={toggling_DOY}>
                   {this.state.selectedDOY || "Year"}
@@ -1656,7 +1673,7 @@ class SearchBar extends React.Component {
               <button onClick={this.login} style={button}>
                 {t("Login")}
               </button>
-              <button
+              {/* <button
                 style={button}
                 onClick={() => {
                   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1666,7 +1683,7 @@ class SearchBar extends React.Component {
                 }}
               >
                 Register
-              </button>
+              </button> */}
             </div>
           </Container>
           {this.state.showRegisterSection && <Register />}
