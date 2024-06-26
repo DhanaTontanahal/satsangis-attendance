@@ -13,7 +13,7 @@ i18n
           Satsangis_Attendance: "Satsangis Attendance (Youth Association)",
           Choose_date: "Select Date",
           Choose_event: "Select Activity",
-          Choose_user: "Start Typing Name(s)",
+          Choose_user: "Start typing more name(s)",
           Submit_Attendance: "Submit Attendance",
           submit_message: "Ra-Dha-Sva-Aa-Mi \nYour request is submitted!",
           Choose_Year_of_Birth: "Choose Year of Birth",

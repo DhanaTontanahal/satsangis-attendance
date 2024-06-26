@@ -1339,11 +1339,11 @@ class SearchBar extends React.Component {
                   </StyledHistoryPopUp>
                 )}
               </div>
-              <h3>
+              {/* <h3>
                 {`Scan QR Code of the activity to mark the attendance
                     for selected date directly for loggedin user`}
-              </h3>
-              <hr />
+              </h3> */}
+
               {!this.state.showSummaryButtons && (
                 <button
                   onClick={() => {
@@ -1356,7 +1356,11 @@ class SearchBar extends React.Component {
                   </i>
                 </button>
               )}
-
+              <>
+                <u>
+                  <h3>Mark activity attendance</h3>
+                </u>
+              </>
               <>
                 {this.state.showSummaryButtons && (
                   <>
@@ -1391,6 +1395,9 @@ class SearchBar extends React.Component {
                 )}
               </>
               <div>
+                <h4>
+                  <u>Step 1</u>
+                </h4>
                 <h3>
                   {t("Choose_date")} &nbsp;
                   <i
@@ -1410,6 +1417,9 @@ class SearchBar extends React.Component {
                   />
                 )}
               </div>
+              <h4>
+                <u>Step 2</u>
+              </h4>
               <QRReader
                 //markAttendanceNow={this.markAttendanceNow}
                 closeModalNow={this.state.closeModalNow}
@@ -1427,6 +1437,7 @@ class SearchBar extends React.Component {
               )}
               {this.state.openAllActivities ? (
                 <div className="App">
+                  {/* <b>{this.getMonthName(new Date().getMonth())}</b> */}
                   <Calendar
                     year={new Date().getFullYear()}
                     month={new Date().getMonth()}
@@ -1459,6 +1470,9 @@ class SearchBar extends React.Component {
                 ""
               )}
               <div>
+                <h4>
+                  <u>Step 2</u>
+                </h4>
                 <h3>
                   {t("Choose_event")}&nbsp;
                   <i
@@ -1525,14 +1539,20 @@ class SearchBar extends React.Component {
                   ))}
                 </div>
 
-                <button
-                  onClick={() => {
-                    this.setState({ selectMultipleUsers: true });
-                  }}
-                  className="btn-history"
-                >
-                  Select multiple users
-                </button>
+                <h4>
+                  <u>Step 3</u>
+                </h4>
+                {!this.state.selectMultipleUsers && (
+                  <button
+                    onClick={() => {
+                      this.setState({ selectMultipleUsers: true });
+                    }}
+                    className="btn-history"
+                  >
+                    Check selected user(s)
+                  </button>
+                )}
+
                 {this.state.selectMultipleUsers && (
                   <div>
                     <h3>
@@ -1561,6 +1581,9 @@ class SearchBar extends React.Component {
                   </div>
                 )}
               </div>
+              <h4>
+                <u>Step 4</u>
+              </h4>
               {this.state.submitSuccess ? (
                 <div>
                   <div
