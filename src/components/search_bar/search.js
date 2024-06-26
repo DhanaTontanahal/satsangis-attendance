@@ -1408,18 +1408,32 @@ class SearchBar extends React.Component {
                   ></i>
                 </h3>
                 {this.state.showDatePicker && (
-                  <DatePicker
-                    selected={this.state.selectedDate}
-                    onChange={(date) => this.setState({ selectedDate: date })}
-                    dateFormat="dd/MM/yyyy"
-                    disabled={false}
-                    maxDate={this.state.selectedDate}
-                  />
+                  <>
+                    <DatePicker
+                      selected={this.state.selectedDate}
+                      onChange={(date) => this.setState({ selectedDate: date })}
+                      dateFormat="dd/MM/yyyy"
+                      disabled={false}
+                      maxDate={this.state.selectedDate}
+                    />
+                    <p>
+                      Selected Date is{" "}
+                      {("0" + this.state.selectedDate.getDate()).slice(-2) +
+                        "-" +
+                        this.state.selectedDate.toLocaleString("default", {
+                          month: "long",
+                        }) +
+                        "-" +
+                        this.state.selectedDate.getFullYear()}
+                    </p>
+                  </>
                 )}
               </div>
+
               <h4>
                 <u>Step 2</u>
               </h4>
+
               <QRReader
                 //markAttendanceNow={this.markAttendanceNow}
                 closeModalNow={this.state.closeModalNow}
@@ -1483,25 +1497,28 @@ class SearchBar extends React.Component {
                   ></i>
                 </h3>
                 {this.state.showActivitySelector && (
-                  <DropDownContainer>
-                    <DropDownHeaderEvent onClick={toggling}>
-                      {this.state.selectedEvent || "Event"}
-                    </DropDownHeaderEvent>
-                    {this.state.isOpen && (
-                      <DropDownListContainer>
-                        <DropDownListEvent>
-                          {this.state.eventList.map((event) => (
-                            <ListItem
-                              onClick={onOptionClicked(event)}
-                              key={Math.random()}
-                            >
-                              {event}
-                            </ListItem>
-                          ))}
-                        </DropDownListEvent>
-                      </DropDownListContainer>
-                    )}
-                  </DropDownContainer>
+                  <>
+                    <DropDownContainer>
+                      <DropDownHeaderEvent onClick={toggling}>
+                        {this.state.selectedEvent || "Event"}
+                      </DropDownHeaderEvent>
+                      {this.state.isOpen && (
+                        <DropDownListContainer>
+                          <DropDownListEvent>
+                            {this.state.eventList.map((event) => (
+                              <ListItem
+                                onClick={onOptionClicked(event)}
+                                key={Math.random()}
+                              >
+                                {event}
+                              </ListItem>
+                            ))}
+                          </DropDownListEvent>
+                        </DropDownListContainer>
+                      )}
+                    </DropDownContainer>
+                    <p>Selected activity is {this.state.selectedEvent}</p>
+                  </>
                 )}
               </div>
               {this.state.selectedEvent !== null && (
