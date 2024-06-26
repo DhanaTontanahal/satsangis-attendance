@@ -15,7 +15,7 @@ i18n
           Choose_event: "Select Activity",
           Choose_user: "Start Typing Name(s)",
           Submit_Attendance: "Submit Attendance",
-          submit_message: "Ra-dha-sva-Aa-mi \nYour request is submitted!",
+          submit_message: "Ra-Dha-Sva-Aa-Mi \nYour request is submitted!",
           Choose_Year_of_Birth: "Choose Year of Birth",
           Choose_UID: "Choose UID",
           Login: "Login",
@@ -25,7 +25,7 @@ i18n
           Example: "Example",
           no_internet_connection: "No internet connection",
           Logout: "Signout",
-          Scan: "Scan QR Code / Barcode",
+          Scan: "Scan QR Code to choose seva activity",
         },
       },
       hi: {
