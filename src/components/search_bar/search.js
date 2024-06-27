@@ -92,6 +92,7 @@ const ListItem = styled("li")`
 
 const button = {
   color: "#00008E",
+  cursor: "pointer",
   backgroundColor: "#f6f6f6",
   padding: "10px",
   fontFamily: "Arial",
@@ -1052,13 +1053,15 @@ class SearchBar extends React.Component {
                   <u>Step 1</u>
                 </h4>
                 <h3>
-                  {t("Choose_date")} &nbsp;
                   <i
+                    style={{ cursor: "pointer" }}
                     onClick={() => {
                       this.setState({ showDatePicker: true });
                     }}
                     class="far fa-calendar-alt"
                   ></i>
+                  &nbsp;
+                  {t("Choose_date")}
                 </h3>
                 {this.state.showDatePicker && (
                   <>
@@ -1140,13 +1143,15 @@ class SearchBar extends React.Component {
                   <u>Step 2</u>
                 </h4>
                 <h3>
-                  {t("Choose_event")}&nbsp;
                   <i
+                    style={{ cursor: "pointer" }}
                     onClick={() => {
                       this.setState({ showActivitySelector: true });
                     }}
                     class="fas fa-suitcase"
                   ></i>
+                  &nbsp;
+                  {t("Choose_event")}
                 </h3>
                 {this.state.showActivitySelector && (
                   <>
@@ -1197,7 +1202,8 @@ class SearchBar extends React.Component {
                     }}
                     className="btn-history"
                   >
-                    Check selected user(s)
+                    <i className="fas fa-check-circle"></i>&nbsp;Check selected
+                    user(s)
                   </button>
                 )}
 
@@ -1254,6 +1260,7 @@ class SearchBar extends React.Component {
               <div>
                 <br></br>
                 <button onClick={this.submitAttendance} style={button}>
+                  <i className="	far fa-check-square"></i>&nbsp;
                   {t("Submit_Attendance")}
                 </button>
                 <br></br>
