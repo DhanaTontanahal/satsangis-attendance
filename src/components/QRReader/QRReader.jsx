@@ -41,7 +41,8 @@ const QRReader = ({ handleScanFinished, buttonText, closeModalNow }) => {
           setData(null);
         }}
       >
-        {buttonText}
+        <i class="fas fa-qrcode"></i>
+        &nbsp;{buttonText}
       </button>
       {showModal && (
         <Modal>
