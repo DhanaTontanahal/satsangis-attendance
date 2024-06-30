@@ -809,7 +809,7 @@ const AttendanceReport = ({
   return (
     <div>
       <button onClick={() => generateExcelSheet(data, selectedAct)}>
-        <i className="far fa-file-excel"></i> Report for selected activity Sheet
+        <i className="far fa-file-excel"></i> Month end report
       </button>
     </div>
   );

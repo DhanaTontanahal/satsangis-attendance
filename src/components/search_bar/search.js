@@ -1039,16 +1039,20 @@ class SearchBar extends React.Component {
               </div>
 
               {!this.state.showSummaryButtons && (
-                <button
-                  onClick={() => {
-                    this.setState({ showSummaryButtons: true });
-                  }}
-                  className="btn-history"
-                >
-                  <i className="fas fa-arrow-alt-circle-right">
-                    &nbsp; View Activity Summary
-                  </i>
-                </button>
+                <>
+                  <button
+                    onClick={() => {
+                      this.setState({ showSummaryButtons: true });
+                    }}
+                    className="btn-history"
+                  >
+                    <i className="fas fa-arrow-alt-circle-right">
+                      &nbsp; View Activity Summary
+                    </i>
+                  </button>
+
+                  <AttendanceReport2 />
+                </>
               )}
               <>
                 <u>
@@ -1089,12 +1093,6 @@ class SearchBar extends React.Component {
                       .length > 0 && (
                       <>
                         <AttendanceReport
-                          satsangiUsersData={this.state.satsangiUsersData}
-                          activities={this.state.activitiesData}
-                          selectedAct={this.state.selectedEvent}
-                          data={this.state.currentMonthDataForSelectedActivity}
-                        />
-                        <AttendanceReport2
                           satsangiUsersData={this.state.satsangiUsersData}
                           activities={this.state.activitiesData}
                           selectedAct={this.state.selectedEvent}

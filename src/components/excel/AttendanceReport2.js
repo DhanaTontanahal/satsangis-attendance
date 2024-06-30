@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { saveAs } from "file-saver";
 import * as XLSX from "xlsx";
+import firebase from "firebase/app";
+import { getMonthName } from "../utils/utl";
+// import StatisticReport from "../statistics/StatisticReport";
 
 const participantsData = {
   185: {
@@ -782,74 +785,110 @@ const allActivities = [
   "Youth meeting",
 ];
 
-const generateExcelSheet = (data, selectedAct) => {
-  const attendanceData = data;
-  // Extract the dates and activities
-  const dates = Object.keys(attendanceData);
-
-  // Create a new workbook
-  const wb = XLSX.utils.book_new();
-
-  // Loop through each activity to create individual sheets
-  allActivities.forEach((activityName) => {
-    // Prepare the header row
-    const headerRow = ["Name", ...dates];
-
-    // Prepare the data rows for the current activity
-    const rows = Object.values(participantsData).map((participant) => {
-      const row = [participant.nameSatsangi];
-
-      dates.forEach((date) => {
-        let count = 0;
-        const activities = attendanceData[date];
-        if (activities && activities[activityName]) {
-          const participants = activities[activityName];
-          if (participants[participant.biometricId]) {
-            count++;
+let currentMonthData = [];
+const generateExcelSheet = () => {
+  const refAddress = "satsangiUsers-attendance/";
+  const databaseRef = firebase.database().ref(refAddress);
+  const currentMonth = new Date().getMonth() + 1; // Months are 0-indexed in JS
+  const currentMonthName = getMonthName(currentMonth - 1);
+  // Query to get nodes matching "June-2024"
+  databaseRef
+    .orderByKey()
+    .startAt("01-" + currentMonthName + "-" + new Date().getFullYear())
+    .endAt("30-" + currentMonthName + "-" + new Date().getFullYear())
+    .once("value", (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        // Filter keys that contain "June-2024"
+        const juneData = {};
+        for (const key in data) {
+          if (
+            data.hasOwnProperty(key) &&
+            key.includes(currentMonthName + "-" + new Date().getFullYear())
+          ) {
+            juneData[key] = data[key];
           }
         }
-        row.push(count);
-      });
+        console.log(juneData);
+        currentMonthData = juneData;
+        const attendanceData = juneData;
+        // Extract the dates and activities
+        const dates = Object.keys(attendanceData);
 
-      return row;
-    });
+        // Create a new workbook
+        const wb = XLSX.utils.book_new();
 
-    // Create a worksheet with the activity name as the first row
-    const ws = XLSX.utils.aoa_to_sheet([[activityName], headerRow, ...rows]);
+        // Loop through each activity to create individual sheets
+        allActivities.forEach((activityName) => {
+          // Prepare the header row
+          const headerRow = ["Name", ...dates];
 
-    // Apply conditional formatting
-    rows.forEach((row, rowIndex) => {
-      row.forEach((cell, colIndex) => {
-        if (colIndex > 0 && cell >= 1) {
-          const cellAddress = XLSX.utils.encode_cell({
-            c: colIndex,
-            r: rowIndex + 2,
+          // Prepare the data rows for the current activity
+          const rows = Object.values(participantsData).map((participant) => {
+            const row = [participant.nameSatsangi];
+
+            dates.forEach((date) => {
+              let count = 0;
+              const activities = attendanceData[date];
+              if (activities && activities[activityName]) {
+                const participants = activities[activityName];
+                if (participants[participant.biometricId]) {
+                  count++;
+                }
+              }
+              row.push(count);
+            });
+
+            return row;
           });
-          if (!ws[cellAddress]) ws[cellAddress] = { v: cell, t: "n" };
-          ws[cellAddress].s = {
-            fill: {
-              patternType: "solid",
-              fgColor: { rgb: "FFFF00" },
-            },
-          };
-        }
-      });
+
+          // Create a worksheet with the activity name as the first row
+          const ws = XLSX.utils.aoa_to_sheet([
+            [activityName],
+            headerRow,
+            ...rows,
+          ]);
+
+          // Apply conditional formatting
+          rows.forEach((row, rowIndex) => {
+            row.forEach((cell, colIndex) => {
+              if (colIndex > 0 && cell >= 1) {
+                const cellAddress = XLSX.utils.encode_cell({
+                  c: colIndex,
+                  r: rowIndex + 2,
+                });
+                if (!ws[cellAddress]) ws[cellAddress] = { v: cell, t: "n" };
+                ws[cellAddress].s = {
+                  fill: {
+                    patternType: "solid",
+                    fgColor: { rgb: "FFFF00" },
+                  },
+                };
+              }
+            });
+          });
+
+          // Append the worksheet to the workbook
+          XLSX.utils.book_append_sheet(wb, ws, activityName.substring(0, 20));
+        });
+
+        // Write the workbook and download it
+        XLSX.writeFile(wb, "attendance_activity_wise.xlsx");
+      }
     });
-
-    // Append the worksheet to the workbook
-    XLSX.utils.book_append_sheet(wb, ws, activityName.substring(0, 20));
-  });
-
-  // Write the workbook and download it
-  XLSX.writeFile(wb, "attendance_activity_wise.xlsx");
 };
 
-const AttendanceReport2 = ({ data, selectedAct }) => {
+const AttendanceReport2 = () => {
   return (
     <div>
-      <button onClick={() => generateExcelSheet(data, selectedAct)}>
-        <i className="far fa-file-excel"></i> Report for all activities
+      <button className="btn-history" onClick={() => generateExcelSheet()}>
+        <i className="far fa-file-excel"></i> &nbsp;
+        {getMonthName(new Date().getMonth())} attendance summary (all
+        activities)
       </button>
+      {/* {currentMonthData.length !== 0 && (
+        <StatisticReport attendanceData={currentMonthData} />
+      )} */}
     </div>
   );
 };
