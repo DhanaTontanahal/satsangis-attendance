@@ -18,6 +18,8 @@ import Register from "./Register";
 import Calendar from "../activity-calendar/Calendar";
 import TimeDurationCalculator from "../activity-calendar/TimeDurationCalculator";
 import { credVals, firebaseConfig } from "./firebase-config";
+import AttendanceReport from "../excel/AttendanceReport";
+import AttendanceReport2 from "../excel/AttendanceReport2";
 require("firebase/auth");
 require("firebase/database");
 
@@ -127,6 +129,9 @@ class SearchBar extends React.Component {
     const loginObj = JSON.parse(localStorage.getItem("loginObject"));
 
     this.state = {
+      activitiesData: null,
+      satsangiUsersData: null,
+      currentMonthDataForSelectedActivity: [],
       showActivitySelector: false,
       showSummaryButtons: false,
       selectMultipleUsers: false,
@@ -383,6 +388,32 @@ class SearchBar extends React.Component {
 
         firebase
           .database()
+          .ref("activities")
+          .once("value")
+          .then((snapshot) => {
+            const keys = [];
+            snapshot.forEach(function (item) {
+              var itemVal = item.val();
+              keys.push(itemVal);
+            });
+            this.setState({ activitiesData: Object.keys(keys) });
+          });
+
+        firebase
+          .database()
+          .ref("satsangiUsers")
+          .once("value")
+          .then((snapshot) => {
+            const keys = [];
+            snapshot.forEach(function (item) {
+              var itemVal = item.val();
+              keys.push(itemVal);
+            });
+            this.setState({ satsangiUsersData: keys });
+          });
+
+        firebase
+          .database()
           .ref("notices")
           .once("value")
           .then((snapshot) => {
@@ -605,6 +636,7 @@ class SearchBar extends React.Component {
               juneData[key] = data[key];
             }
           }
+          this.setState({ currentMonthDataForSelectedActivity: juneData });
           const activityName = this.state.selectedEvent;
 
           let attendees = [];
@@ -650,6 +682,10 @@ class SearchBar extends React.Component {
   }
 
   handleHistoryAllActivities = async () => {
+    console.log(
+      "===============================*************************************************************************================================================="
+    );
+
     const loginObj = JSON.parse(localStorage.getItem("loginObject"));
 
     const refAddress = "satsangiUsers-attendance/";
@@ -675,6 +711,10 @@ class SearchBar extends React.Component {
               juneData[key] = data[key];
             }
           }
+          console.log(
+            "*************************************************************************================================================="
+          );
+          console.log(juneData);
           const userId = loginObj.userName.branchCode;
           const activities = this.transformActivityDataForUser(
             juneData,
@@ -1045,6 +1085,23 @@ class SearchBar extends React.Component {
                       All attendees &nbsp;
                       <i class="fas fa-users"></i>
                     </button>
+                    {Object.keys(this.state.currentMonthDataForSelectedActivity)
+                      .length > 0 && (
+                      <>
+                        <AttendanceReport
+                          satsangiUsersData={this.state.satsangiUsersData}
+                          activities={this.state.activitiesData}
+                          selectedAct={this.state.selectedEvent}
+                          data={this.state.currentMonthDataForSelectedActivity}
+                        />
+                        <AttendanceReport2
+                          satsangiUsersData={this.state.satsangiUsersData}
+                          activities={this.state.activitiesData}
+                          selectedAct={this.state.selectedEvent}
+                          data={this.state.currentMonthDataForSelectedActivity}
+                        />
+                      </>
+                    )}
                   </>
                 )}
               </>
