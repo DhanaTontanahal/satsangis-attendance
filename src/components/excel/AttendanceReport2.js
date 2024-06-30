@@ -3,7 +3,6 @@ import { saveAs } from "file-saver";
 import * as XLSX from "xlsx";
 import firebase from "firebase/app";
 import { getMonthName } from "../utils/utl";
-// import StatisticReport from "../statistics/StatisticReport";
 
 const participantsData = {
   185: {
@@ -886,9 +885,6 @@ const AttendanceReport2 = () => {
         {getMonthName(new Date().getMonth())} attendance summary (all
         activities)
       </button>
-      {/* {currentMonthData.length !== 0 && (
-        <StatisticReport attendanceData={currentMonthData} />
-      )} */}
     </div>
   );
 };

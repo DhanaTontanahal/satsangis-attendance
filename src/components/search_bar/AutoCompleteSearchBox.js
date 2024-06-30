@@ -1,8 +1,5 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
-//import Chip from '@material-ui/core/Chip';
-// import { makeStyles } from '@material-ui/core/styles';
-// import Chip from './Chips';
+import React, { Component } from "react";
+import styled from "styled-components";
 
 const StyledNoSuggsDiv = styled.div`
   color: #999;
@@ -47,7 +44,7 @@ const StyledUl = styled.ul`
   width: 100%;
   overflow-y: auto;
   padding-left: 0;
-  color: ${props => props.fontColor};
+  color: ${(props) => props.fontColor};
 
   li {
     padding: 0.5rem;
@@ -73,20 +70,20 @@ const StyledUl = styled.ul`
 `;
 
 const defaultProps = {
-  placeHolderSearchLabel: 'Search',
+  placeHolderSearchLabel: "Search",
   showSearchBtn: false,
   styles: {
     ulDiv: {
-      color: 'blue',
+      color: "blue",
     },
     searchImage: {
-      width: '24',
-      height: '24',
-      alt: 'Search',
+      width: "24",
+      height: "24",
+      alt: "Search",
     },
     container: {
-      width: '400px',
-      margin: '0 auto',
+      width: "400px",
+      margin: "0 auto",
     },
   },
 };
@@ -99,7 +96,7 @@ class AutoCompleteSearchBox extends Component {
       filteredSuggestions: [],
       activeSuggestions: 0,
       showSuggestions: false,
-      userInput: '',
+      userInput: "",
       selectedUsers: [],
     };
 
@@ -114,7 +111,7 @@ class AutoCompleteSearchBox extends Component {
     const { suggestions, primaryIndex } = this.props;
     const userSearchInput = e.target.value;
 
-    const filteredSuggestions = suggestions.filter(suggestion => {
+    const filteredSuggestions = suggestions.filter((suggestion) => {
       return (
         suggestion[primaryIndex]
           .toLowerCase()
@@ -139,7 +136,7 @@ class AutoCompleteSearchBox extends Component {
       this.state.selectedUsers.push(filteredSuggestions[activeSuggestions]);
       this.setState({
         showSuggestions: false,
-        userInput: '',
+        userInput: "",
       });
 
       this.props.onClick(this.state.selectedUsers);
@@ -174,7 +171,7 @@ class AutoCompleteSearchBox extends Component {
     // console.log('user input list')
     // console.log(this.state.selectedUsers)
     this.setState({
-      userInput: '',
+      userInput: "",
     });
     this.props.onClick(this.state.selectedUsers);
   }
@@ -214,7 +211,7 @@ class AutoCompleteSearchBox extends Component {
               let className;
 
               if (index === activeSuggestions) {
-                className = 'suggestion-active';
+                className = "suggestion-active";
               }
 
               return (
