@@ -129,6 +129,7 @@ class SearchBar extends React.Component {
     const loginObj = JSON.parse(localStorage.getItem("loginObject"));
 
     this.state = {
+      currentTravMonth: null,
       activitiesData: null,
       satsangiUsersData: null,
       currentMonthDataForSelectedActivity: [],
@@ -193,6 +194,9 @@ class SearchBar extends React.Component {
   }
 
   componentDidMount() {
+    this.setState({
+      currentTravMonth: this.getMonthName(new Date().getMonth()),
+    });
     this.fetchData();
     const loginObj = JSON.parse(localStorage.getItem("loginObject"));
     if (loginObj) this.login();
@@ -497,7 +501,9 @@ class SearchBar extends React.Component {
 
   transformActivityDataForCurrentMonth = (data) => {
     const currentYear = new Date().getFullYear();
-    const currentMonth = new Date().getMonth() + 1; // Months are 0-indexed in JS
+    const currentMonth = Number(
+      this.getMonthNumber(this.state.currentTravMonth)
+    );
 
     return data.reduce((acc, activity) => {
       const { year, month, day } = this.parseDateForCurrentMonth(
@@ -616,9 +622,11 @@ class SearchBar extends React.Component {
   getAttendeesByActivity() {
     const refAddress = "satsangiUsers-attendance/";
     const databaseRef = firebase.database().ref(refAddress);
-    const currentMonth = new Date().getMonth() + 1; // Months are 0-indexed in JS
+
+    const currentMonth = this.getMonthNumber(this.state.currentTravMonth);
+
     const currentMonthName = this.getMonthName(currentMonth - 1);
-    // Query to get nodes matching "June-2024"
+
     databaseRef
       .orderByKey()
       .startAt("01-" + currentMonthName + "-" + new Date().getFullYear())
@@ -682,22 +690,19 @@ class SearchBar extends React.Component {
   }
 
   handleHistoryAllActivities = async () => {
-    console.log(
-      "===============================*************************************************************************================================================="
-    );
-
     const loginObj = JSON.parse(localStorage.getItem("loginObject"));
 
     const refAddress = "satsangiUsers-attendance/";
 
     const databaseRef = firebase.database().ref(refAddress);
-    const currentMonth = new Date().getMonth() + 1; // Months are 0-indexed in JS
-    const currentMonthName = this.getMonthName(currentMonth - 1);
-    // Query to get nodes matching "June-2024"
+    const currentMonth = this.state.currentTravMonth;
+    console.log(currentMonth);
+    //const currentMonthName = this.getMonthName(currentMonth - 1);
+    //console.log(currentMonthName);
     databaseRef
       .orderByKey()
-      .startAt("01-" + currentMonthName + "-" + new Date().getFullYear())
-      .endAt("30-" + currentMonthName + "-" + new Date().getFullYear())
+      .startAt("01-" + currentMonth + "-" + new Date().getFullYear())
+      .endAt("30-" + currentMonth + "-" + new Date().getFullYear())
       .once("value", (snapshot) => {
         if (snapshot.exists()) {
           const data = snapshot.val();
@@ -706,13 +711,13 @@ class SearchBar extends React.Component {
           for (const key in data) {
             if (
               data.hasOwnProperty(key) &&
-              key.includes("June-" + new Date().getFullYear())
+              key.includes(currentMonth + "-" + new Date().getFullYear())
             ) {
               juneData[key] = data[key];
             }
           }
           console.log(
-            "*************************************************************************================================================="
+            "************MEHTA*************************************************************================================================="
           );
           console.log(juneData);
           const userId = loginObj.userName.branchCode;
@@ -1037,7 +1042,35 @@ class SearchBar extends React.Component {
                   {t("Logout")}&nbsp;<i class="fas fa-power-off"></i>
                 </button>
               </div>
-
+              <div style={{ display: "inline-flex" }}>
+                <i
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    const prevM = Number(new Date().getMonth() - 1);
+                    this.setState({
+                      currentTravMonth: this.getMonthName(prevM),
+                    });
+                  }}
+                  className="fas fa-step-backward"
+                ></i>
+                &nbsp;&nbsp;
+                <i>{this.state.currentTravMonth}</i>&nbsp;
+                <i
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    console.log(this.state.currentTravMonth);
+                    const nextM = Number(
+                      this.getMonthNumber(this.state.currentTravMonth)
+                    );
+                    console.log(nextM);
+                    this.setState({
+                      currentTravMonth: this.getMonthName(nextM),
+                    });
+                  }}
+                  className="fas fa-step-forward"
+                ></i>
+              </div>
+              <br />
               {!this.state.showSummaryButtons && (
                 <>
                   <button
@@ -1047,11 +1080,14 @@ class SearchBar extends React.Component {
                     className="btn-history"
                   >
                     <i className="fas fa-arrow-alt-circle-right">
-                      &nbsp; View Activity Summary
+                      &nbsp; View Activity Summary (
+                      {this.state.currentTravMonth})
                     </i>
                   </button>
 
-                  <AttendanceReport2 />
+                  <AttendanceReport2
+                    currentTravMonth={this.state.currentTravMonth}
+                  />
                 </>
               )}
               <>
@@ -1066,7 +1102,7 @@ class SearchBar extends React.Component {
                       className="btn-history"
                       onClick={() => this.handleHistory()}
                     >
-                      {t("My Attendance")}&nbsp;
+                      {t("My Attendance")}({this.state.currentTravMonth})&nbsp;
                       {this.state.open ? (
                         <i class="fas fa-bookmark"></i>
                       ) : (
@@ -1078,7 +1114,7 @@ class SearchBar extends React.Component {
                       className="btn-history"
                       onClick={() => this.handleHistoryAllActivities()}
                     >
-                      {t("My activities")}&nbsp;
+                      {t("My activities")}({this.state.currentTravMonth})&nbsp;
                       <i class="fas fa-network-wired"></i>
                     </button>
 
@@ -1086,7 +1122,7 @@ class SearchBar extends React.Component {
                       className="btn-history"
                       onClick={() => this.getDataForAttendees()}
                     >
-                      All attendees &nbsp;
+                      All attendees ({this.state.currentTravMonth}) &nbsp;
                       <i class="fas fa-users"></i>
                     </button>
                     {Object.keys(this.state.currentMonthDataForSelectedActivity)
@@ -1161,10 +1197,13 @@ class SearchBar extends React.Component {
               )}
               {this.state.openAllActivities ? (
                 <div className="App">
-                  {/* <b>{this.getMonthName(new Date().getMonth())}</b> */}
+                  <b>{this.state.currentTravMonth}</b>
                   <Calendar
                     year={new Date().getFullYear()}
-                    month={new Date().getMonth()}
+                    month={
+                      Number(this.getMonthNumber(this.state.currentTravMonth)) -
+                      1
+                    }
                     activities={this.state.allActForUser}
                   />
                 </div>
@@ -1175,7 +1214,10 @@ class SearchBar extends React.Component {
                 <div className="App">
                   <Calendar
                     year={new Date().getFullYear()}
-                    month={new Date().getMonth()}
+                    month={
+                      Number(this.getMonthNumber(this.state.currentTravMonth)) -
+                      1
+                    }
                     activities={this.state.allAttsForMonth}
                   />
                 </div>
@@ -1186,7 +1228,10 @@ class SearchBar extends React.Component {
                 <div className="App">
                   <Calendar
                     year={new Date().getFullYear()}
-                    month={new Date().getMonth()}
+                    month={
+                      Number(this.getMonthNumber(this.state.currentTravMonth)) -
+                      1
+                    }
                     activities={this.state.activitiesCalendarData}
                   />
                 </div>

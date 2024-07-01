@@ -877,13 +877,12 @@ const generateExcelSheet = () => {
     });
 };
 
-const AttendanceReport2 = () => {
+const AttendanceReport2 = ({ currentTravMonth }) => {
   return (
     <div>
       <button className="btn-history" onClick={() => generateExcelSheet()}>
         <i className="far fa-file-excel"></i> &nbsp;
-        {getMonthName(new Date().getMonth())} attendance summary (all
-        activities)
+        {currentTravMonth} attendance summary (all activities)
       </button>
     </div>
   );
