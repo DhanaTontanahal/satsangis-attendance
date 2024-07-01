@@ -129,7 +129,7 @@ class SearchBar extends React.Component {
     const loginObj = JSON.parse(localStorage.getItem("loginObject"));
 
     this.state = {
-      currentTravMonth: null,
+      currentTravMonth: this.getMonthName(new Date().getMonth()),
       activitiesData: null,
       satsangiUsersData: null,
       currentMonthDataForSelectedActivity: [],
@@ -194,9 +194,9 @@ class SearchBar extends React.Component {
   }
 
   componentDidMount() {
-    this.setState({
-      currentTravMonth: this.getMonthName(new Date().getMonth()),
-    });
+    // this.setState({
+    //   currentTravMonth: this.getMonthName(new Date().getMonth()),
+    // });
     this.fetchData();
     const loginObj = JSON.parse(localStorage.getItem("loginObject"));
     if (loginObj) this.login();
@@ -602,11 +602,11 @@ class SearchBar extends React.Component {
     const people = {};
 
     data.forEach((item) => {
-      console.log(item.datePresent);
+      // console.log(item.datePresent);
       const [day, month, year] = item.datePresent.split("-");
-      console.log(month);
+      //  console.log(month);
       const currentMonthName = this.getMonthNumber(month);
-      console.log(currentMonthName);
+      //   console.log(currentMonthName);
       const formattedDate = `${year}-${currentMonthName}-${parseInt(day)}`;
       if (!people[formattedDate]) {
         people[formattedDate] = [];
@@ -1042,27 +1042,36 @@ class SearchBar extends React.Component {
                   {t("Logout")}&nbsp;<i class="fas fa-power-off"></i>
                 </button>
               </div>
-              <div style={{ display: "inline-flex" }}>
+              <p>Select the month</p>
+              <div style={{ margin: "10px", display: "inline-flex" }}>
                 <i
                   style={{ cursor: "pointer" }}
                   onClick={() => {
-                    const prevM = Number(new Date().getMonth() - 1);
+                    //const prevM = Number(new Date().getMonth());
+                    const prevM =
+                      Number(this.getMonthNumber(this.state.currentTravMonth)) -
+                      1;
+                    // console.log(prevM);
+                    // console.log(this.state.currentTravMonth);
                     this.setState({
-                      currentTravMonth: this.getMonthName(prevM),
+                      currentTravMonth: this.getMonthName(prevM - 1),
                     });
                   }}
                   className="fas fa-step-backward"
                 ></i>
                 &nbsp;&nbsp;
-                <i>{this.state.currentTravMonth}</i>&nbsp;
+                <i style={{ fontSize: "14px", fontWeight: "bold" }}>
+                  {this.state.currentTravMonth}
+                </i>
+                &nbsp;
                 <i
                   style={{ cursor: "pointer" }}
                   onClick={() => {
-                    console.log(this.state.currentTravMonth);
+                    //  console.log(this.state.currentTravMonth);
                     const nextM = Number(
                       this.getMonthNumber(this.state.currentTravMonth)
                     );
-                    console.log(nextM);
+                    //   console.log(nextM);
                     this.setState({
                       currentTravMonth: this.getMonthName(nextM),
                     });

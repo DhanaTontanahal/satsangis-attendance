@@ -785,11 +785,14 @@ const allActivities = [
 ];
 
 let currentMonthData = [];
-const generateExcelSheet = () => {
+const generateExcelSheet = (currentTravMonth) => {
+  console.log(currentTravMonth);
+  //return;
   const refAddress = "satsangiUsers-attendance/";
   const databaseRef = firebase.database().ref(refAddress);
   const currentMonth = new Date().getMonth() + 1; // Months are 0-indexed in JS
-  const currentMonthName = getMonthName(currentMonth - 1);
+  //const currentMonthName = getMonthName(currentMonth - 1);
+  const currentMonthName = currentTravMonth;
   // Query to get nodes matching "June-2024"
   databaseRef
     .orderByKey()
@@ -808,7 +811,7 @@ const generateExcelSheet = () => {
             juneData[key] = data[key];
           }
         }
-        console.log(juneData);
+        //  console.log(juneData);
         currentMonthData = juneData;
         const attendanceData = juneData;
         // Extract the dates and activities
@@ -880,7 +883,10 @@ const generateExcelSheet = () => {
 const AttendanceReport2 = ({ currentTravMonth }) => {
   return (
     <div>
-      <button className="btn-history" onClick={() => generateExcelSheet()}>
+      <button
+        className="btn-history"
+        onClick={() => generateExcelSheet(currentTravMonth)}
+      >
         <i className="far fa-file-excel"></i> &nbsp;
         {currentTravMonth} attendance summary (all activities)
       </button>
