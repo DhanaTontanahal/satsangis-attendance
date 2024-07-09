@@ -887,6 +887,7 @@ const AttendanceReport2 = ({ currentTravMonth }) => {
         className="btn-history"
         onClick={() => generateExcelSheet(currentTravMonth)}
       >
+        <i className="	fas fa-download"></i>&nbsp;
         <i className="far fa-file-excel"></i> &nbsp;
         {currentTravMonth} attendance summary (all activities)
       </button>

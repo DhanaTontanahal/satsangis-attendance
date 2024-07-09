@@ -20,6 +20,7 @@
     "react-i18next": "^11.8.5",
     "react-lottie": "^1.2.3",
     "react-qr-barcode-scanner": "^1.0.6",
+    "react-router-dom": "^6.24.1",
     "react-scripts": "^4.0.1",
     "reactjs-popup": "^2.0.5",
     "styled-components": "^5.2.1",

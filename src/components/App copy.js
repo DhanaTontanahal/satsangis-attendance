@@ -1,25 +1,8 @@
-import React, { useState } from "react";
+// import logo from '../logo.svg';
 import "../styles.css";
 import SearchBar from "./search_bar/search";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import SideMenu from "./menu/SideMenu";
-import LibraryManagement from "./library/LibraryManagement";
-import styled from "styled-components";
-import Timer from "./timer/Timer";
-import Alarm from "./alarm/Alarm";
-
-const MenuButton = styled.button`
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  background: none;
-  border: none;
-  font-size: 30px;
-  cursor: pointer;
-  z-index: 1001;
-`;
 
 i18n
   .use(initReactI18next) // passes i18n down to react-i18next
@@ -75,37 +58,32 @@ i18n
   });
 
 function App() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const closeMenu = () => {
-    setIsMenuOpen(false);
-  };
-
   const l = localStorage.getItem("currentLanguage");
   i18n.changeLanguage(l);
   return (
-    <Router>
-      <MenuButton onClick={toggleMenu}>☰</MenuButton>
-      <SideMenu isOpen={isMenuOpen} onClose={closeMenu} />
-      <div
-        style={{
-          paddingLeft: isMenuOpen ? "250px" : "0",
-          transition: "padding-left 0.3s ease",
-        }}
-      >
-        <Routes>
-          <Route path="/" exact element={<SearchBar />} />
-          <Route path="/library-management" element={<LibraryManagement />} />
-          <Route path="/timer" exact element={<Timer />} />
-          <Route path="/alarm" exact element={<Alarm />} />
-        </Routes>
-      </div>
-    </Router>
+    <div className="App">
+      <SearchBar />
+    </div>
   );
+
+  // return (
+  //   <div className="App">
+  //     <header className="App-header">
+  //       <img src={logo} className="App-logo" alt="logo" />
+  //       <p>
+  //         Edit <cohde>src/App.js</code> and save to reload.
+  //       </p>
+  //       <a
+  //         className="App-link"
+  //         href="https://reactjs.org"
+  //         target="_blank"
+  //         rel="noopener noreferrer"
+  //       >
+  //         Learn React
+  //       </a>
+  //     </header>
+  //   </div>
+  // );
 }
 
 export default App;
