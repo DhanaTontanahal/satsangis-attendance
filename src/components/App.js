@@ -8,6 +8,9 @@ import SideMenu from "./menu/SideMenu";
 import LibraryManagement from "./library/LibraryManagement";
 import styled from "styled-components";
 import Timer from "./timer/Timer";
+import Notes from "./notes/Notes";
+import Notice from "./notices/Notice";
+
 import Alarm from "./alarm/Alarm";
 import ViewAttendanceSummary from "./search_bar/ViewAttendanceSummary";
 
@@ -104,6 +107,8 @@ function App() {
           <Route path="/timer" exact element={<Timer />} />
           <Route path="/alarm" exact element={<Alarm />} />
           <Route path="/summary" exact element={<ViewAttendanceSummary />} />
+          <Route path="/notes" exact element={<Notes />} />
+          <Route path="/notices" exact element={<Notice />} />
         </Routes>
       </div>
     </Router>
