@@ -55,9 +55,14 @@ const SideMenu = ({ isOpen, onClose }) => (
     <Overlay isOpen={isOpen} onClick={onClose} />
     <MenuContainer isOpen={isOpen}>
       <CloseButton onClick={onClose}>×</CloseButton>
+      <br />
       <MenuItem to="/" onClick={onClose}>
-        Home
+        Mark Attendance
       </MenuItem>
+      <MenuItem to="/summary" onClick={onClose}>
+        Attendance Summary
+      </MenuItem>
+
       <MenuItem to="/timer" onClick={onClose}>
         Timer
       </MenuItem>
@@ -67,7 +72,17 @@ const SideMenu = ({ isOpen, onClose }) => (
       <MenuItem to="/library-management" onClick={onClose}>
         Library Management
       </MenuItem>
-      {/* Add more menu items here */}
+
+      <button
+        className="btn-history"
+        onClick={(e) => {
+          e.preventDefault();
+          localStorage.removeItem("loginObject");
+          window.location.href = "/";
+        }}
+      >
+        {"Log out"}&nbsp;<i class="fas fa-power-off"></i>
+      </button>
     </MenuContainer>
   </>
 );

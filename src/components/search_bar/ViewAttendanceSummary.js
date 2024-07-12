@@ -121,7 +121,7 @@ function handleEnter(event) {
   }
 }
 
-class SearchBar extends React.Component {
+class ViewAttendanceSummary extends React.Component {
   constructor(props) {
     super(props);
     let dumm = [];
@@ -1035,18 +1035,25 @@ class SearchBar extends React.Component {
                   </div>
                 </StyledHistoryPopUp>
               )}
-              {/* <div className="btn-container">
-                <b>{this.state.userName?.nameSatsangi}</b>
+              <div className="btn-container">
+                <h2>Attendance Summary</h2>
+                {/* <b>{this.state.userName?.nameSatsangi}</b> */}
                 &nbsp;&nbsp;
-              </div> */}
-              {/* <p>Select the month</p>
+                {/* <button className="btn-history" onClick={handleLogout}>
+                  {t("Logout")}&nbsp;<i class="fas fa-power-off"></i>
+                </button> */}
+              </div>
+              <b>Select the month</b>
               <div style={{ margin: "10px", display: "inline-flex" }}>
                 <i
                   style={{ cursor: "pointer" }}
                   onClick={() => {
+                    //const prevM = Number(new Date().getMonth());
                     const prevM =
                       Number(this.getMonthNumber(this.state.currentTravMonth)) -
                       1;
+                    // console.log(prevM);
+                    // console.log(this.state.currentTravMonth);
                     this.setState({
                       currentTravMonth: this.getMonthName(prevM - 1),
                     });
@@ -1061,9 +1068,11 @@ class SearchBar extends React.Component {
                 <i
                   style={{ cursor: "pointer" }}
                   onClick={() => {
+                    //  console.log(this.state.currentTravMonth);
                     const nextM = Number(
                       this.getMonthNumber(this.state.currentTravMonth)
                     );
+                    //   console.log(nextM);
                     this.setState({
                       currentTravMonth: this.getMonthName(nextM),
                     });
@@ -1071,8 +1080,47 @@ class SearchBar extends React.Component {
                   className="fas fa-step-forward"
                 ></i>
               </div>
-              <br /> */}
-              {/* {!this.state.showSummaryButtons && (
+
+              <div>
+                <h3>
+                  <i
+                    style={{ cursor: "pointer" }}
+                    onClick={() => {
+                      this.setState({ showActivitySelector: true });
+                    }}
+                    class="fas fa-suitcase"
+                  ></i>
+                  &nbsp;
+                  {t("Choose_event")}
+                </h3>
+                {this.state.showActivitySelector && (
+                  <>
+                    <DropDownContainer>
+                      <DropDownHeaderEvent onClick={toggling}>
+                        {this.state.selectedEvent || "Event"}
+                      </DropDownHeaderEvent>
+                      {this.state.isOpen && (
+                        <DropDownListContainer>
+                          <DropDownListEvent>
+                            {this.state.eventList.map((event) => (
+                              <ListItem
+                                onClick={onOptionClicked(event)}
+                                key={Math.random()}
+                              >
+                                {event}
+                              </ListItem>
+                            ))}
+                          </DropDownListEvent>
+                        </DropDownListContainer>
+                      )}
+                    </DropDownContainer>
+                    {/* <p>Selected activity is {this.state.selectedEvent}</p> */}
+                  </>
+                )}
+              </div>
+
+              <br />
+              {!this.state.showSummaryButtons && (
                 <>
                   <button
                     onClick={() => {
@@ -1090,9 +1138,9 @@ class SearchBar extends React.Component {
                     currentTravMonth={this.state.currentTravMonth}
                   />
                 </>
-              )} */}
+              )}
 
-              {/* <>
+              <>
                 {this.state.showSummaryButtons && (
                   <>
                     <button
@@ -1135,18 +1183,18 @@ class SearchBar extends React.Component {
                     )}
                   </>
                 )}
-              </> */}
+              </>
               <>
-                {/* <u> */}
-                <h2>Mark activity attendance</h2>
-                {/* </u> */}
+                {/* <u>
+                  <h3>Mark activity attendance</h3>
+                </u> */}
               </>
 
               <div>
-                <h4>
+                {/* <h4>
                   <u>Step 1</u>
-                </h4>
-                <h3>
+                </h4> */}
+                {/* <h3>
                   <i
                     style={{ cursor: "pointer" }}
                     onClick={() => {
@@ -1156,8 +1204,8 @@ class SearchBar extends React.Component {
                   ></i>
                   &nbsp;
                   {t("Choose_date")}
-                </h3>
-                {this.state.showDatePicker && (
+                </h3> */}
+                {/* {this.state.showDatePicker && (
                   <>
                     <DatePicker
                       selected={this.state.selectedDate}
@@ -1177,19 +1225,19 @@ class SearchBar extends React.Component {
                         this.state.selectedDate.getFullYear()}
                     </p>
                   </>
-                )}
+                )} */}
               </div>
 
-              <h4>
+              {/* <h4>
                 <u>Step 2</u>
-              </h4>
+              </h4> */}
 
-              <QRReader
+              {/* <QRReader
                 closeModalNow={this.state.closeModalNow}
                 handleScanFinished={this.handleScanFinished}
-                buttonText={`Scan activity QR  Or`}
-              />
-              {this.state.selectedEvent !== null ? (
+                buttonText={`Scan QR code  Or`}
+              /> */}
+              {/* {this.state.selectedEvent !== null ? (
                 <>
                   <p>Selected Activity is {this.state.selectedEvent}</p>
                 </>
@@ -1197,7 +1245,7 @@ class SearchBar extends React.Component {
                 <>
                   <p></p>
                 </>
-              )}
+              )} */}
               {this.state.openAllActivities ? (
                 <div className="App">
                   <b>{this.state.currentTravMonth}</b>
@@ -1241,51 +1289,12 @@ class SearchBar extends React.Component {
               ) : (
                 ""
               )}
-              <div>
-                {/* <h4>
-                  <u>Step 2</u>
-                </h4> */}
-                <h3>
-                  <i
-                    style={{ cursor: "pointer" }}
-                    onClick={() => {
-                      this.setState({ showActivitySelector: true });
-                    }}
-                    class="fas fa-suitcase"
-                  ></i>
-                  &nbsp;
-                  {t("Choose_event")}
-                </h3>
-                {this.state.showActivitySelector && (
-                  <>
-                    <DropDownContainer>
-                      <DropDownHeaderEvent onClick={toggling}>
-                        {this.state.selectedEvent || "Event"}
-                      </DropDownHeaderEvent>
-                      {this.state.isOpen && (
-                        <DropDownListContainer>
-                          <DropDownListEvent>
-                            {this.state.eventList.map((event) => (
-                              <ListItem
-                                onClick={onOptionClicked(event)}
-                                key={Math.random()}
-                              >
-                                {event}
-                              </ListItem>
-                            ))}
-                          </DropDownListEvent>
-                        </DropDownListContainer>
-                      )}
-                    </DropDownContainer>
-                    <p>Selected activity is {this.state.selectedEvent}</p>
-                  </>
-                )}
-              </div>
-              {this.state.selectedEvent !== null && (
-                <TimeDurationCalculator conveyDuration={this.conveyDuration} />
-              )}
 
-              <div>
+              {/* {this.state.selectedEvent !== null && (
+                <TimeDurationCalculator conveyDuration={this.conveyDuration} />
+              )} */}
+
+              {/* <div>
                 <div>
                   {this.state.selectedUsers?.map((user, index) => (
                     <Chip
@@ -1337,11 +1346,11 @@ class SearchBar extends React.Component {
                     />
                   </div>
                 )}
-              </div>
-              <h4>
+              </div> */}
+              {/* <h4>
                 <u>Step 4</u>
-              </h4>
-              {this.state.submitSuccess ? (
+              </h4> */}
+              {/* {this.state.submitSuccess ? (
                 <div>
                   <div
                     style={{
@@ -1359,8 +1368,8 @@ class SearchBar extends React.Component {
                     <Lottie options={defaultOptions} height={50} width={50} />
                   </div>
                 </div>
-              ) : null}
-              <div>
+              ) : null} */}
+              {/* <div>
                 <br></br>
                 <button onClick={this.submitAttendance} style={button}>
                   <i className="	far fa-check-square"></i>&nbsp;
@@ -1368,8 +1377,8 @@ class SearchBar extends React.Component {
                 </button>
                 <br></br>
                 <br></br>
-                {/* history button  */}
-              </div>
+                history button 
+              </div> */}
             </Container>
           </div>
         </>
@@ -1488,4 +1497,4 @@ class SearchBar extends React.Component {
       );
   }
 }
-export default withTranslation()(SearchBar);
+export default withTranslation()(ViewAttendanceSummary);

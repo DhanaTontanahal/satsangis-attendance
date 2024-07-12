@@ -9,6 +9,7 @@ import LibraryManagement from "./library/LibraryManagement";
 import styled from "styled-components";
 import Timer from "./timer/Timer";
 import Alarm from "./alarm/Alarm";
+import ViewAttendanceSummary from "./search_bar/ViewAttendanceSummary";
 
 const MenuButton = styled.button`
   position: fixed;
@@ -102,6 +103,7 @@ function App() {
           <Route path="/library-management" element={<LibraryManagement />} />
           <Route path="/timer" exact element={<Timer />} />
           <Route path="/alarm" exact element={<Alarm />} />
+          <Route path="/summary" exact element={<ViewAttendanceSummary />} />
         </Routes>
       </div>
     </Router>
