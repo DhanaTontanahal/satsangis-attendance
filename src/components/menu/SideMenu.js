@@ -64,14 +64,14 @@ const SideMenu = ({ isOpen, onClose }) => (
       </MenuItem>
 
       <MenuItem to="/timer" onClick={onClose}>
-        Timer
+        Activity Timer
       </MenuItem>
-      <MenuItem to="/alarm" onClick={onClose}>
+      {/* <MenuItem to="/alarm" onClick={onClose}>
         Alarm
-      </MenuItem>
-      <MenuItem to="/library-management" onClick={onClose}>
+      </MenuItem> */}
+      {/* <MenuItem to="/library-management" onClick={onClose}>
         Library Management
-      </MenuItem>
+      </MenuItem> */}
 
       <button
         className="btn-history"

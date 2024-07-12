@@ -20,17 +20,9 @@ import TimeDurationCalculator from "../activity-calendar/TimeDurationCalculator"
 import { credVals, firebaseConfig } from "./firebase-config";
 import AttendanceReport from "../excel/AttendanceReport";
 import AttendanceReport2 from "../excel/AttendanceReport2";
+import { defaultOptions } from "../utils/utl";
 require("firebase/auth");
 require("firebase/database");
-
-const defaultOptions = {
-  loop: true,
-  autoplay: true,
-  animationData: thumbsUp,
-  rendererSettings: {
-    preserveAspectRatio: "xMidYMid slice",
-  },
-};
 
 const DropDownContainer = styled("div")`
   width: 20em;
@@ -1138,7 +1130,7 @@ class SearchBar extends React.Component {
               </> */}
               <>
                 {/* <u> */}
-                <h2>Mark activity attendance</h2>
+                <h2>Mark attendance</h2>
                 {/* </u> */}
               </>
 
@@ -1356,7 +1348,11 @@ class SearchBar extends React.Component {
                     }}
                   >
                     {t("submit_message")}
-                    <Lottie options={defaultOptions} height={50} width={50} />
+                    <Lottie
+                      options={defaultOptions(thumbsUp)}
+                      height={50}
+                      width={50}
+                    />
                   </div>
                 </div>
               ) : null}
