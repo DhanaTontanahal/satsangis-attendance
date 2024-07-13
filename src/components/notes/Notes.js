@@ -70,9 +70,15 @@ const Notes = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [editingNoteId, setEditingNoteId] = useState(null);
+  const [loggedInUserDetail, setLoggedInUserDetail] = useState(
+    JSON.parse(localStorage.getItem("loginObject"))?.userName
+  );
 
   useEffect(() => {
-    const notesRef = database.ref("notes");
+    const loginObj = JSON.parse(localStorage.getItem("loginObject"));
+    setLoggedInUserDetail(loginObj.userName);
+    const notesRef = database.ref(`notes/${loggedInUserDetail?.branchCode}`);
+
     notesRef.on("value", (snapshot) => {
       const notesData = snapshot.val();
       const notesList = [];
@@ -85,7 +91,7 @@ const Notes = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const notesRef = database.ref("notes");
+    const notesRef = database.ref(`notes/${loggedInUserDetail?.branchCode}`);
 
     if (editingNoteId) {
       notesRef.child(editingNoteId).update({ title, description });
@@ -106,7 +112,7 @@ const Notes = () => {
   };
 
   const handleDelete = (noteId) => {
-    const notesRef = database.ref("notes");
+    const notesRef = database.ref(`notes/${loggedInUserDetail?.branchCode}`);
     notesRef.child(noteId).remove();
   };
 

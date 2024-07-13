@@ -74,6 +74,13 @@ const SideMenu = ({ isOpen, onClose }) => (
       <MenuItem to="/notices" onClick={onClose}>
         Notice
       </MenuItem>
+      <MenuItem to="/appointments" onClick={onClose}>
+        Doctor appointment
+      </MenuItem>
+
+      <MenuItem to="/docview" onClick={onClose}>
+        Doctor View
+      </MenuItem>
 
       {/* <MenuItem to="/alarm" onClick={onClose}>
         Alarm

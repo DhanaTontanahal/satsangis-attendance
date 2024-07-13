@@ -10,6 +10,8 @@ import styled from "styled-components";
 import Timer from "./timer/Timer";
 import Notes from "./notes/Notes";
 import Notice from "./notices/Notice";
+import Appointments from "./doctor/Appointments";
+import DoctorViewAppointments from "./doctor/DoctorViewAppointments";
 
 import Alarm from "./alarm/Alarm";
 import ViewAttendanceSummary from "./search_bar/ViewAttendanceSummary";
@@ -109,6 +111,8 @@ function App() {
           <Route path="/summary" exact element={<ViewAttendanceSummary />} />
           <Route path="/notes" exact element={<Notes />} />
           <Route path="/notices" exact element={<Notice />} />
+          <Route path="/appointments" exact element={<Appointments />} />
+          <Route path="/docview" exact element={<DoctorViewAppointments />} />
         </Routes>
       </div>
     </Router>
