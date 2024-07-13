@@ -19,6 +19,19 @@ import ViewAttendanceSummary from "./search_bar/ViewAttendanceSummary";
 import ExhibitionEvents from "./exhibition/ExhibitionEvents";
 import ManageDoctors from "./doctor/ManageDoctors";
 import ManageBranches from "./doctor/ManageBranches";
+import PehraDutySlots from "./pehraduty/PehraDutySlots";
+import PehraVolunteers from "./pehraduty/PehraVolunteers";
+import MapDuties from "./pehraduty/MapDuties";
+import PehraEvents from "./pehraduty/PehraEvents";
+import ViewDuties from "./pehraduty/ViewDuties";
+import ContactInfoTypes from "./impcontacts/ContactInfoTypes";
+import ManageContacts from "./impcontacts/ManageContacts";
+import ManageStoreItems from "./stores/ManageStore";
+import OrderStoreItems from "./stores/OrderStoreItems";
+import ManageOrders from "./stores/ManageOrders";
+import ManageMaintenance from "./com/ManageMaintenance";
+import LiftMaintenance from "./com/ListMaintenance";
+import GeneratorMaintenance from "./com/GeneratorMaintenance";
 
 const MenuButton = styled.button`
   position: fixed;
@@ -119,9 +132,30 @@ function App() {
           <Route path="/docview" exact element={<DoctorViewAppointments />} />
           <Route path="/manageDoctors" exact element={<ManageDoctors />} />
           <Route path="/manageBranches" exact element={<ManageBranches />} />
-
           <Route path="/exhcustdets" exact element={<CustomerDetails />} />
           <Route path="/exhevents" exact element={<ExhibitionEvents />} />
+          <Route path="/pehraslots" exact element={<PehraDutySlots />} />
+          <Route path="/pehraVolunteers" exact element={<PehraVolunteers />} />
+          <Route path="/mapDuties" exact element={<MapDuties />} />
+          <Route path="/pehraEvents" exact element={<PehraEvents />} />
+          <Route path="/viewDuties" exact element={<ViewDuties />} />
+          <Route path="/impContacts" exact element={<ContactInfoTypes />} />
+          <Route path="/manageContacts" exact element={<ManageContacts />} />
+          <Route path="/manageStore" exact element={<ManageStoreItems />} />
+          <Route path="/orderStoreItems" exact element={<OrderStoreItems />} />
+          <Route path="/manageOrders" exact element={<ManageOrders />} />
+          <Route
+            path="/manageMaintenance"
+            exact
+            element={<ManageMaintenance />}
+          />
+
+          <Route path="/liftMaintenance" exact element={<LiftMaintenance />} />
+          <Route
+            path="/generatorMaintenance"
+            exact
+            element={<GeneratorMaintenance />}
+          />
         </Routes>
       </div>
     </Router>

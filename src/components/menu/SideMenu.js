@@ -72,10 +72,24 @@ const SideMenu = ({ isOpen, onClose }) => {
   const [isAttendanceOpen, setIsAttendanceOpen] = useState(false);
   const [isDoctorOpen, setIsDoctorOpen] = useState(false);
   const [isExhibitionOpen, setIsExhibitionOpen] = useState(false);
+  const [pehraDutyOpen, setPehraDutyOpen] = useState(false);
+
+  const [general, setGeneral] = useState(false);
+
+  const [stores, setStores] = useState(false);
+
+  const [com, setCom] = useState(false);
 
   const toggleAttendance = () => setIsAttendanceOpen(!isAttendanceOpen);
   const toggleDoctor = () => setIsDoctorOpen(!isDoctorOpen);
   const toggleExhibition = () => setIsExhibitionOpen(!isExhibitionOpen);
+  const togglePehraDuty = () => setPehraDutyOpen(!pehraDutyOpen);
+
+  const toggleGeneral = () => setGeneral(!general);
+
+  const togglestores = () => setStores(!stores);
+
+  const toggleCOM = () => setCom(!com);
 
   return (
     <>
@@ -143,6 +157,90 @@ const SideMenu = ({ isOpen, onClose }) => {
             </MenuItem>
             <MenuItem to="/exhevents" onClick={onClose}>
               Exhibition Events
+            </MenuItem>
+          </>
+        )}
+
+        <SectionTitle onClick={togglePehraDuty}>
+          Colony Security
+          <Arrow isOpen={pehraDutyOpen}>{pehraDutyOpen ? "↓" : "→"}</Arrow>
+        </SectionTitle>
+        {pehraDutyOpen && (
+          <>
+            <MenuItem to="/viewDuties" onClick={onClose}>
+              View Duties
+            </MenuItem>
+
+            <MenuItem to="/pehraslots" onClick={onClose}>
+              Manage pehra slots
+            </MenuItem>
+
+            <MenuItem to="/pehraVolunteers" onClick={onClose}>
+              Manage volunteers
+            </MenuItem>
+
+            <MenuItem to="/mapDuties" onClick={onClose}>
+              Map duties
+            </MenuItem>
+
+            <MenuItem to="/pehraEvents" onClick={onClose}>
+              Events noticed during pehr
+            </MenuItem>
+          </>
+        )}
+
+        <SectionTitle onClick={toggleGeneral}>
+          General Utility
+          <Arrow isOpen={general}>{general ? "↓" : "→"}</Arrow>
+        </SectionTitle>
+        {general && (
+          <>
+            <MenuItem to="/impcontacts" onClick={onClose}>
+              Contact types
+            </MenuItem>
+
+            <MenuItem to="/manageContacts" onClick={onClose}>
+              Manage utility contacts
+            </MenuItem>
+          </>
+        )}
+
+        <SectionTitle onClick={togglestores}>
+          Stores
+          <Arrow isOpen={stores}>{stores ? "↓" : "→"}</Arrow>
+        </SectionTitle>
+        {stores && (
+          <>
+            <MenuItem to="/manageStore" onClick={onClose}>
+              Manage Store
+            </MenuItem>
+
+            <MenuItem to="/orderStoreItems" onClick={onClose}>
+              OrderStoreItems
+            </MenuItem>
+
+            <MenuItem to="/manageOrders" onClick={onClose}>
+              ManageOrders
+            </MenuItem>
+          </>
+        )}
+
+        <SectionTitle onClick={toggleCOM}>
+          COM
+          <Arrow isOpen={com}>{com ? "↓" : "→"}</Arrow>
+        </SectionTitle>
+        {com && (
+          <>
+            <MenuItem to="/manageMaintenance" onClick={onClose}>
+              ManageMaintenance
+            </MenuItem>
+
+            <MenuItem to="/liftMaintenance" onClick={onClose}>
+              LiftMaintenance
+            </MenuItem>
+
+            <MenuItem to="/generatorMaintenance" onClick={onClose}>
+              GeneratorMaintenance
             </MenuItem>
           </>
         )}
