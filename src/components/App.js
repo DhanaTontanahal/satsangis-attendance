@@ -12,9 +12,13 @@ import Notes from "./notes/Notes";
 import Notice from "./notices/Notice";
 import Appointments from "./doctor/Appointments";
 import DoctorViewAppointments from "./doctor/DoctorViewAppointments";
+import CustomerDetails from "./exhibition/CustomerDetails";
 
 import Alarm from "./alarm/Alarm";
 import ViewAttendanceSummary from "./search_bar/ViewAttendanceSummary";
+import ExhibitionEvents from "./exhibition/ExhibitionEvents";
+import ManageDoctors from "./doctor/ManageDoctors";
+import ManageBranches from "./doctor/ManageBranches";
 
 const MenuButton = styled.button`
   position: fixed;
@@ -113,6 +117,11 @@ function App() {
           <Route path="/notices" exact element={<Notice />} />
           <Route path="/appointments" exact element={<Appointments />} />
           <Route path="/docview" exact element={<DoctorViewAppointments />} />
+          <Route path="/manageDoctors" exact element={<ManageDoctors />} />
+          <Route path="/manageBranches" exact element={<ManageBranches />} />
+
+          <Route path="/exhcustdets" exact element={<CustomerDetails />} />
+          <Route path="/exhevents" exact element={<ExhibitionEvents />} />
         </Routes>
       </div>
     </Router>

@@ -95,9 +95,6 @@ const AppointmentIcons = styled.div`
 `;
 
 const Appointments = () => {
-  const [doctors, setDoctors] = useState([]);
-  const [branches, setBranches] = useState([]);
-
   const [appointments, setAppointments] = useState([]);
   const [formData, setFormData] = useState({
     doctor: "",
@@ -123,26 +120,6 @@ const Appointments = () => {
         appointmentsList.push({ id, ...appointmentsData[id] });
       }
       setAppointments(appointmentsList);
-    });
-
-    const doctorsRef = database.ref("doctors");
-    doctorsRef.on("value", (snapshot) => {
-      const doctorsData = snapshot.val();
-      const doctorsList = [];
-      for (let id in doctorsData) {
-        doctorsList.push({ id, ...doctorsData[id] });
-      }
-      setDoctors(doctorsList);
-    });
-
-    const branchesRef = database.ref("branches");
-    branchesRef.on("value", (snapshot) => {
-      const branchesData = snapshot.val();
-      const branchesList = [];
-      for (let id in branchesData) {
-        branchesList.push({ id, ...branchesData[id] });
-      }
-      setBranches(branchesList);
     });
   }, []);
 
@@ -200,10 +177,9 @@ const Appointments = () => {
 
   return (
     <AppointmentsContainer>
-      <h2>Book Doctor appointment</h2>
       <AppointmentForm onSubmit={handleSubmit}>
         <FormControl>
-          <FormLabel></FormLabel>
+          <FormLabel>Book Doctor appointment</FormLabel>
           <FormSelect
             name="doctor"
             value={formData.doctor}
@@ -211,14 +187,27 @@ const Appointments = () => {
             required
           >
             <option value="">Select Doctor</option>
-            {doctors.map((doctor) => (
-              <option
-                key={doctor.id}
-                value={`${doctor.name} - ${doctor.specialty}`}
-              >
-                {doctor.name} - {doctor.specialty}
-              </option>
-            ))}
+            <option value="Dr Vijay Shekar - Pediatrician">
+              Dr Vijay Shekar - Pediatrician
+            </option>
+            <option value="Dr Roshini - General Medicine">
+              Dr Roshini - General Medicine
+            </option>
+            <option value="Dr Rama Devi - Gynecologist">
+              Dr Rama Devi - Gynecologist
+            </option>
+            <option value="Dr Padmavati - Dermatology">
+              Dr Padmavati - Dermatology
+            </option>
+            <option value="Dr Swetha Bandapalli - Homeopathy">
+              Dr Swetha Bandapalli - Homeopathy
+            </option>
+            <option value="Dr Mehta - General Medicine">
+              Dr Mehta - General Medicine
+            </option>
+            <option value="Dr Venkat - General Medicine">
+              Dr Venkat - General Medicine
+            </option>
           </FormSelect>
         </FormControl>
         <FormControl>
@@ -319,11 +308,11 @@ const Appointments = () => {
             required
           >
             <option value="">Select Branch</option>
-            {branches.map((branch) => (
-              <option key={branch.id} value={branch.name}>
-                {branch.name}
-              </option>
-            ))}
+            <option value="Bolarum">Bolarum</option>
+            <option value="Secunderabad">Secunderabad</option>
+            <option value="Malakpet">Malakpet</option>
+            <option value="Hyderabad">Hyderabad</option>
+            <option value="Anand Nagar">Anand Nagar</option>
           </FormSelect>
         </FormControl>
         <SubmitButton type="submit">
