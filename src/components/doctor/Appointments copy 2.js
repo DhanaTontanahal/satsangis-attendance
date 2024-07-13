@@ -97,6 +97,7 @@ const AppointmentIcons = styled.div`
 const Appointments = () => {
   const [doctors, setDoctors] = useState([]);
   const [branches, setBranches] = useState([]);
+
   const [appointments, setAppointments] = useState([]);
   const [formData, setFormData] = useState({
     doctor: "",
@@ -113,19 +114,13 @@ const Appointments = () => {
   });
   const [editingAppointmentId, setEditingAppointmentId] = useState(null);
 
-  const loggedInUser = JSON.parse(localStorage.getItem("loginObject"));
-
   useEffect(() => {
     const appointmentsRef = database.ref("appointments");
     appointmentsRef.on("value", (snapshot) => {
       const appointmentsData = snapshot.val();
       const appointmentsList = [];
       for (let id in appointmentsData) {
-        if (
-          appointmentsData[id].submittedBy === loggedInUser?.userName?.newUID
-        ) {
-          appointmentsList.push({ id, ...appointmentsData[id] });
-        }
+        appointmentsList.push({ id, ...appointmentsData[id] });
       }
       setAppointments(appointmentsList);
     });
@@ -149,7 +144,7 @@ const Appointments = () => {
       }
       setBranches(branchesList);
     });
-  }, [loggedInUser?.userName?.newUID]);
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -163,10 +158,7 @@ const Appointments = () => {
       appointmentsRef.child(editingAppointmentId).update(formData);
       setEditingAppointmentId(null);
     } else {
-      appointmentsRef.push({
-        ...formData,
-        submittedBy: loggedInUser?.userName?.newUID,
-      });
+      appointmentsRef.push(formData);
     }
 
     setFormData({
@@ -208,10 +200,10 @@ const Appointments = () => {
 
   return (
     <AppointmentsContainer>
-      <h2>Book Doctor Appointment</h2>
+      <h2>Book Doctor appointment</h2>
       <AppointmentForm onSubmit={handleSubmit}>
         <FormControl>
-          <FormLabel>Doctor</FormLabel>
+          <FormLabel></FormLabel>
           <FormSelect
             name="doctor"
             value={formData.doctor}

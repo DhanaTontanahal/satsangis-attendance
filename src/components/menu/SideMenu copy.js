@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { database } from "../firebase/firebase"; // Adjust the path to your Firebase configuration
 
 const MenuContainer = styled.div`
   position: fixed;
@@ -16,7 +15,6 @@ const MenuContainer = styled.div`
   transition: transform 0.3s ease;
   z-index: 1000;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
-  overflow-y: auto; /* Enable vertical scrolling */
 `;
 
 const Overlay = styled.div`
@@ -75,29 +73,23 @@ const SideMenu = ({ isOpen, onClose }) => {
   const [isDoctorOpen, setIsDoctorOpen] = useState(false);
   const [isExhibitionOpen, setIsExhibitionOpen] = useState(false);
   const [pehraDutyOpen, setPehraDutyOpen] = useState(false);
+
   const [general, setGeneral] = useState(false);
+
   const [stores, setStores] = useState(false);
+
   const [com, setCom] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
 
   const toggleAttendance = () => setIsAttendanceOpen(!isAttendanceOpen);
   const toggleDoctor = () => setIsDoctorOpen(!isDoctorOpen);
   const toggleExhibition = () => setIsExhibitionOpen(!isExhibitionOpen);
   const togglePehraDuty = () => setPehraDutyOpen(!pehraDutyOpen);
-  const toggleGeneral = () => setGeneral(!general);
-  const togglestores = () => setStores(!stores);
-  const toggleCOM = () => setCom(!com);
 
-  useEffect(() => {
-    const loggedInUser = JSON.parse(localStorage.getItem("loginObject"));
-    console.log(loggedInUser);
-    if (loggedInUser) {
-      const adminRef = database.ref(`admins/${loggedInUser?.userName?.newUID}`);
-      adminRef.on("value", (snapshot) => {
-        setIsAdmin(!!snapshot.val());
-      });
-    }
-  }, []);
+  const toggleGeneral = () => setGeneral(!general);
+
+  const togglestores = () => setStores(!stores);
+
+  const toggleCOM = () => setCom(!com);
 
   return (
     <>
@@ -125,13 +117,9 @@ const SideMenu = ({ isOpen, onClose }) => {
             <MenuItem to="/notes" onClick={onClose}>
               Notes
             </MenuItem>
-            {isAdmin && (
-              <>
-                <MenuItem to="/notices" onClick={onClose}>
-                  Notice
-                </MenuItem>
-              </>
-            )}
+            <MenuItem to="/notices" onClick={onClose}>
+              Notice
+            </MenuItem>
           </>
         )}
 
@@ -144,24 +132,15 @@ const SideMenu = ({ isOpen, onClose }) => {
             <MenuItem to="/appointments" onClick={onClose}>
               Doctor Appointment
             </MenuItem>
-            {isAdmin && (
-              <>
-                <MenuItem to="/docview" onClick={onClose}>
-                  Doctor View
-                </MenuItem>
-              </>
-            )}
-
-            {isAdmin && (
-              <>
-                <MenuItem to="/manageDoctors" onClick={onClose}>
-                  Manage Doctors
-                </MenuItem>
-                <MenuItem to="/manageBranches" onClick={onClose}>
-                  Manage Branches
-                </MenuItem>
-              </>
-            )}
+            <MenuItem to="/docview" onClick={onClose}>
+              Doctor View
+            </MenuItem>
+            <MenuItem to="/manageDoctors" onClick={onClose}>
+              Manage Doctors
+            </MenuItem>
+            <MenuItem to="/manageBranches" onClick={onClose}>
+              Manage Branches
+            </MenuItem>
           </>
         )}
 
@@ -191,22 +170,22 @@ const SideMenu = ({ isOpen, onClose }) => {
             <MenuItem to="/viewDuties" onClick={onClose}>
               View Duties
             </MenuItem>
-            {isAdmin && (
-              <>
-                <MenuItem to="/pehraslots" onClick={onClose}>
-                  Manage Pehra Slots
-                </MenuItem>
-                <MenuItem to="/pehraVolunteers" onClick={onClose}>
-                  Manage Volunteers
-                </MenuItem>
-                <MenuItem to="/mapDuties" onClick={onClose}>
-                  Map Duties
-                </MenuItem>
-                <MenuItem to="/pehraEvents" onClick={onClose}>
-                  Events Noticed During Pehra
-                </MenuItem>
-              </>
-            )}
+
+            <MenuItem to="/pehraslots" onClick={onClose}>
+              Manage pehra slots
+            </MenuItem>
+
+            <MenuItem to="/pehraVolunteers" onClick={onClose}>
+              Manage volunteers
+            </MenuItem>
+
+            <MenuItem to="/mapDuties" onClick={onClose}>
+              Map duties
+            </MenuItem>
+
+            <MenuItem to="/pehraEvents" onClick={onClose}>
+              Events noticed during pehr
+            </MenuItem>
           </>
         )}
 
@@ -216,18 +195,12 @@ const SideMenu = ({ isOpen, onClose }) => {
         </SectionTitle>
         {general && (
           <>
-            {isAdmin && (
-              <>
-                <MenuItem to="/impcontacts" onClick={onClose}>
-                  Contact Types
-                </MenuItem>
-                <MenuItem to="/manageContacts" onClick={onClose}>
-                  Manage Utility Contacts
-                </MenuItem>
-              </>
-            )}
-            <MenuItem to="/ViewContacts" onClick={onClose}>
-              View Contacts
+            <MenuItem to="/impcontacts" onClick={onClose}>
+              Contact types
+            </MenuItem>
+
+            <MenuItem to="/manageContacts" onClick={onClose}>
+              Manage utility contacts
             </MenuItem>
           </>
         )}
@@ -238,54 +211,49 @@ const SideMenu = ({ isOpen, onClose }) => {
         </SectionTitle>
         {stores && (
           <>
-            {isAdmin && (
-              <>
-                <MenuItem to="/manageStore" onClick={onClose}>
-                  Manage Store
-                </MenuItem>
-
-                <MenuItem to="/manageOrders" onClick={onClose}>
-                  Manage Orders
-                </MenuItem>
-              </>
-            )}
+            <MenuItem to="/manageStore" onClick={onClose}>
+              Manage Store
+            </MenuItem>
 
             <MenuItem to="/orderStoreItems" onClick={onClose}>
-              Order Store Items
+              Order StoreItems
+            </MenuItem>
+
+            <MenuItem to="/manageOrders" onClick={onClose}>
+              Manage Orders
             </MenuItem>
           </>
         )}
 
-        {isAdmin && (
+        <SectionTitle onClick={toggleCOM}>
+          COM
+          <Arrow isOpen={com}>{com ? "↓" : "→"}</Arrow>
+        </SectionTitle>
+        {com && (
           <>
-            <SectionTitle onClick={toggleCOM}>
-              COM
-              <Arrow isOpen={com}>{com ? "↓" : "→"}</Arrow>
-            </SectionTitle>
-            {com && (
-              <>
-                <MenuItem to="/manageMaintenance" onClick={onClose}>
-                  Manage Maintenance
-                </MenuItem>
-                <MenuItem to="/liftMaintenance" onClick={onClose}>
-                  Lift Maintenance
-                </MenuItem>
-                <MenuItem to="/generatorMaintenance" onClick={onClose}>
-                  Generator Maintenance
-                </MenuItem>
-                <MenuItem to="/generalBodyMeetings" onClick={onClose}>
-                  General Body Meetings
-                </MenuItem>
-                <MenuItem to="/CCTVMaintenance" onClick={onClose}>
-                  CCTV Maintenance
-                </MenuItem>
-                {isAdmin && (
-                  <MenuItem to="/ManageAdmins" onClick={onClose}>
-                    Manage Admins
-                  </MenuItem>
-                )}
-              </>
-            )}
+            <MenuItem to="/manageMaintenance" onClick={onClose}>
+              Manage Maintenance
+            </MenuItem>
+
+            <MenuItem to="/liftMaintenance" onClick={onClose}>
+              Lift Maintenance
+            </MenuItem>
+
+            <MenuItem to="/generatorMaintenance" onClick={onClose}>
+              Generator Maintenance
+            </MenuItem>
+
+            <MenuItem to="/generalBodyMeetings" onClick={onClose}>
+              General Body Meetings
+            </MenuItem>
+
+            <MenuItem to="/CCTVMaintenance" onClick={onClose}>
+              CCTV Maintenance
+            </MenuItem>
+
+            <MenuItem to="/ManageAdmins" onClick={onClose}>
+              Manag eAdmins
+            </MenuItem>
           </>
         )}
 

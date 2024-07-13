@@ -32,6 +32,10 @@ import ManageOrders from "./stores/ManageOrders";
 import ManageMaintenance from "./com/ManageMaintenance";
 import LiftMaintenance from "./com/ListMaintenance";
 import GeneratorMaintenance from "./com/GeneratorMaintenance";
+import GeneralBodyMeetings from "./com/GeneralBodyMeetings";
+import CCTVMaintenance from "./com/CCTVMaintenance";
+import ManageAdmins from "./admin/ManageAdmins";
+import ViewContacts from "./impcontacts/ViewContacts";
 
 const MenuButton = styled.button`
   position: fixed;
@@ -50,7 +54,7 @@ i18n
     resources: {
       en: {
         translation: {
-          Satsangis_Attendance: "Satsangis Attendance (Youth Association)",
+          Satsangis_Attendance: "Hello World",
           Choose_date: "Select Date",
           Choose_event: "Select Activity",
           Choose_user: "Start typing more name(s)",
@@ -156,6 +160,18 @@ function App() {
             exact
             element={<GeneratorMaintenance />}
           />
+
+          <Route
+            path="/generalBodyMeetings"
+            exact
+            element={<GeneralBodyMeetings />}
+          />
+
+          <Route path="/CCTVMaintenance" exact element={<CCTVMaintenance />} />
+
+          <Route path="/ManageAdmins" exact element={<ManageAdmins />} />
+
+          <Route path="/ViewContacts" exact element={<ViewContacts />} />
         </Routes>
       </div>
     </Router>
