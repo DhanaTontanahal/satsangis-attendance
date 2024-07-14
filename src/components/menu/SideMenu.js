@@ -147,7 +147,7 @@ const SideMenu = ({ isOpen, onClose }) => {
             {isAdmin && (
               <>
                 <MenuItem to="/docview" onClick={onClose}>
-                  Doctor View
+                  Doctor's View
                 </MenuItem>
               </>
             )}
@@ -282,6 +282,12 @@ const SideMenu = ({ isOpen, onClose }) => {
                 {isAdmin && (
                   <MenuItem to="/ManageAdmins" onClick={onClose}>
                     Manage Admins
+                  </MenuItem>
+                )}
+
+                {isAdmin && (
+                  <MenuItem to="/ManageUsers" onClick={onClose}>
+                    Manage Users
                   </MenuItem>
                 )}
               </>

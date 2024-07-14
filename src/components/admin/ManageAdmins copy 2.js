@@ -48,9 +48,6 @@ const Card = styled.div`
   border-radius: 4px;
   background-color: #f9f9f9;
   margin-top: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 `;
 
 const Button = styled.button`
@@ -65,20 +62,6 @@ const Button = styled.button`
 
   &:hover {
     background-color: #0056b3;
-  }
-`;
-
-const DeleteButton = styled.button`
-  padding: 5px 10px;
-  font-size: 14px;
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  cursor: pointer;
-  border-radius: 4px;
-
-  &:hover {
-    background-color: #c82333;
   }
 `;
 
@@ -140,11 +123,6 @@ const ManageAdmins = () => {
     }
   };
 
-  const handleDeleteAdmin = (adminId) => {
-    const adminsRef = database.ref("admins");
-    adminsRef.child(adminId).remove();
-  };
-
   return (
     <Container>
       <Form onSubmit={handleAddAdmin}>
@@ -175,10 +153,8 @@ const ManageAdmins = () => {
 
         {selectedUser && (
           <Card>
-            <div>
-              <h4>{selectedUser.nameSatsangi}</h4>
-              <p>{selectedUser.newUID}</p>
-            </div>
+            <h4>{selectedUser.nameSatsangi}</h4>
+            <p>{selectedUser.newUID}</p>
           </Card>
         )}
 
@@ -190,13 +166,8 @@ const ManageAdmins = () => {
       <h3>Current Admins</h3>
       {admins.map((admin) => (
         <Card key={admin.id}>
-          <div>
-            <h4>{admin.name}</h4>
-            <p>{admin.newUID}</p>
-          </div>
-          <DeleteButton onClick={() => handleDeleteAdmin(admin.id)}>
-            Delete
-          </DeleteButton>
+          <h4>{admin.name}</h4>
+          <p>{admin.newUID}</p>
         </Card>
       ))}
     </Container>

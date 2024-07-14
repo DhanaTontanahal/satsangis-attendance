@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import { database } from "../firebase/firebase";
-import moment from "moment";
 
 const AppointmentsContainer = styled.div`
   max-width: 800px;
@@ -101,11 +98,10 @@ const Appointments = () => {
   const [doctors, setDoctors] = useState([]);
   const [branches, setBranches] = useState([]);
   const [appointments, setAppointments] = useState([]);
-  const [users, setUsers] = useState([]);
   const [formData, setFormData] = useState({
     doctor: "",
     name: "",
-    gender: "Male",
+    gender: "",
     dob: "",
     email: "",
     mobile: "",
@@ -114,11 +110,7 @@ const Appointments = () => {
     bloodGroup: "",
     symptoms: "",
     satsangBranch: "",
-    appointmentDate: new Date(),
-    appointmentFor: "Self",
-    familyMember: "",
   });
-  const [filteredUsers, setFilteredUsers] = useState([]);
   const [editingAppointmentId, setEditingAppointmentId] = useState(null);
 
   const loggedInUser = JSON.parse(localStorage.getItem("loginObject"));
@@ -157,44 +149,10 @@ const Appointments = () => {
       }
       setBranches(branchesList);
     });
-
-    const usersRef = database.ref("satsangiUsers");
-    usersRef.on("value", (snapshot) => {
-      const usersData = snapshot.val();
-      const usersList = [];
-      for (let id in usersData) {
-        usersList.push({ id, ...usersData[id] });
-      }
-      setUsers(usersList);
-      setFilteredUsers(usersList);
-    });
-
-    setDefaultUpcomingSunday();
   }, [loggedInUser?.userName?.newUID]);
-
-  const setDefaultUpcomingSunday = () => {
-    const today = new Date();
-    const upcomingSunday = moment(today).day(7).toDate();
-    setFormData((prevState) => ({
-      ...prevState,
-      appointmentDate: upcomingSunday,
-    }));
-  };
-
-  const handleDateChange = (date) => {
-    setFormData({ ...formData, appointmentDate: date });
-  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSearchChange = (e) => {
-    const term = e.target.value.toLowerCase();
-    setFormData({ ...formData, familyMember: e.target.value });
-    setFilteredUsers(
-      users.filter((user) => user.nameSatsangi.toLowerCase().includes(term))
-    );
   };
 
   const handleSubmit = (e) => {
@@ -214,7 +172,7 @@ const Appointments = () => {
     setFormData({
       doctor: "",
       name: "",
-      gender: "Male",
+      gender: "",
       dob: "",
       email: "",
       mobile: "",
@@ -223,12 +181,7 @@ const Appointments = () => {
       bloodGroup: "",
       symptoms: "",
       satsangBranch: "",
-      appointmentDate: new Date(),
-      appointmentFor: "Self",
-      familyMember: "",
     });
-
-    setDefaultUpcomingSunday();
   };
 
   const handleEdit = (appointment) => {
@@ -244,9 +197,6 @@ const Appointments = () => {
       bloodGroup: appointment.bloodGroup,
       symptoms: appointment.symptoms,
       satsangBranch: appointment.satsangBranch,
-      appointmentDate: new Date(appointment.appointmentDate),
-      appointmentFor: appointment.appointmentFor || "Self",
-      familyMember: appointment.familyMember || "",
     });
     setEditingAppointmentId(appointment.id);
   };
@@ -260,53 +210,6 @@ const Appointments = () => {
     <AppointmentsContainer>
       <h2>Book Doctor Appointment</h2>
       <AppointmentForm onSubmit={handleSubmit}>
-        <FormControl>
-          <FormLabel>Appointment For</FormLabel>
-          <FormSelect
-            name="appointmentFor"
-            value={formData.appointmentFor}
-            onChange={handleChange}
-            required
-          >
-            <option value="Self">Self</option>
-            <option value="Family member">Family member</option>
-          </FormSelect>
-        </FormControl>
-
-        {formData.appointmentFor === "Family member" && (
-          <FormControl>
-            <FormLabel>Search Family Member</FormLabel>
-            <FormInput
-              type="text"
-              value={formData.familyMember}
-              onChange={handleSearchChange}
-              placeholder="Search by name"
-            />
-            <FormSelect
-              name="familyMember"
-              value={formData.familyMember}
-              onChange={handleChange}
-              required
-            >
-              <option value="">Select Family Member</option>
-              {filteredUsers.map((user) => (
-                <option key={user.id} value={user.nameSatsangi}>
-                  {user.nameSatsangi}
-                </option>
-              ))}
-            </FormSelect>
-          </FormControl>
-        )}
-
-        <FormControl>
-          <FormLabel>Appointment Date</FormLabel>
-          <DatePicker
-            selected={formData.appointmentDate}
-            onChange={handleDateChange}
-            dateFormat="MMMM d, yyyy"
-            className="form-control"
-          />
-        </FormControl>
         <FormControl>
           <FormLabel>Doctor</FormLabel>
           <FormSelect
@@ -338,15 +241,13 @@ const Appointments = () => {
         </FormControl>
         <FormControl>
           <FormLabel>Gender</FormLabel>
-          <FormSelect
+          <FormInput
+            type="text"
             name="gender"
             value={formData.gender}
             onChange={handleChange}
             required
-          >
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-          </FormSelect>
+          />
         </FormControl>
         <FormControl>
           <FormLabel>Date of Birth</FormLabel>
@@ -453,14 +354,6 @@ const Appointments = () => {
               <p>Blood Group: {appointment.bloodGroup}</p>
               <p>Symptoms: {appointment.symptoms}</p>
               <p>Satsang Branch: {appointment.satsangBranch}</p>
-              <p>
-                Appointment Date:{" "}
-                {moment(appointment.appointmentDate).format("MMMM d, yyyy")}
-              </p>
-              <p>Appointment For: {appointment.appointmentFor}</p>
-              {appointment.appointmentFor === "Family member" && (
-                <p>Family Member: {appointment.familyMember}</p>
-              )}
             </AppointmentText>
             <AppointmentIcons>
               <span

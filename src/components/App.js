@@ -36,6 +36,7 @@ import GeneralBodyMeetings from "./com/GeneralBodyMeetings";
 import CCTVMaintenance from "./com/CCTVMaintenance";
 import ManageAdmins from "./admin/ManageAdmins";
 import ViewContacts from "./impcontacts/ViewContacts";
+import ManageSatsangiUsers from "./admin/ManageSatsangiUsers";
 
 const MenuButton = styled.button`
   position: fixed;
@@ -114,9 +115,15 @@ function App() {
 
   const l = localStorage.getItem("currentLanguage");
   i18n.changeLanguage(l);
+
+  console.log(JSON.parse(localStorage.getItem("loginObject")));
   return (
     <Router>
-      <MenuButton onClick={toggleMenu}>☰</MenuButton>
+      {JSON.parse(localStorage.getItem("loginObject"))?.userName
+        ?.nameSatsangi !== undefined && (
+        <MenuButton onClick={toggleMenu}>☰</MenuButton>
+      )}
+
       <SideMenu isOpen={isMenuOpen} onClose={closeMenu} />
       <div
         style={{
@@ -148,6 +155,8 @@ function App() {
           <Route path="/manageStore" exact element={<ManageStoreItems />} />
           <Route path="/orderStoreItems" exact element={<OrderStoreItems />} />
           <Route path="/manageOrders" exact element={<ManageOrders />} />
+          <Route path="/ManageUsers" exact element={<ManageSatsangiUsers />} />
+
           <Route
             path="/manageMaintenance"
             exact
