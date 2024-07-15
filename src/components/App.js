@@ -37,6 +37,8 @@ import CCTVMaintenance from "./com/CCTVMaintenance";
 import ManageAdmins from "./admin/ManageAdmins";
 import ViewContacts from "./impcontacts/ViewContacts";
 import ManageSatsangiUsers from "./admin/ManageSatsangiUsers";
+import MedicalCampForm from "./medcamp/MedicalCampForm";
+import MedicalCampTabs from "./medcamp/MedicalCampTabs";
 
 const MenuButton = styled.button`
   position: fixed;
@@ -156,6 +158,10 @@ function App() {
           <Route path="/orderStoreItems" exact element={<OrderStoreItems />} />
           <Route path="/manageOrders" exact element={<ManageOrders />} />
           <Route path="/ManageUsers" exact element={<ManageSatsangiUsers />} />
+
+          <Route path="/medcamppatient" exact element={<MedicalCampForm />} />
+          <Route path="/MedicalCampdoc" exact element={<MedicalCampTabs />} />
+          <Route path="/medcampcured" exact element={<MedicalCampTabs />} />
 
           <Route
             path="/manageMaintenance"

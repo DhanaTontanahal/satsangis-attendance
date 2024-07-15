@@ -74,6 +74,7 @@ const SideMenu = ({ isOpen, onClose }) => {
   const [isAttendanceOpen, setIsAttendanceOpen] = useState(false);
   const [isDoctorOpen, setIsDoctorOpen] = useState(false);
   const [isExhibitionOpen, setIsExhibitionOpen] = useState(false);
+  const [medicalCamp, setMedicalCamp] = useState(false);
   const [pehraDutyOpen, setPehraDutyOpen] = useState(false);
   const [general, setGeneral] = useState(false);
   const [stores, setStores] = useState(false);
@@ -83,6 +84,9 @@ const SideMenu = ({ isOpen, onClose }) => {
   const toggleAttendance = () => setIsAttendanceOpen(!isAttendanceOpen);
   const toggleDoctor = () => setIsDoctorOpen(!isDoctorOpen);
   const toggleExhibition = () => setIsExhibitionOpen(!isExhibitionOpen);
+
+  const toggleMedCamp = () => setMedicalCamp(!medicalCamp);
+
   const togglePehraDuty = () => setPehraDutyOpen(!pehraDutyOpen);
   const toggleGeneral = () => setGeneral(!general);
   const togglestores = () => setStores(!stores);
@@ -178,6 +182,25 @@ const SideMenu = ({ isOpen, onClose }) => {
             </MenuItem>
             <MenuItem to="/exhevents" onClick={onClose}>
               Exhibition Events
+            </MenuItem>
+          </>
+        )}
+
+        <SectionTitle onClick={toggleMedCamp}>
+          Medical Camp
+          <Arrow isOpen={medicalCamp}>{medicalCamp ? "↓" : "→"}</Arrow>
+        </SectionTitle>
+        {medicalCamp && (
+          <>
+            <MenuItem to="/medcamppatient" onClick={onClose}>
+              Patient Details
+            </MenuItem>
+            <MenuItem to="/MedicalCampdoc" onClick={onClose}>
+              Doctor's View
+            </MenuItem>
+
+            <MenuItem to="/medcampcured" onClick={onClose}>
+              Cured Patients
             </MenuItem>
           </>
         )}
