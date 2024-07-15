@@ -193,14 +193,13 @@ const SideMenu = ({ isOpen, onClose }) => {
         {medicalCamp && (
           <>
             <MenuItem to="/medcamppatient" onClick={onClose}>
-              Patient Details
+              Add Patients
             </MenuItem>
             <MenuItem to="/MedicalCampdoc" onClick={onClose}>
-              Doctor's View
+              Doctor treatment
             </MenuItem>
-
             <MenuItem to="/medcampcured" onClick={onClose}>
-              Cured Patients
+              Medicine Distribution
             </MenuItem>
           </>
         )}
